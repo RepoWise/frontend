@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from './lib/api'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -35,7 +35,8 @@ import { Dashboard } from './components/Dashboard'
 
 function App() {
   const [activeView, setActiveView] = useState('chat') // 'dashboard' or 'chat'
-  const [selectedProject, setSelectedProject] = useState(null)
+  // Default to keras-io if available, otherwise first project
+  const [selectedProject, setSelectedProject] = useState('keras-team-keras-io')
   const [githubUrl, setGithubUrl] = useState('')
   const [query, setQuery] = useState('')
   const [messages, setMessages] = useState([])
@@ -64,6 +65,15 @@ function App() {
       return () => clearTimeout(timer)
     }
   }, [indexingStatus])
+
+  // Fetch available projects
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => api.listProjects(),
+    refetchInterval: 30000, // Refetch every 30 seconds to keep list updated
+  })
+
+  const availableProjects = projectsData?.data?.projects || []
 
   // Add repository and index mutation
   const addRepoMutation = useMutation({
@@ -133,12 +143,17 @@ function App() {
   // Query mutation
   const queryMutation = useMutation({
     mutationFn: ({ projectId, query, conversationHistory }) =>
-      api.agenticQuery(projectId, query, { conversationHistory }), // CHANGED: Use agentic endpoint
+      api.query(projectId, query, { conversationHistory }),
     onSuccess: (data) => {
+      // Safely handle sources with null checking
+      const sources = data?.data?.sources || []
+
       // Deduplicate sources by file_path, keeping highest score and counting matches
       const sourcesByPath = {}
 
-      data.data.sources.forEach(source => {
+      sources.forEach(source => {
+        if (!source || !source.file_path) return // Skip invalid sources
+
         if (!sourcesByPath[source.file_path]) {
           sourcesByPath[source.file_path] = {
             ...source,
@@ -157,9 +172,9 @@ function App() {
 
       setMessages(prev => [...prev, {
         type: 'assistant',
-        content: data.data.response,
+        content: data?.data?.response || 'No response received',
         sources: uniqueSources,
-        metadata: data.data.metadata,
+        metadata: data?.data?.metadata || {},
         timestamp: new Date(),
         query: prev[prev.length - 1]?.content
       }])
@@ -188,7 +203,7 @@ function App() {
 
   const handleSendQuery = (e) => {
     e.preventDefault()
-    if (!query.trim()) return // CHANGED: Allow queries without project for conversational queries
+    if (!query.trim() || !selectedProject) return
 
     // Build conversation history from previous messages (limit to last 5 pairs = 10 messages)
     const conversationHistory = messages
@@ -207,9 +222,8 @@ function App() {
     }])
 
     // Send query with conversation history
-    // Project ID is now optional - agentic router will decide if it's needed
     queryMutation.mutate({
-      projectId: selectedProject || null, // CHANGED: Allow null for conversational queries
+      projectId: selectedProject,
       query,
       conversationHistory: conversationHistory.length > 0 ? conversationHistory : null
     })
@@ -227,6 +241,15 @@ function App() {
     if (!githubUrl.trim()) return
     setIndexingStatus({ status: 'loading', message: 'Scraping and indexing repository...' })
     addRepoMutation.mutate(githubUrl)
+  }
+
+  // Handler for project selection from dropdown
+  const handleProjectSelect = (e) => {
+    const projectId = e.target.value
+    if (projectId) {
+      setSelectedProject(projectId)
+      setMessages([]) // Clear messages when switching projects
+    }
   }
 
   // Action handlers for Share, Export, Rewrite
@@ -314,53 +337,33 @@ function App() {
 
   // Generate dynamic related questions based on conversation context
   const getRelatedQuestions = () => {
-    // All available questions by topic
+    // All available questions by topic (real test questions)
     const questionBank = {
-      contribution: [
-        'What is the contribution workflow?',
-        'How do I submit a pull request?',
-        'What coding standards should I follow?',
-        'How do I report a bug?'
-      ],
       governance: [
-        'How are decisions made?',
-        'What is the governance model?',
-        'Who has voting rights?',
-        'What are the community guidelines?'
+        'Who currently maintains this project?',
+        'What are the voting rules for changes?',
+        'What are the required steps before submitting a pull request?',
+        'How do I report a security vulnerability?'
       ],
-      maintainers: [
-        'Who are the current maintainers?',
-        'How do I become a maintainer?',
-        'What are maintainer responsibilities?',
-        'How are maintainers selected?'
+      commits: [
+        'Who are the three most active committers?',
+        'What are the five latest commits?',
+        'Which files have the highest total lines added across all commits?'
       ],
-      security: [
-        'What are the security policies?',
-        'How do I report a security vulnerability?',
-        'What is the security disclosure process?',
-        'Are there security audits?'
-      ],
-      review: [
-        'What is the code review process?',
-        'How long does review take?',
-        'Who can review code?',
-        'What happens after review approval?'
-      ],
-      license: [
-        'What license does the project use?',
-        'Can I use this code commercially?',
-        'What are the licensing terms?',
-        'Are there contributor license agreements?'
+      issues: [
+        'How many open vs closed issues are there?',
+        'What are the three most recently updated issues?',
+        'Which issue has the highest comment count?'
       ]
     }
 
-    // If no messages, show default mix
+    // If no messages, show default mix across all categories
     if (messages.length === 0) {
       return [
-        'What is the governance model?',
-        'How do I contribute?',
-        'Who are the maintainers?',
-        'What is the security policy?'
+        'Who currently maintains this project?',
+        'What are the required steps before submitting a pull request?',
+        'Who are the three most active committers?',
+        'How do I report a security vulnerability?'
       ]
     }
 
@@ -375,34 +378,38 @@ function App() {
       .reverse()
       .find(m => m.type === 'assistant')
 
-    let relevantTopics = ['contribution', 'governance', 'maintainers', 'security']
+    let relevantTopics = ['governance', 'commits', 'issues']
 
     if (lastAssistantMessage) {
       const content = lastAssistantMessage.content.toLowerCase()
       relevantTopics = []
 
-      if (content.includes('contribut') || content.includes('pull request') || content.includes('pr')) {
-        relevantTopics.push('contribution', 'review')
-      }
-      if (content.includes('maintainer') || content.includes('committer')) {
-        relevantTopics.push('maintainers', 'governance')
-      }
-      if (content.includes('security') || content.includes('vulnerability')) {
-        relevantTopics.push('security')
-      }
-      if (content.includes('license') || content.includes('copyright')) {
-        relevantTopics.push('license')
-      }
-      if (content.includes('governance') || content.includes('decision') || content.includes('vote')) {
+      // GOVERNANCE intent indicators
+      if (content.includes('maintainer') || content.includes('contribut') ||
+          content.includes('pull request') || content.includes('pr') ||
+          content.includes('governance') || content.includes('decision') ||
+          content.includes('vote') || content.includes('security') ||
+          content.includes('vulnerability')) {
         relevantTopics.push('governance')
       }
-      if (content.includes('review') || content.includes('approval')) {
-        relevantTopics.push('review')
+
+      // COMMITS intent indicators
+      if (content.includes('commit') || content.includes('author') ||
+          content.includes('contributor') || content.includes('file') ||
+          content.includes('lines added') || content.includes('code change')) {
+        relevantTopics.push('commits')
       }
 
-      // If no specific topics identified, default to common ones
+      // ISSUES intent indicators
+      if (content.includes('issue') || content.includes('bug') ||
+          content.includes('ticket') || content.includes('open') ||
+          content.includes('closed')) {
+        relevantTopics.push('issues')
+      }
+
+      // If no specific topics identified, default to all
       if (relevantTopics.length === 0) {
-        relevantTopics = ['contribution', 'governance', 'maintainers']
+        relevantTopics = ['governance', 'commits', 'issues']
       }
     }
 
@@ -427,7 +434,9 @@ function App() {
       security: <Shield className="w-4 h-4" />,
       maintainers: <Users className="w-4 h-4" />,
       license: <FileText className="w-4 h-4" />,
-      readme: <FileText className="w-4 h-4" />
+      readme: <FileText className="w-4 h-4" />,
+      commits: <GitBranch className="w-4 h-4" />,
+      issues: <AlertCircle className="w-4 h-4" />
     }
     return icons[fileType] || <FileText className="w-4 h-4" />
   }
@@ -480,34 +489,12 @@ function App() {
               </div>
             </div>
 
-            {/* GitHub URL Input */}
-            <form onSubmit={handleAddRepository} className="flex items-center gap-2 flex-1 max-w-xl">
-              <div className="relative flex-1">
-                <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
-                  placeholder="Enter GitHub repository URL (e.g., https://github.com/owner/repo)"
-                  className="w-full bg-gray-900/50 border border-gray-800 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  disabled={addRepoMutation.isPending}
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={!githubUrl.trim() || addRepoMutation.isPending}
-                className="px-4 py-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              >
-                {addRepoMutation.isPending ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Indexing...
-                  </span>
-                ) : (
-                  'Add Repository'
-                )}
-              </button>
-            </form>
+            {/* Project Display - keras-io */}
+            <div className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 border border-gray-800 rounded-lg">
+              <Github className="w-4 h-4 text-emerald-500" />
+              <span className="text-sm font-medium text-white">Keras.io</span>
+              <span className="text-xs text-gray-500">keras-team/keras-io</span>
+            </div>
           </div>
 
           {/* Indexing Status */}
@@ -624,10 +611,10 @@ function App() {
                 {selectedProject && (
                   <div className="grid grid-cols-2 gap-3 max-w-3xl mx-auto">
                     {[
-                      { q: 'What is the governance model?', icon: <Globe className="w-4 h-4" /> },
-                      { q: 'How do I contribute?', icon: <Code className="w-4 h-4" /> },
-                      { q: 'Who are the maintainers?', icon: <Users className="w-4 h-4" /> },
-                      { q: 'What is the security policy?', icon: <Shield className="w-4 h-4" /> },
+                      { q: 'Who currently maintains this project?', icon: <Users className="w-4 h-4" /> },
+                      { q: 'What are the required steps before submitting a pull request?', icon: <Code className="w-4 h-4" /> },
+                      { q: 'Who are the three most active committers?', icon: <GitBranch className="w-4 h-4" /> },
+                      { q: 'How do I report a security vulnerability?', icon: <Shield className="w-4 h-4" /> },
                     ].map((item, i) => (
                       <motion.button
                         key={i}
@@ -826,9 +813,11 @@ function App() {
                                           ({source.matchCount} {source.matchCount === 1 ? 'match' : 'matches'})
                                         </span>
                                       )}
-                                      <span className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-400 capitalize">
-                                        {source.file_type.replace('_', ' ')}
-                                      </span>
+                                      {source.file_type && (
+                                        <span className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-400 capitalize">
+                                          {source.file_type.replace('_', ' ')}
+                                        </span>
+                                      )}
                                     </div>
                                   </div>
                                 </motion.div>
@@ -924,9 +913,11 @@ function App() {
                                       ({source.matchCount} {source.matchCount === 1 ? 'match' : 'matches'})
                                     </span>
                                   )}
-                                  <span className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-400 capitalize">
-                                    {source.file_type.replace('_', ' ')}
-                                  </span>
+                                  {source.file_type && (
+                                    <span className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-400 capitalize">
+                                      {source.file_type.replace('_', ' ')}
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                             </div>
