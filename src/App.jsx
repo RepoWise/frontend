@@ -45,6 +45,7 @@ function App() {
   const [copiedMessageId, setCopiedMessageId] = useState(null) // Track copied message
   const [editingMessageId, setEditingMessageId] = useState(null) // Track which message is being edited
   const [editedQuery, setEditedQuery] = useState('') // Store edited query text
+  const [loadingStage, setLoadingStage] = useState(0) // Track loading animation stage
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
 
@@ -175,6 +176,7 @@ function App() {
         content: data?.data?.response || 'No response received',
         sources: uniqueSources,
         metadata: data?.data?.metadata || {},
+        suggestedQuestions: data?.data?.suggested_questions || [],
         timestamp: new Date(),
         query: prev[prev.length - 1]?.content
       }])
@@ -425,6 +427,68 @@ function App() {
   }
 
   const relatedQuestions = getRelatedQuestions()
+
+  // Generate dynamic loading messages based on query context
+  const getLoadingStages = (query) => {
+    const queryLower = query.toLowerCase()
+
+    // Determine query type for context-aware messages
+    const isGovernance = queryLower.includes('maintain') || queryLower.includes('contribut') ||
+                         queryLower.includes('pull request') || queryLower.includes('security') ||
+                         queryLower.includes('vote') || queryLower.includes('decision') ||
+                         queryLower.includes('governance') || queryLower.includes('license')
+
+    const isCommits = queryLower.includes('commit') || queryLower.includes('contributor') ||
+                      queryLower.includes('author') || queryLower.includes('code') ||
+                      queryLower.includes('file') || queryLower.includes('change')
+
+    const isIssues = queryLower.includes('issue') || queryLower.includes('bug') ||
+                     queryLower.includes('ticket') || queryLower.includes('open') ||
+                     queryLower.includes('closed') || queryLower.includes('report')
+
+    // Context-specific loading stages
+    if (isGovernance) {
+      return [
+        { icon: Search, text: "Searching governance documents...", color: "text-blue-400" },
+        { icon: FileText, text: "Reading CONTRIBUTING.md and CODE_OF_CONDUCT.md...", color: "text-purple-400" },
+        { icon: Shield, text: "Analyzing project policies...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Synthesizing governance insights...", color: "text-amber-400" }
+      ]
+    } else if (isCommits) {
+      return [
+        { icon: Search, text: "Querying commit history...", color: "text-blue-400" },
+        { icon: GitBranch, text: "Analyzing contributor activity...", color: "text-purple-400" },
+        { icon: Code, text: "Processing code changes...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Generating insights...", color: "text-amber-400" }
+      ]
+    } else if (isIssues) {
+      return [
+        { icon: Search, text: "Scanning issue tracker...", color: "text-blue-400" },
+        { icon: AlertCircle, text: "Analyzing issue patterns...", color: "text-purple-400" },
+        { icon: Users, text: "Evaluating community engagement...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Compiling results...", color: "text-amber-400" }
+      ]
+    }
+
+    // Default loading stages
+    return [
+      { icon: Search, text: "Understanding your question...", color: "text-blue-400" },
+      { icon: FileText, text: "Searching relevant documents...", color: "text-purple-400" },
+      { icon: Sparkles, text: "Analyzing context...", color: "text-emerald-400" },
+      { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
+    ]
+  }
+
+  // Cycle through loading stages
+  useEffect(() => {
+    if (queryMutation.isPending) {
+      setLoadingStage(0)
+      const interval = setInterval(() => {
+        setLoadingStage(prev => (prev + 1) % 4)
+      }, 1500) // Change stage every 1.5 seconds
+      return () => clearInterval(interval)
+    }
+  }, [queryMutation.isPending])
 
   const getSourceIcon = (fileType) => {
     const icons = {
@@ -861,24 +925,32 @@ function App() {
                           </button>
                         </div>
 
-                        {/* Related Questions */}
+                        {/* Related Questions - Use API suggestions if available, fallback to hardcoded */}
                         <div className="space-y-3 pt-4">
                           <div className="flex items-center space-x-2 text-sm text-gray-500">
-                            <span className="font-medium">Related</span>
+                            <Sparkles className="w-4 h-4" />
+                            <span className="font-medium">Suggested Questions</span>
                           </div>
                           <div className="space-y-2">
-                            {relatedQuestions.slice(0, 4).map((question, i) => (
-                              <button
-                                key={i}
-                                onClick={() => handleSuggestion(question)}
-                                className="w-full flex items-center justify-between px-4 py-3 bg-gray-900/30 hover:bg-gray-800/50 border border-gray-800/50 hover:border-gray-700 rounded-lg transition-all text-left group"
-                              >
-                                <span className="text-sm text-gray-400 group-hover:text-gray-300">
-                                  {question}
-                                </span>
-                                <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-500" />
-                              </button>
-                            ))}
+                            {(() => {
+                              // Use API-provided suggestions if available, otherwise fallback to hardcoded
+                              const questions = msg.suggestedQuestions && msg.suggestedQuestions.length > 0
+                                ? msg.suggestedQuestions
+                                : relatedQuestions.slice(0, 4)
+
+                              return questions.map((question, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => handleSuggestion(question)}
+                                  className="w-full flex items-center justify-between px-4 py-3 bg-gray-900/30 hover:bg-gray-800/50 border border-gray-800/50 hover:border-gray-700 rounded-lg transition-all text-left group"
+                                >
+                                  <span className="text-sm text-gray-400 group-hover:text-gray-300">
+                                    {question}
+                                  </span>
+                                  <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-500" />
+                                </button>
+                              ))
+                            })()}
                           </div>
                         </div>
                       </div>
@@ -937,19 +1009,112 @@ function App() {
               </motion.div>
             ))}
 
-            {/* Loading State */}
-            {queryMutation.isPending && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center space-x-3 p-4 bg-gray-900/30 border border-gray-800 rounded-xl"
-              >
-                <Loader2 className="w-5 h-5 animate-spin text-emerald-500" />
-                <span className="text-sm text-gray-400">
-                  Analyzing governance documents...
-                </span>
-              </motion.div>
-            )}
+            {/* Enhanced Loading State - Perplexity-style */}
+            {queryMutation.isPending && (() => {
+              const lastUserMessage = messages.filter(m => m.type === 'user').pop()
+              const loadingStages = lastUserMessage ? getLoadingStages(lastUserMessage.content) : getLoadingStages('')
+              const currentStage = loadingStages[loadingStage]
+              const Icon = currentStage.icon
+
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  {/* Main Loading Card */}
+                  <div className="relative overflow-hidden p-6 bg-gradient-to-br from-gray-900/50 to-gray-900/30 border border-gray-800 rounded-2xl">
+                    {/* Animated gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-blue-500/5 to-purple-500/5 animate-pulse" />
+
+                    <div className="relative space-y-4">
+                      {/* Current Stage Display */}
+                      <div className="flex items-center space-x-4">
+                        <div className="flex-shrink-0">
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full opacity-20 blur-xl animate-pulse" />
+                            <div className="relative p-3 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-xl border border-emerald-500/30">
+                              <Icon className={`w-6 h-6 ${currentStage.color} animate-pulse`} />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <AnimatePresence mode="wait">
+                            <motion.div
+                              key={loadingStage}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <p className="text-base font-medium text-white">
+                                {currentStage.text}
+                              </p>
+                            </motion.div>
+                          </AnimatePresence>
+                          <div className="flex items-center space-x-2 mt-2">
+                            <div className="flex space-x-1">
+                              {loadingStages.map((_, idx) => (
+                                <div key={idx} className={`h-1 rounded-full transition-all duration-300 ${
+                                  idx === loadingStage ? 'w-8 bg-gradient-to-r from-emerald-500 to-blue-500'
+                                  : idx < loadingStage ? 'w-4 bg-emerald-500/50' : 'w-4 bg-gray-700'
+                                }`} />
+                              ))}
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              Step {loadingStage + 1} of {loadingStages.length}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Progress Timeline */}
+                      <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-800/50">
+                        {loadingStages.map((stage, idx) => {
+                          const StageIcon = stage.icon
+                          const isCompleted = idx < loadingStage
+                          const isCurrent = idx === loadingStage
+                          const isPending = idx > loadingStage
+
+                          return (
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: idx * 0.1 }}
+                              className="flex flex-col items-center space-y-2 p-3 rounded-lg bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/30"
+                            >
+                              <div className={`p-2 rounded-lg ${
+                                isCurrent
+                                  ? 'bg-gradient-to-br from-emerald-500/20 to-blue-500/20'
+                                  : isCompleted
+                                  ? 'bg-emerald-500/10'
+                                  : 'bg-gray-800/50'
+                              }`}>
+                                <StageIcon className={`w-4 h-4 ${
+                                  isCurrent ? stage.color : isCompleted ? 'text-emerald-400' : 'text-gray-600'
+                                }`} />
+                              </div>
+                              <span className={`text-xs text-center ${
+                                isCurrent ? 'text-white font-medium' : 'text-gray-500'
+                              }`}>
+                                {stage.text.split('...')[0]}
+                              </span>
+                            </motion.div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating particles effect */}
+                  <div className="flex items-center justify-center space-x-2 text-xs text-gray-600">
+                    <Sparkles className="w-3 h-3 animate-pulse" />
+                    <span>Powered by Llama 3.2 with RAG</span>
+                  </div>
+                </motion.div>
+              )
+            })()}
                 </AnimatePresence>
                 <div ref={messagesEndRef} />
               </div>
