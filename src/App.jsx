@@ -48,13 +48,30 @@ function App() {
   const [loadingStage, setLoadingStage] = useState(0) // Track loading animation stage
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
+  const messageRefs = useRef({}) // Store refs for each message
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const scrollToMessage = (index) => {
+    messageRefs.current[index]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   useEffect(() => {
-    scrollToBottom()
+    // When a new assistant message is added, scroll to its start position
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1]
+      if (lastMessage.type === 'assistant') {
+        // Scroll to the assistant message (not the bottom)
+        setTimeout(() => {
+          scrollToMessage(messages.length - 1)
+        }, 100)
+      } else {
+        // For user messages or loading, scroll to bottom
+        scrollToBottom()
+      }
+    }
   }, [messages])
 
   // Auto-dismiss indexing status messages after 5 seconds (but not loading state)
@@ -705,6 +722,7 @@ function App() {
             {messages.map((msg, idx) => (
               <motion.div
                 key={idx}
+                ref={(el) => (messageRefs.current[idx] = el)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-8"
@@ -1106,12 +1124,6 @@ function App() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Floating particles effect */}
-                  <div className="flex items-center justify-center space-x-2 text-xs text-gray-600">
-                    <Sparkles className="w-3 h-3 animate-pulse" />
-                    <span>Powered by Llama 3.2 with RAG</span>
-                  </div>
                 </motion.div>
               )
             })()}
@@ -1129,22 +1141,27 @@ function App() {
         <div className="max-w-5xl mx-auto px-6">
           <form onSubmit={handleSendQuery} className="relative">
             <div className="flex items-end space-x-3 p-4 bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl">
-              <textarea
-                ref={inputRef}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSendQuery(e)
-                  }
-                }}
-                placeholder="Ask about governance, sustainability, or contribution guidelines..."
-                disabled={!selectedProject || queryMutation.isPending || editingMessageId !== null}
-                rows={1}
-                className="flex-1 bg-transparent border-0 focus:outline-none resize-none text-gray-100 placeholder-gray-600 text-sm disabled:opacity-50 max-h-32"
-                style={{ minHeight: '24px' }}
-              />
+              <div
+                className="flex-1 cursor-text"
+                onClick={() => inputRef.current?.focus()}
+              >
+                <textarea
+                  ref={inputRef}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSendQuery(e)
+                    }
+                  }}
+                  placeholder="Ask about governance, sustainability, or contribution guidelines..."
+                  disabled={!selectedProject || queryMutation.isPending || editingMessageId !== null}
+                  rows={1}
+                  className="w-full bg-transparent border-0 focus:outline-none resize-none text-gray-100 placeholder-gray-600 text-base disabled:opacity-50 max-h-32 disabled:cursor-not-allowed"
+                  style={{ minHeight: '28px' }}
+                />
+              </div>
               <button
                 type="submit"
                 disabled={!query.trim() || !selectedProject || queryMutation.isPending || editingMessageId !== null}
