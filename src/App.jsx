@@ -535,10 +535,10 @@ function App() {
                 </div>
                 <div>
                   <h1 className="text-lg font-semibold text-white">
-                    OSSPREY Intelligence
+                    OSS Forensics
                   </h1>
                   <p className="text-xs text-gray-500">
-                    One-stop OSS sustainability platform
+                    AI-powered OSS governance and commit analysis
                   </p>
                 </div>
               </div>
@@ -684,7 +684,7 @@ function App() {
                 </h2>
                 <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-12">
                   {selectedProject
-                    ? "Ask anything about this project's governance, sustainability practices, contribution guidelines, or community policies."
+                    ? "Ask anything about this project's governance, contribution guidelines, commit history, or issue tracking."
                     : "Enter a GitHub repository URL above to start exploring its governance documents with AI."}
                 </p>
 
@@ -1155,7 +1155,7 @@ function App() {
                       handleSendQuery(e)
                     }
                   }}
-                  placeholder="Ask about governance, sustainability, or contribution guidelines..."
+                  placeholder="Ask about governance, commits, issues, or contribution guidelines..."
                   disabled={!selectedProject || queryMutation.isPending || editingMessageId !== null}
                   rows={1}
                   className="w-full bg-transparent border-0 focus:outline-none resize-none text-gray-100 placeholder-gray-600 text-base disabled:opacity-50 max-h-32 disabled:cursor-not-allowed"
