@@ -35,8 +35,8 @@ import { Dashboard } from './components/Dashboard'
 
 function App() {
   const [activeView, setActiveView] = useState('chat') // 'dashboard' or 'chat'
-  // Default to keras-io if available, otherwise first project
-  const [selectedProject, setSelectedProject] = useState('keras-team-keras-io')
+  // Default to null, will be set when projects load
+  const [selectedProject, setSelectedProject] = useState(null)
   const [githubUrl, setGithubUrl] = useState('')
   const [query, setQuery] = useState('')
   const [messages, setMessages] = useState([])
@@ -207,7 +207,7 @@ function App() {
     },
   })
 
-  // Auto-focus input after assistant response (like Claude chat)
+  // Auto-focus input after assistant response
   useEffect(() => {
     if (messages.length > 0 && !queryMutation.isPending) {
       const lastMessage = messages[messages.length - 1]
@@ -247,6 +247,10 @@ function App() {
       conversationHistory: conversationHistory.length > 0 ? conversationHistory : null
     })
     setQuery('')
+    // Reset textarea height to minimum after submission
+    if (inputRef.current) {
+      inputRef.current.style.height = '28px'
+    }
     inputRef.current?.focus()
   }
 
@@ -544,7 +548,7 @@ function App() {
               </div>
 
               {/* Navigation Tabs */}
-              <div className="flex items-center space-x-1 bg-gray-900/50 p-1 rounded-lg border border-gray-800">
+              {/* <div className="flex items-center space-x-1 bg-gray-900/50 p-1 rounded-lg border border-gray-800">
                 <button
                   onClick={() => setActiveView('dashboard')}
                   className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
@@ -567,15 +571,36 @@ function App() {
                   <MessageSquare className="w-4 h-4" />
                   Chat
                 </button>
-              </div>
+              </div> */}
             </div>
 
+            <form onSubmit={handleAddRepository} className="flex gap-2 min-w-[500px]">
+              <div className="relative flex-1">
+                <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                  type="text"
+                  value={githubUrl}
+                  onChange={(e) => setGithubUrl(e.target.value)}
+                  placeholder="Enter GitHub repository URL (e.g., https://github.com/owner/repo)"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-900/50 border border-gray-800 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={!githubUrl.trim() || addRepoMutation.isPending}
+                className="px-5 py-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 text-sm font-semibold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+              >
+                <Github className="w-4 h-4" />
+                Add Repo
+              </button>
+            </form>
+ 
             {/* Project Display - keras-io */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 border border-gray-800 rounded-lg">
+            {/* <div className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 border border-gray-800 rounded-lg">
               <Github className="w-4 h-4 text-emerald-500" />
               <span className="text-sm font-medium text-white">Keras.io</span>
               <span className="text-xs text-gray-500">keras-team/keras-io</span>
-            </div>
+            </div> */}
           </div>
 
           {/* Indexing Status */}
@@ -728,10 +753,7 @@ function App() {
                 className="mb-8"
               >
                 {msg.type === 'user' && (
-                  <div className="flex items-start space-x-4 mb-8">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                      <Search className="w-4 h-4 text-white" />
-                    </div>
+                  <div className="mb-8">
                     <div className="flex-1">
                       {editingMessageId === idx ? (
                         <div className="space-y-3">
@@ -770,7 +792,7 @@ function App() {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-2xl font-medium text-white leading-relaxed">
+                        <p className="text-base font-normal text-white/90" style={{ lineHeight: '1.7' }}>
                           {msg.content}
                         </p>
                       )}
@@ -813,7 +835,7 @@ function App() {
                             rehypePlugins={[rehypeHighlight]}
                             components={{
                               p: ({ children }) => (
-                                <p className="text-gray-300 leading-relaxed mb-4">{children}</p>
+                                <p className="text-base text-gray-300 mb-4" style={{ lineHeight: '1.7' }}>{children}</p>
                               ),
                               h1: ({ children }) => (
                                 <h1 className="text-3xl font-bold text-white mb-6">{children}</h1>
@@ -1140,7 +1162,7 @@ function App() {
       <div className="sticky bottom-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f] to-transparent pt-8 pb-6">
         <div className="max-w-5xl mx-auto px-6">
           <form onSubmit={handleSendQuery} className="relative">
-            <div className="flex items-end space-x-3 p-4 bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl">
+            <div className="flex items-end space-x-3 p-4 bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl transition-all focus-within:border-emerald-500/50 focus-within:shadow-emerald-500/10">
               <div
                 className="flex-1 cursor-text"
                 onClick={() => inputRef.current?.focus()}
@@ -1148,7 +1170,13 @@ function App() {
                 <textarea
                   ref={inputRef}
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => {
+                    setQuery(e.target.value)
+                    // Auto-expand textarea height
+                    const target = e.target
+                    target.style.height = 'auto'
+                    target.style.height = `${target.scrollHeight}px`
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault()
@@ -1158,14 +1186,14 @@ function App() {
                   placeholder="Ask about governance, commits, issues, or contribution guidelines..."
                   disabled={!selectedProject || queryMutation.isPending || editingMessageId !== null}
                   rows={1}
-                  className="w-full bg-transparent border-0 focus:outline-none resize-none text-gray-100 placeholder-gray-600 text-base disabled:opacity-50 max-h-32 disabled:cursor-not-allowed"
-                  style={{ minHeight: '28px' }}
+                  className="w-full bg-transparent border-0 focus:outline-none resize-none text-gray-100 placeholder-gray-500 text-base disabled:opacity-50 max-h-32 disabled:cursor-not-allowed overflow-y-auto"
+                  style={{ minHeight: '28px', lineHeight: '1.6', height: '28px' }}
                 />
               </div>
               <button
                 type="submit"
                 disabled={!query.trim() || !selectedProject || queryMutation.isPending || editingMessageId !== null}
-                className="flex-shrink-0 p-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="flex-shrink-0 p-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
               >
                 <Send className="w-5 h-5" />
               </button>
