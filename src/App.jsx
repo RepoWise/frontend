@@ -32,6 +32,7 @@ import {
 } from 'lucide-react'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Dashboard } from './components/Dashboard'
+import { ThemeToggle } from './components/ThemeToggle'
 
 function App() {
   const [activeView, setActiveView] = useState('chat') // 'dashboard' or 'chat'
@@ -527,9 +528,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#0f0f0f]/80 backdrop-blur-xl border-b border-gray-800/50">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center space-x-6">
@@ -538,7 +539,7 @@ function App() {
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-semibold text-white">
+                  <h1 className="text-lg font-semibold dark:text-white text-gray-900">
                     RepoWise
                   </h1>
                 </div>
@@ -571,26 +572,31 @@ function App() {
               </div> */}
             </div>
 
-            <form onSubmit={handleAddRepository} className="flex gap-2 min-w-[500px]">
-              <div className="relative flex-1">
-                <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type="text"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
-                  placeholder="Enter GitHub repository URL (e.g., https://github.com/owner/repo)"
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-900/50 border border-gray-800 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={!githubUrl.trim() || addRepoMutation.isPending}
-                className="px-5 py-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 text-sm font-semibold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
-              >
-                <Github className="w-4 h-4" />
-                Add Repo
-              </button>
-            </form>
+            <div className="flex items-center gap-3">
+              <form onSubmit={handleAddRepository} className="flex gap-2 min-w-[500px]">
+                <div className="relative flex-1">
+                  <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <input
+                    type="text"
+                    value={githubUrl}
+                    onChange={(e) => setGithubUrl(e.target.value)}
+                    placeholder="Enter GitHub repository URL (e.g., https://github.com/owner/repo)"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-900/50 border border-gray-800 dark:bg-gray-900/50 dark:border-gray-800 bg-white/50 border-gray-200 rounded-xl text-sm dark:text-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={!githubUrl.trim() || addRepoMutation.isPending}
+                  className="px-5 py-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 text-sm font-semibold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+                >
+                  <Github className="w-4 h-4" />
+                  Add Repo
+                </button>
+              </form>
+
+              {/* Theme Toggle */}
+              <ThemeToggle />
+            </div>
  
             {/* Project Display - keras-io */}
             {/* <div className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 border border-gray-800 rounded-lg">
@@ -606,33 +612,33 @@ function App() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className={`mt-3 p-4 rounded-lg border ${
+              className={`mt-3 p-4 rounded-xl border ${
                 indexingStatus.status === 'success'
-                  ? 'bg-emerald-900/20 border-emerald-500/30 shadow-lg shadow-emerald-500/10'
+                  ? 'dark:bg-emerald-500/10 dark:border-emerald-500/20 bg-emerald-50 border-emerald-200'
                   : indexingStatus.status === 'error'
-                  ? 'bg-red-900/20 border-red-500/30 shadow-lg shadow-red-500/10'
-                  : 'bg-blue-900/20 border-blue-500/30 shadow-lg shadow-blue-500/10'
+                  ? 'dark:bg-red-500/10 dark:border-red-500/20 bg-red-50 border-red-200'
+                  : 'dark:bg-blue-500/10 dark:border-blue-500/20 bg-blue-50 border-blue-200'
               }`}
             >
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 mt-0.5">
                   {indexingStatus.status === 'loading' && (
-                    <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
+                    <Loader2 className="w-5 h-5 animate-spin dark:text-blue-400 text-blue-600" />
                   )}
                   {indexingStatus.status === 'success' && (
-                    <CheckCircle className="w-5 h-5 text-emerald-400" />
+                    <CheckCircle className="w-5 h-5 dark:text-emerald-400 text-emerald-600" />
                   )}
                   {indexingStatus.status === 'error' && (
-                    <AlertCircle className="w-5 h-5 text-red-400" />
+                    <AlertCircle className="w-5 h-5 dark:text-red-400 text-red-600" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className={`text-sm font-medium ${
                     indexingStatus.status === 'success'
-                      ? 'text-emerald-300'
+                      ? 'dark:text-emerald-300 text-emerald-800'
                       : indexingStatus.status === 'error'
-                      ? 'text-red-300'
-                      : 'text-blue-300'
+                      ? 'dark:text-red-300 text-red-800'
+                      : 'dark:text-blue-300 text-blue-800'
                   }`}>
                     {indexingStatus.status === 'success' && 'Success!'}
                     {indexingStatus.status === 'error' && 'Error'}
@@ -640,15 +646,15 @@ function App() {
                   </p>
                   <p className={`text-sm mt-1 ${
                     indexingStatus.status === 'success'
-                      ? 'text-emerald-400'
+                      ? 'dark:text-emerald-400 text-emerald-700'
                       : indexingStatus.status === 'error'
-                      ? 'text-red-400'
-                      : 'text-blue-400'
+                      ? 'dark:text-red-400 text-red-700'
+                      : 'dark:text-blue-400 text-blue-700'
                   }`}>
                     {indexingStatus.message}
                   </p>
                   {indexingStatus.status === 'error' && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs dark:text-gray-500 text-gray-600 mt-2">
                       💡 Tip: Use format https://github.com/owner/repository
                     </p>
                   )}
@@ -656,9 +662,9 @@ function App() {
                 {indexingStatus.status !== 'loading' && (
                   <button
                     onClick={() => setIndexingStatus(null)}
-                    className="flex-shrink-0 p-1 hover:bg-gray-800/50 rounded transition-colors"
+                    className="flex-shrink-0 p-1 dark:hover:bg-gray-800/50 hover:bg-gray-200/50 rounded transition-colors"
                   >
-                    <X className="w-4 h-4 text-gray-500 hover:text-gray-300" />
+                    <X className="w-4 h-4 dark:text-gray-500 dark:hover:text-gray-300 text-gray-400 hover:text-gray-600" />
                   </button>
                 )}
               </div>
@@ -701,10 +707,10 @@ function App() {
                 <div className="inline-flex p-6 bg-gradient-to-br from-emerald-500/10 to-teal-600/10 rounded-2xl border border-emerald-500/20 mb-8">
                   <Sparkles className="w-16 h-16 text-emerald-500" />
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-4">
+                <h2 className="text-3xl font-bold dark:text-white text-gray-900 mb-4">
                   Where OSS exploration begins!
                 </h2>
-                <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-12">
+                <p className="text-lg dark:text-gray-400 text-gray-600 max-w-2xl mx-auto mb-12">
                   {selectedProject
                     ? "Ask anything about this project's governance, contribution guidelines, commit, or issue tracking."
                     : "Enter a GitHub repository URL above to start exploring projects documents with AI."}
@@ -725,12 +731,21 @@ function App() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
                         onClick={() => handleSuggestion(item.q)}
-                        className="flex items-center space-x-3 px-5 py-4 bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 hover:border-gray-700 rounded-xl transition-all text-left group"
+                        className="flex items-center space-x-3 px-5 py-4
+                                   dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                   bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300
+                                   rounded-xl transition-all text-left group shadow-sm hover:shadow-md"
                       >
-                        <div className="p-2 bg-emerald-500/10 group-hover:bg-emerald-500/20 rounded-lg transition-colors">
-                          {item.icon}
+                        <div className="p-2 dark:bg-emerald-500/10 dark:group-hover:bg-emerald-500/20
+                                      bg-emerald-50 group-hover:bg-emerald-100
+                                      rounded-lg transition-colors">
+                          <div className="dark:text-emerald-400 text-emerald-600">
+                            {item.icon}
+                          </div>
                         </div>
-                        <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+                        <span className="text-sm dark:text-gray-300 dark:group-hover:text-white
+                                       text-gray-700 group-hover:text-gray-900
+                                       transition-colors">
                           {item.q}
                         </span>
                       </motion.button>
@@ -789,7 +804,7 @@ function App() {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-base font-normal text-white/90" style={{ lineHeight: '1.7' }}>
+                        <p className="text-base font-normal dark:text-white/90 text-gray-900" style={{ lineHeight: '1.7' }}>
                           {msg.content}
                         </p>
                       )}
@@ -800,7 +815,7 @@ function App() {
                 {msg.type === 'assistant' && (
                   <div className="space-y-6">
                     {/* Tabs */}
-                    <div className="flex items-center space-x-1 border-b border-gray-800">
+                    <div className="flex items-center space-x-1 border-b dark:border-gray-800 border-gray-200">
                       {['answer', 'sources'].map((tab) => (
                         <button
                           key={tab}
@@ -808,7 +823,7 @@ function App() {
                           className={`px-4 py-2 text-sm font-medium transition-colors relative ${
                             (activeTabs[idx] || 'answer') === tab
                               ? 'text-emerald-500'
-                              : 'text-gray-500 hover:text-gray-300'
+                              : 'dark:text-gray-500 dark:hover:text-gray-300 text-gray-600 hover:text-gray-900'
                           }`}
                         >
                           {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -826,45 +841,45 @@ function App() {
                     {(activeTabs[idx] || 'answer') === 'answer' && (
                       <div className="space-y-6">
                         {/* Main Answer */}
-                        <div className="prose prose-invert prose-lg max-w-none">
+                        <div className="prose dark:prose-invert prose-lg max-w-none">
                           <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeHighlight]}
                             components={{
                               p: ({ children }) => (
-                                <p className="text-base text-gray-300 mb-4" style={{ lineHeight: '1.7' }}>{children}</p>
+                                <p className="text-base dark:text-gray-300 text-gray-700 mb-4" style={{ lineHeight: '1.7' }}>{children}</p>
                               ),
                               h1: ({ children }) => (
-                                <h1 className="text-3xl font-bold text-white mb-6">{children}</h1>
+                                <h1 className="text-3xl font-bold dark:text-white text-gray-900 mb-6">{children}</h1>
                               ),
                               h2: ({ children }) => (
-                                <h2 className="text-2xl font-bold text-white mb-4 mt-8">{children}</h2>
+                                <h2 className="text-2xl font-bold dark:text-white text-gray-900 mb-4 mt-8">{children}</h2>
                               ),
                               h3: ({ children }) => (
-                                <h3 className="text-xl font-semibold text-white mb-3 mt-6">{children}</h3>
+                                <h3 className="text-xl font-semibold dark:text-white text-gray-900 mb-3 mt-6">{children}</h3>
                               ),
                               ul: ({ children }) => (
                                 <ul className="space-y-2 mb-4">{children}</ul>
                               ),
                               li: ({ children }) => (
-                                <li className="text-gray-300 leading-relaxed">{children}</li>
+                                <li className="dark:text-gray-300 text-gray-700 leading-relaxed">{children}</li>
                               ),
                               code: ({ node, inline, children, ...props }) => {
                                 if (inline) {
                                   return (
-                                    <code className="px-1.5 py-0.5 bg-gray-800 text-emerald-400 rounded text-sm font-mono" {...props}>
+                                    <code className="px-1.5 py-0.5 dark:bg-gray-800 dark:text-emerald-400 bg-emerald-50 text-emerald-700 rounded text-sm font-mono" {...props}>
                                       {children}
                                     </code>
                                   )
                                 }
                                 return (
-                                  <code className="block bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm" {...props}>
+                                  <code className="block dark:bg-gray-900 dark:text-gray-300 bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto text-sm" {...props}>
                                     {children}
                                   </code>
                                 )
                               },
                               blockquote: ({ children }) => (
-                                <blockquote className="border-l-4 border-emerald-500 pl-4 italic text-gray-400 my-4">
+                                <blockquote className="border-l-4 border-emerald-500 pl-4 italic dark:text-gray-400 text-gray-600 my-4">
                                   {children}
                                 </blockquote>
                               ),
@@ -877,66 +892,85 @@ function App() {
                         {/* Source Cards */}
                         {msg.sources && msg.sources.length > 0 && (
                           <div className="space-y-3">
-                            <div className="flex items-center space-x-2 text-sm text-gray-500">
+                            <div className="flex items-center space-x-2 text-sm dark:text-gray-500 text-gray-600">
                               <FileText className="w-4 h-4" />
                               <span className="font-medium">Sources</span>
-                              <span className="text-gray-600">·</span>
+                              <span className="dark:text-gray-600 text-gray-400">·</span>
                               <span>{msg.sources.length} {msg.sources.length === 1 ? 'document' : 'documents'}</span>
                             </div>
                             <div className="grid grid-cols-1 gap-3">
-                              {msg.sources.map((source, i) => (
-                                <motion.div
-                                  key={i}
-                                  initial={{ opacity: 0, x: -20 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: i * 0.1 }}
-                                  className="flex items-start space-x-4 p-4 bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 hover:border-gray-700 rounded-xl transition-all group cursor-pointer"
-                                >
-                                  <div className="flex-shrink-0 p-2 bg-emerald-500/10 rounded-lg">
-                                    {getSourceIcon(source.file_type)}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center space-x-2 mb-1">
-                                      <h4 className="text-sm font-medium text-white truncate">
-                                        {source.file_path.split('/').pop()}
-                                      </h4>
-                                      <ExternalLink className="w-3 h-3 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              {msg.sources.map((source, i) => {
+                                const relevanceScore = (source.score * 100).toFixed(0)
+                                const scoreColor = relevanceScore >= 70 ? 'emerald' : relevanceScore >= 40 ? 'blue' : 'amber'
+                                return (
+                                  <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="flex items-start space-x-4 p-4
+                                             dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                             bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-gray-300
+                                             rounded-xl transition-all group cursor-pointer"
+                                  >
+                                    <div className={`flex-shrink-0 p-2 bg-${scoreColor}-500/10 rounded-lg border border-${scoreColor}-500/20`}>
+                                      {getSourceIcon(source.file_type)}
                                     </div>
-                                    <p className="text-xs text-gray-500 truncate">
-                                      {source.file_path}
-                                    </p>
-                                    <div className="flex items-center space-x-3 mt-2">
-                                      <span className="text-xs text-gray-600">
-                                        Relevance: {(source.score * 100).toFixed(0)}%
-                                      </span>
-                                      {source.matchCount && source.matchCount > 1 && (
-                                        <span className="text-xs text-emerald-400">
-                                          ({source.matchCount} {source.matchCount === 1 ? 'match' : 'matches'})
-                                        </span>
-                                      )}
-                                      {source.file_type && (
-                                        <span className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-400 capitalize">
-                                          {source.file_type.replace('_', ' ')}
-                                        </span>
-                                      )}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center space-x-2 mb-1">
+                                        <h4 className="text-sm font-medium dark:text-white text-gray-900 truncate">
+                                          {source.file_path.split('/').pop()}
+                                        </h4>
+                                        <ExternalLink className="w-3 h-3 dark:text-gray-500 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                      </div>
+                                      <p className="text-xs dark:text-gray-500 text-gray-600 truncate">
+                                        {source.file_path}
+                                      </p>
+                                      <div className="flex items-center space-x-3 mt-2">
+                                        <div className="flex items-center space-x-1.5">
+                                          <div className="h-1.5 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden w-16">
+                                            <div
+                                              className={`h-full bg-gradient-to-r from-${scoreColor}-500 to-${scoreColor}-600`}
+                                              style={{ width: `${relevanceScore}%` }}
+                                            />
+                                          </div>
+                                          <span className={`text-xs font-medium text-${scoreColor}-600 dark:text-${scoreColor}-400`}>
+                                            {relevanceScore}%
+                                          </span>
+                                        </div>
+                                        {source.matchCount && source.matchCount > 1 && (
+                                          <span className="text-xs dark:text-emerald-400 text-emerald-600 font-medium">
+                                            ({source.matchCount} {source.matchCount === 1 ? 'match' : 'matches'})
+                                          </span>
+                                        )}
+                                        {source.file_type && (
+                                          <span className="px-2 py-0.5 dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-700 rounded text-xs capitalize font-medium">
+                                            {source.file_type.replace('_', ' ')}
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
-                                </motion.div>
-                              ))}
+                                  </motion.div>
+                                )
+                              })}
                             </div>
                           </div>
                         )}
 
                         {/* Action Buttons */}
-                        <div className="flex items-center space-x-2 pt-4 border-t border-gray-800">
+                        <div className="flex items-center space-x-2 pt-4 border-t dark:border-gray-800 border-gray-200">
                           <button
                             onClick={() => handleShare(idx)}
-                            className="flex items-center space-x-2 px-4 py-2 bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 hover:border-gray-700 rounded-lg transition-all text-sm text-gray-400 hover:text-gray-300"
+                            className="flex items-center space-x-2 px-4 py-2
+                                     dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                     bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400
+                                     rounded-lg transition-all text-sm
+                                     dark:text-gray-400 dark:hover:text-gray-300 text-gray-700 hover:text-gray-900"
                           >
                             {copiedMessageId === idx ? (
                               <>
-                                <Check className="w-4 h-4 text-emerald-400" />
-                                <span className="text-emerald-400">Copied!</span>
+                                <Check className="w-4 h-4 dark:text-emerald-400 text-emerald-600" />
+                                <span className="dark:text-emerald-400 text-emerald-600">Copied!</span>
                               </>
                             ) : (
                               <>
@@ -947,7 +981,11 @@ function App() {
                           </button>
                           <button
                             onClick={() => handleExport(idx)}
-                            className="flex items-center space-x-2 px-4 py-2 bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 hover:border-gray-700 rounded-lg transition-all text-sm text-gray-400 hover:text-gray-300"
+                            className="flex items-center space-x-2 px-4 py-2
+                                     dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                     bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400
+                                     rounded-lg transition-all text-sm
+                                     dark:text-gray-400 dark:hover:text-gray-300 text-gray-700 hover:text-gray-900"
                           >
                             <Download className="w-4 h-4" />
                             <span>Export</span>
@@ -955,7 +993,13 @@ function App() {
                           <button
                             onClick={() => handleEdit(idx)}
                             disabled={editingMessageId !== null && editingMessageId !== idx - 1}
-                            className="flex items-center space-x-2 px-4 py-2 bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 hover:border-gray-700 rounded-lg transition-all text-sm text-gray-400 hover:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center space-x-2 px-4 py-2
+                                     dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                     bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400
+                                     rounded-lg transition-all text-sm
+                                     dark:text-gray-400 dark:hover:text-gray-300
+                                     text-gray-700 hover:text-gray-900
+                                     disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <Pencil className="w-4 h-4" />
                             <span>Edit</span>
@@ -964,7 +1008,7 @@ function App() {
 
                         {/* Related Questions - Use API suggestions if available, fallback to hardcoded */}
                         <div className="space-y-3 pt-4">
-                          <div className="flex items-center space-x-2 text-sm text-gray-500">
+                          <div className="flex items-center space-x-2 text-sm dark:text-gray-500 text-gray-600">
                             <Sparkles className="w-4 h-4" />
                             <span className="font-medium">Suggested Questions</span>
                           </div>
@@ -979,12 +1023,17 @@ function App() {
                                 <button
                                   key={i}
                                   onClick={() => handleSuggestion(question)}
-                                  className="w-full flex items-center justify-between px-4 py-3 bg-gray-900/30 hover:bg-gray-800/50 border border-gray-800/50 hover:border-gray-700 rounded-lg transition-all text-left group"
+                                  className="w-full flex items-center justify-between px-4 py-3
+                                           dark:bg-gray-900/30 dark:hover:bg-gray-800/50 dark:border-gray-800/50 dark:hover:border-gray-700
+                                           bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300
+                                           rounded-lg transition-all text-left group"
                                 >
-                                  <span className="text-sm text-gray-400 group-hover:text-gray-300">
+                                  <span className="text-sm dark:text-gray-400 dark:group-hover:text-gray-300
+                                                 text-gray-700 group-hover:text-gray-900">
                                     {question}
                                   </span>
-                                  <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-500" />
+                                  <ExternalLink className="w-3 h-3 dark:text-gray-600 dark:group-hover:text-gray-500
+                                                         text-gray-400 group-hover:text-gray-600" />
                                 </button>
                               ))
                             })()}
@@ -996,42 +1045,54 @@ function App() {
                     {/* Sources Tab */}
                     {(activeTabs[idx] || 'answer') === 'sources' && msg.sources && (
                       <div className="space-y-3">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm dark:text-gray-500 text-gray-600">
                           {msg.sources.length} source {msg.sources.length === 1 ? 'document' : 'documents'} referenced
                         </p>
-                        {msg.sources.map((source, i) => (
-                          <div
-                            key={i}
-                            className="p-4 bg-gray-900/50 border border-gray-800 rounded-xl space-y-2"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="p-2 bg-emerald-500/10 rounded-lg">
-                                {getSourceIcon(source.file_type)}
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="text-sm font-medium text-white">
-                                  {source.file_path.split('/').pop()}
-                                </h4>
-                                <p className="text-xs text-gray-500">{source.file_path}</p>
-                                <div className="flex items-center space-x-3 mt-2">
-                                  <span className="text-xs text-gray-600">
-                                    Relevance: {(source.score * 100).toFixed(0)}%
-                                  </span>
-                                  {source.matchCount && source.matchCount > 1 && (
-                                    <span className="text-xs text-emerald-400">
-                                      ({source.matchCount} {source.matchCount === 1 ? 'match' : 'matches'})
-                                    </span>
-                                  )}
-                                  {source.file_type && (
-                                    <span className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-400 capitalize">
-                                      {source.file_type.replace('_', ' ')}
-                                    </span>
-                                  )}
+                        {msg.sources.map((source, i) => {
+                          const relevanceScore = (source.score * 100).toFixed(0)
+                          const scoreColor = relevanceScore >= 70 ? 'emerald' : relevanceScore >= 40 ? 'blue' : 'amber'
+                          return (
+                            <div
+                              key={i}
+                              className="p-4 dark:bg-gray-900/50 dark:border-gray-800 bg-white border-2 border-gray-200 rounded-xl space-y-2"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className={`p-2 bg-${scoreColor}-500/10 rounded-lg border border-${scoreColor}-500/20`}>
+                                  {getSourceIcon(source.file_type)}
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="text-sm font-medium dark:text-white text-gray-900">
+                                    {source.file_path.split('/').pop()}
+                                  </h4>
+                                  <p className="text-xs dark:text-gray-500 text-gray-600">{source.file_path}</p>
+                                  <div className="flex items-center space-x-3 mt-2">
+                                    <div className="flex items-center space-x-1.5">
+                                      <div className="h-1.5 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden w-16">
+                                        <div
+                                          className={`h-full bg-gradient-to-r from-${scoreColor}-500 to-${scoreColor}-600`}
+                                          style={{ width: `${relevanceScore}%` }}
+                                        />
+                                      </div>
+                                      <span className={`text-xs font-medium text-${scoreColor}-600 dark:text-${scoreColor}-400`}>
+                                        {relevanceScore}%
+                                      </span>
+                                    </div>
+                                    {source.matchCount && source.matchCount > 1 && (
+                                      <span className="text-xs dark:text-emerald-400 text-emerald-600 font-medium">
+                                        ({source.matchCount} {source.matchCount === 1 ? 'match' : 'matches'})
+                                      </span>
+                                    )}
+                                    {source.file_type && (
+                                      <span className="px-2 py-0.5 dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-700 rounded text-xs capitalize font-medium">
+                                        {source.file_type.replace('_', ' ')}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          )
+                        })}
                       </div>
                     )}
                   </div>
@@ -1060,7 +1121,10 @@ function App() {
                   className="space-y-4"
                 >
                   {/* Main Loading Card */}
-                  <div className="relative overflow-hidden p-6 bg-gradient-to-br from-gray-900/50 to-gray-900/30 border border-gray-800 rounded-2xl">
+                  <div className="relative overflow-hidden p-6
+                                dark:bg-gradient-to-br dark:from-gray-900/50 dark:to-gray-900/30 dark:border-gray-800
+                                bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200
+                                rounded-2xl shadow-xl">
                     {/* Animated gradient background */}
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-blue-500/5 to-purple-500/5 animate-pulse" />
 
@@ -1070,7 +1134,8 @@ function App() {
                         <div className="flex-shrink-0">
                           <div className="relative">
                             <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full opacity-20 blur-xl animate-pulse" />
-                            <div className="relative p-3 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-xl border border-emerald-500/30">
+                            <div className="relative p-3 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-xl
+                                          dark:border-emerald-500/30 border-2 border-emerald-400/40">
                               <Icon className={`w-6 h-6 ${currentStage.color} animate-pulse`} />
                             </div>
                           </div>
@@ -1084,7 +1149,7 @@ function App() {
                               exit={{ opacity: 0, y: -10 }}
                               transition={{ duration: 0.3 }}
                             >
-                              <p className="text-base font-medium text-white">
+                              <p className="text-base font-medium dark:text-white text-gray-900">
                                 {currentStage.text}
                               </p>
                             </motion.div>
@@ -1094,11 +1159,11 @@ function App() {
                               {loadingStages.map((_, idx) => (
                                 <div key={idx} className={`h-1 rounded-full transition-all duration-300 ${
                                   idx === loadingStage ? 'w-8 bg-gradient-to-r from-emerald-500 to-blue-500'
-                                  : idx < loadingStage ? 'w-4 bg-emerald-500/50' : 'w-4 bg-gray-700'
+                                  : idx < loadingStage ? 'w-4 bg-emerald-500/50' : 'w-4 dark:bg-gray-700 bg-gray-300'
                                 }`} />
                               ))}
                             </div>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs dark:text-gray-500 text-gray-600">
                               Step {loadingStage + 1} of {loadingStages.length}
                             </span>
                           </div>
@@ -1106,7 +1171,7 @@ function App() {
                       </div>
 
                       {/* Progress Timeline */}
-                      <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-800/50">
+                      <div className="grid grid-cols-4 gap-3 pt-4 dark:border-gray-800/50 border-gray-200 border-t">
                         {loadingStages.map((stage, idx) => {
                           const StageIcon = stage.icon
                           const isCompleted = idx < loadingStage
@@ -1119,21 +1184,24 @@ function App() {
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ delay: idx * 0.1 }}
-                              className="flex flex-col items-center space-y-2 p-3 rounded-lg bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/30"
+                              className="flex flex-col items-center space-y-2 p-3 rounded-lg
+                                       dark:bg-gradient-to-br dark:from-emerald-500/10 dark:to-blue-500/10 dark:border-emerald-500/30
+                                       bg-white border-2 border-gray-200
+                                       shadow-sm"
                             >
                               <div className={`p-2 rounded-lg ${
                                 isCurrent
                                   ? 'bg-gradient-to-br from-emerald-500/20 to-blue-500/20'
                                   : isCompleted
-                                  ? 'bg-emerald-500/10'
-                                  : 'bg-gray-800/50'
+                                  ? 'dark:bg-emerald-500/10 bg-emerald-50'
+                                  : 'dark:bg-gray-800/50 bg-gray-100'
                               }`}>
                                 <StageIcon className={`w-4 h-4 ${
-                                  isCurrent ? stage.color : isCompleted ? 'text-emerald-400' : 'text-gray-600'
+                                  isCurrent ? stage.color : isCompleted ? 'dark:text-emerald-400 text-emerald-600' : 'dark:text-gray-600 text-gray-400'
                                 }`} />
                               </div>
                               <span className={`text-xs text-center ${
-                                isCurrent ? 'text-white font-medium' : 'text-gray-500'
+                                isCurrent ? 'dark:text-white text-gray-900 font-medium' : 'dark:text-gray-500 text-gray-600'
                               }`}>
                                 {stage.text.split('...')[0]}
                               </span>
@@ -1156,10 +1224,15 @@ function App() {
 
       {/* Input Area - Fixed at Bottom - Only show in Chat view */}
       {activeView === 'chat' && (
-      <div className="sticky bottom-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f] to-transparent pt-8 pb-6">
+      <div className="sticky bottom-0 dark:bg-gradient-to-t dark:from-[#0f0f0f] dark:via-[#0f0f0f] dark:to-transparent
+                      bg-gradient-to-t from-white via-white to-transparent pt-8 pb-6">
         <div className="max-w-5xl mx-auto px-6">
           <form onSubmit={handleSendQuery} className="relative">
-            <div className="flex items-end space-x-3 p-4 bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl transition-all focus-within:border-emerald-500/50 focus-within:shadow-emerald-500/10">
+            <div className="flex items-end space-x-3 p-4
+                          dark:bg-gray-900/80 dark:border-gray-800
+                          bg-white border-2 border-gray-200
+                          backdrop-blur-xl rounded-2xl shadow-2xl transition-all
+                          focus-within:border-emerald-500/50 focus-within:shadow-emerald-500/10">
               <div
                 className="flex-1 cursor-text"
                 onClick={() => inputRef.current?.focus()}
@@ -1183,7 +1256,10 @@ function App() {
                   placeholder="Ask about governance, commits, issues, or contribution guidelines..."
                   disabled={!selectedProject || queryMutation.isPending || editingMessageId !== null}
                   rows={1}
-                  className="w-full bg-transparent border-0 focus:outline-none resize-none text-gray-100 placeholder-gray-500 text-base disabled:opacity-50 max-h-32 disabled:cursor-not-allowed overflow-y-auto"
+                  className="w-full bg-transparent border-0 focus:outline-none resize-none
+                           dark:text-gray-100 dark:placeholder-gray-500
+                           text-gray-900 placeholder-gray-400
+                           text-base disabled:opacity-50 max-h-32 disabled:cursor-not-allowed overflow-y-auto"
                   style={{ minHeight: '28px', lineHeight: '1.6', height: '28px' }}
                 />
               </div>
