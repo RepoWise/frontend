@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RepoWise | Intelligent Repository Analysis</title>
+    <meta name="description" content="AI-powered repository analysis - Ask questions about any GitHub repository" />
+    <style>
+      /* Minimalist loading screen - inspired by ChatGPT/Claude/Perplexity */
+      #app-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #0a0a0a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      #app-loader.loaded {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .loader-icon {
+        position: relative;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 32px;
+      }
+      .loader-icon-inner {
+        position: absolute;
+        inset: 0;
+        border: 2px solid transparent;
+        border-top-color: #06b6d4;
+        border-right-color: #06b6d4;
+        border-radius: 50%;
+        animation: rotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+      .loader-icon-core {
+        position: absolute;
+        inset: 12px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: breathe 2s ease-in-out infinite;
+      }
+      .loader-dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        background: #06b6d4;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+      }
+      .loader-text {
+        color: #e5e5e5;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        opacity: 0.9;
+      }
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes breathe {
+        0%, 100% { opacity: 0.4; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.1); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-loader">
+      <div class="loader-icon">
+        <div class="loader-icon-inner"></div>
+        <div class="loader-icon-core"></div>
+        <div class="loader-dot"></div>
+      </div>
+      <div class="loader-text">RepoWise</div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Hide loader once React mounts
+      window.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('app-loader');
+        // Wait for React to render
+        const observer = new MutationObserver(() => {
+          const root = document.getElementById('root');
+          if (root && root.children.length > 0) {
+            setTimeout(() => {
+              loader.classList.add('loaded');
+              setTimeout(() => loader.remove(), 400);
+            }, 300);
+            observer.disconnect();
+          }
+        });
+        observer.observe(document.getElementById('root'), { childList: true });
+      });
+    </script>
+  </body>
+</html>
