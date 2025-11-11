@@ -47,7 +47,7 @@ Modern React-based frontend for exploring and querying open-source repository do
 
    Edit `.env` and configure:
    ```
-   VITE_API_BASE_URL=http://localhost:8000
+   VITE_API_BASE_URL=https://tianna-unretractive-ellen.ngrok-free.dev
    ```
 
 4. **Start the development server**
