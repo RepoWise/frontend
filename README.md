@@ -269,6 +269,7 @@ MIT License - see LICENSE file for details
 For issues and questions:
 - GitHub Issues: https://github.com/RepoWise/frontend/issues
 - Documentation: https://github.com/RepoWise/frontend/wiki
+- Nafiz's Portfolio: https://nafiz43.github.io/portfolio/
 
 ## Related Projects
 
