@@ -5,16 +5,13 @@
  * - Optional authentication for future features
  * - Clean routing structure
  */
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import AuthPage from './pages/AuthPage'
 import ChatInterface from './components/ChatInterface'
 
 function App() {
-  const { isAuthenticated, isLoading } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { isLoading } = useAuth()
 
   // Show loading state while checking authentication
   if (isLoading) {

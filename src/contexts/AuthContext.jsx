@@ -174,16 +174,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null)
     setIsAuthenticated(false)
 
-    // Clear browser history to prevent back button access
-    // This replaces the current history entry instead of adding a new one
-    window.history.pushState(null, '', window.location.href)
-    window.history.pushState(null, '', window.location.href)
-
-    // Prevent back button from showing authenticated pages
-    window.addEventListener('popstate', function(event) {
-      window.history.pushState(null, '', window.location.href)
-    })
-
     return { success: true }
   }, [])
 

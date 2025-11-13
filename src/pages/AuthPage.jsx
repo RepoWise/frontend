@@ -43,6 +43,15 @@ const AuthPage = () => {
     const provider = searchParams.get('provider')
 
     if (code && provider) {
+      // Validate state to prevent CSRF attacks
+      const storedState = sessionStorage.getItem('oauth_state')
+      if (!storedState || storedState !== state) {
+        setErrorMessage('Invalid OAuth state. Please try again.')
+        return
+      }
+
+      // Clear stored state after validation
+      sessionStorage.removeItem('oauth_state')
       handleOAuthCallback(provider, code)
     }
   }, [searchParams])
@@ -73,7 +82,7 @@ const AuthPage = () => {
 
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
       newErrors.email = 'Invalid email format'
     }
 
@@ -116,11 +125,17 @@ const AuthPage = () => {
   }
 
   const handleOAuthLogin = async (provider) => {
+    // Generate random state for CSRF protection
+    const state = Math.random().toString(36).substring(2) + Date.now().toString(36)
+    sessionStorage.setItem('oauth_state', state)
+
     const authUrl = await getOAuthUrl(provider)
     if (authUrl) {
       // Store current location to return after OAuth
       sessionStorage.setItem('oauth_return_url', '/')
-      window.location.href = authUrl
+      // Add state parameter to URL
+      const urlWithState = `${authUrl}&state=${encodeURIComponent(state)}`
+      window.location.href = urlWithState
     }
   }
 

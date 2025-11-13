@@ -21,18 +21,13 @@ import {
   ExternalLink,
   BookOpen,
   CheckCircle,
-  Globe,
   Code,
   Search,
   Github,
   X,
   Check,
-  Copy,
-  BarChart3,
-  MessageSquare,
   LogOut,
-  UserCircle,
-  ChevronDown
+  UserCircle
 } from 'lucide-react'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Dashboard } from './Dashboard'
@@ -42,7 +37,7 @@ import { useAuth } from '../contexts/AuthContext'
 function ChatInterface() {
   const { user, logout, isAuthenticated } = useAuth()
   const navigate = useNavigate()
-  const [activeView, setActiveView] = useState('chat') // 'dashboard' or 'chat'
+  const [activeView] = useState('chat') // 'dashboard' or 'chat'
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   // Default to null, will be set when projects load
   const [selectedProject, setSelectedProject] = useState(null)
@@ -994,6 +989,30 @@ function ChatInterface() {
                               {msg.sources.map((source, i) => {
                                 const relevanceScore = (source.score * 100).toFixed(0)
                                 const scoreColor = relevanceScore >= 70 ? 'emerald' : relevanceScore >= 40 ? 'blue' : 'amber'
+
+                                // Color class mappings for Tailwind purge
+                                const colorClasses = {
+                                  emerald: {
+                                    bg: 'bg-emerald-500/10',
+                                    border: 'border-emerald-500/20',
+                                    gradient: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
+                                    text: 'text-emerald-600 dark:text-emerald-400'
+                                  },
+                                  blue: {
+                                    bg: 'bg-blue-500/10',
+                                    border: 'border-blue-500/20',
+                                    gradient: 'bg-gradient-to-r from-blue-500 to-blue-600',
+                                    text: 'text-blue-600 dark:text-blue-400'
+                                  },
+                                  amber: {
+                                    bg: 'bg-amber-500/10',
+                                    border: 'border-amber-500/20',
+                                    gradient: 'bg-gradient-to-r from-amber-500 to-amber-600',
+                                    text: 'text-amber-600 dark:text-amber-400'
+                                  }
+                                }
+                                const colors = colorClasses[scoreColor]
+
                                 return (
                                   <motion.div
                                     key={i}
@@ -1005,7 +1024,7 @@ function ChatInterface() {
                                              bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-gray-300
                                              rounded-xl transition-all group cursor-pointer"
                                   >
-                                    <div className={`flex-shrink-0 p-2 bg-${scoreColor}-500/10 rounded-lg border border-${scoreColor}-500/20`}>
+                                    <div className={`flex-shrink-0 p-2 ${colors.bg} rounded-lg border ${colors.border}`}>
                                       {getSourceIcon(source.file_type)}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -1022,11 +1041,11 @@ function ChatInterface() {
                                         <div className="flex items-center space-x-1.5">
                                           <div className="h-1.5 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden w-16">
                                             <div
-                                              className={`h-full bg-gradient-to-r from-${scoreColor}-500 to-${scoreColor}-600`}
+                                              className={`h-full ${colors.gradient}`}
                                               style={{ width: `${relevanceScore}%` }}
                                             />
                                           </div>
-                                          <span className={`text-xs font-medium text-${scoreColor}-600 dark:text-${scoreColor}-400`}>
+                                          <span className={`text-xs font-medium ${colors.text}`}>
                                             {relevanceScore}%
                                           </span>
                                         </div>
@@ -1143,13 +1162,37 @@ function ChatInterface() {
                         {msg.sources.map((source, i) => {
                           const relevanceScore = (source.score * 100).toFixed(0)
                           const scoreColor = relevanceScore >= 70 ? 'emerald' : relevanceScore >= 40 ? 'blue' : 'amber'
+
+                          // Color class mappings for Tailwind purge
+                          const colorClasses = {
+                            emerald: {
+                              bg: 'bg-emerald-500/10',
+                              border: 'border-emerald-500/20',
+                              gradient: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
+                              text: 'text-emerald-600 dark:text-emerald-400'
+                            },
+                            blue: {
+                              bg: 'bg-blue-500/10',
+                              border: 'border-blue-500/20',
+                              gradient: 'bg-gradient-to-r from-blue-500 to-blue-600',
+                              text: 'text-blue-600 dark:text-blue-400'
+                            },
+                            amber: {
+                              bg: 'bg-amber-500/10',
+                              border: 'border-amber-500/20',
+                              gradient: 'bg-gradient-to-r from-amber-500 to-amber-600',
+                              text: 'text-amber-600 dark:text-amber-400'
+                            }
+                          }
+                          const colors = colorClasses[scoreColor]
+
                           return (
                             <div
                               key={i}
                               className="p-4 dark:bg-gray-900/50 dark:border-gray-800 bg-white border-2 border-gray-200 rounded-xl space-y-2"
                             >
                               <div className="flex items-center space-x-3">
-                                <div className={`p-2 bg-${scoreColor}-500/10 rounded-lg border border-${scoreColor}-500/20`}>
+                                <div className={`p-2 ${colors.bg} rounded-lg border ${colors.border}`}>
                                   {getSourceIcon(source.file_type)}
                                 </div>
                                 <div className="flex-1">
@@ -1161,11 +1204,11 @@ function ChatInterface() {
                                     <div className="flex items-center space-x-1.5">
                                       <div className="h-1.5 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden w-16">
                                         <div
-                                          className={`h-full bg-gradient-to-r from-${scoreColor}-500 to-${scoreColor}-600`}
+                                          className={`h-full ${colors.gradient}`}
                                           style={{ width: `${relevanceScore}%` }}
                                         />
                                       </div>
-                                      <span className={`text-xs font-medium text-${scoreColor}-600 dark:text-${scoreColor}-400`}>
+                                      <span className={`text-xs font-medium ${colors.text}`}>
                                         {relevanceScore}%
                                       </span>
                                     </div>
@@ -1268,7 +1311,6 @@ function ChatInterface() {
                           const StageIcon = stage.icon
                           const isCompleted = idx < loadingStage
                           const isCurrent = idx === loadingStage
-                          const isPending = idx > loadingStage
 
                           return (
                             <motion.div
