@@ -408,9 +408,9 @@ function ChatInterface() {
     // If no messages, show default mix across all categories
     if (messages.length === 0) {
       return [
-        'Who currently maintains this project?',
+        'How can I start contributing?',
         'What are the required steps before submitting a pull request?',
-        'Who are the three most active committers?',
+        'What license does this project use?',
         'How do I report a security vulnerability?'
       ]
     }
@@ -597,7 +597,7 @@ function ChatInterface() {
             </div>
 
             <div className="flex items-center gap-3">
-              <form onSubmit={handleAddRepository} className="flex gap-2 min-w-[500px]">
+              <form onSubmit={handleAddRepository} className="flex gap-2 min-w-[400px]">
                 <div className="relative flex-1">
                   <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                   <input
@@ -617,6 +617,25 @@ function ChatInterface() {
                   Add Repo
                 </button>
               </form>
+
+              {/* Project Selector Dropdown */}
+              {availableProjects.length > 0 && (
+                <div className="relative min-w-[220px]">
+                  <select
+                    value={selectedProject || ''}
+                    onChange={handleProjectSelect}
+                    className="w-full pl-4 pr-10 py-2.5 bg-gray-900/50 border border-gray-800 dark:bg-gray-900/50 dark:border-gray-800 bg-white/50 border-gray-200 rounded-xl text-sm dark:text-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all appearance-none cursor-pointer font-medium"
+                  >
+                    <option value="" disabled>Select a project</option>
+                    {availableProjects.map((project) => (
+                      <option key={project.id} value={project.id} className="dark:bg-gray-800 bg-white">
+                        {project.name} ({project.owner})
+                      </option>
+                    ))}
+                  </select>
+                  <Github className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500 pointer-events-none" />
+                </div>
+              )}
 
               {/* Theme Toggle */}
               <ThemeToggle />
@@ -678,13 +697,6 @@ function ChatInterface() {
                 </div>
               )}
             </div>
- 
-            {/* Project Display - keras-io */}
-            {/* <div className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 border border-gray-800 rounded-lg">
-              <Github className="w-4 h-4 text-emerald-500" />
-              <span className="text-sm font-medium text-white">Keras.io</span>
-              <span className="text-xs text-gray-500">keras-team/keras-io</span>
-            </div> */}
           </div>
 
           {/* Indexing Status */}
@@ -807,10 +819,10 @@ function ChatInterface() {
                 {selectedProject && (
                   <div className="grid grid-cols-2 gap-3 max-w-3xl mx-auto">
                     {[
-                      { q: 'Who currently maintains this project?', icon: <Users className="w-4 h-4" /> },
+                      { q: 'How can I start contributing?', icon: <Users className="w-4 h-4" /> },
                       { q: 'What are the required steps before submitting a pull request?', icon: <Code className="w-4 h-4" /> },
-                      { q: 'Who are the three most active committers?', icon: <GitBranch className="w-4 h-4" /> },
-                      { q: 'How do I report a security vulnerability?', icon: <Shield className="w-4 h-4" /> },
+                      { q: 'What skills or tools do I need to contribute?', icon: <GitBranch className="w-4 h-4" /> },
+                      { q: 'How do I report a bug?', icon: <Shield className="w-4 h-4" /> },
                     ].map((item, i) => (
                       <motion.button
                         key={i}
