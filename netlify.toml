@@ -17,6 +17,13 @@
   to = "/index.html"
   status = 200
 
+# Proxy API requests to the backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://tianna-unretractive-ellen.ngrok-free.dev/api/:splat"
+  status = 200
+  force = true
+
 # Security headers
 [[headers]]
   for = "/*"
