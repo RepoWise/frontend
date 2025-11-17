@@ -1480,11 +1480,46 @@ function ChatInterface() {
         <div className="max-w-5xl mx-auto px-6 py-6 text-center space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
           <p>
             Developed at the DECAL Lab, in the CS Department,{" "}
-            <a href="https://www.ucdavis.edu" target="_blank" rel="noopener noreferrer">UC Davis</a>, by{" "}
-            <a href="https://github.com/sankalp112kashyap" target="_blank" rel="noopener noreferrer">Sankalp Kashyap</a>,{" "}
-            <a href="https://www.linkedin.com/in/arjashok" target="_blank" rel="noopener noreferrer">Arjun Ashok</a>,{" "}
-            <a href="https://nafiz43.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Nafiz Imtiaz Khan</a>, and{" "}
-            <a href="https://www.cs.ucdavis.edu/~filkov/" target="_blank" rel="noopener noreferrer">Vladimir Filkov</a>
+            <a
+              href="https://www.ucdavis.edu"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue" }}
+            >
+              UC Davis
+            </a>, by{" "}
+            <a
+              href="https://github.com/sankalp112kashyap"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue" }}
+            >
+              Sankalp Kashyap
+            </a>,{" "}
+            <a
+              href="https://www.linkedin.com/in/arjashok"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue" }}
+            >
+              Arjun Ashok
+            </a>,{" "}
+            <a
+              href="https://nafiz43.github.io/portfolio/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue" }}
+            >
+              Nafiz Imtiaz Khan
+            </a>, and{" "}
+            <a
+              href="https://www.cs.ucdavis.edu/~filkov/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue" }}
+            >
+              Vladimir Filkov
+            </a>
 
           </p>
           <p className="text-gray-500 dark:text-gray-500">
