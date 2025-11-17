@@ -1475,6 +1475,32 @@ function ChatInterface() {
         </div>
       </div>
       )}
+
+        <footer className="bg-white/80 dark:bg-[#090909]/80 border-t border-gray-200 dark:border-gray-800">
+        <div className="max-w-5xl mx-auto px-6 py-6 text-center space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+          <p>
+            Developed at the DECAL Lab, in the CS Department,{" "}
+            <a href="https://www.ucdavis.edu" target="_blank" rel="noopener noreferrer">UC Davis</a>, by{" "}
+            <a href="https://github.com/sankalp112kashyap" target="_blank" rel="noopener noreferrer">Sankalp Kashyap</a>,{" "}
+            <a href="https://www.linkedin.com/in/arjashok" target="_blank" rel="noopener noreferrer">Arjun Ashok</a>,{" "}
+            <a href="https://nafiz43.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Nafiz Imtiaz Khan</a>, and{" "}
+            <a href="https://www.cs.ucdavis.edu/~filkov/" target="_blank" rel="noopener noreferrer">Vladimir Filkov</a>
+
+          </p>
+          <p className="text-gray-500 dark:text-gray-500">
+            RepoWise keeps open-source intelligence playful and purposeful; discover more at{' '}
+            <a
+              href="https://repowise.github.io/RepoWise-website/"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
+            >
+              repowise.github.io
+            </a>
+          </p>
+        </div>
+      </footer>
+      
     </div>
   )
 }
