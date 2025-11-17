@@ -1484,7 +1484,7 @@ function ChatInterface() {
               href="https://www.ucdavis.edu"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
             >
               UC Davis
             </a>, by{" "}
@@ -1492,7 +1492,7 @@ function ChatInterface() {
               href="https://github.com/sankalp112kashyap"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
             >
               Sankalp Kashyap
             </a>,{" "}
@@ -1500,7 +1500,7 @@ function ChatInterface() {
               href="https://www.linkedin.com/in/arjashok"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
             >
               Arjun Ashok
             </a>,{" "}
@@ -1508,7 +1508,7 @@ function ChatInterface() {
               href="https://nafiz43.github.io/portfolio/"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
             >
               Nafiz Imtiaz Khan
             </a>, and{" "}
@@ -1516,7 +1516,7 @@ function ChatInterface() {
               href="https://www.cs.ucdavis.edu/~filkov/"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
             >
               Vladimir Filkov
             </a>
