@@ -10,6 +10,7 @@ node_modules/
 # Testing
 /coverage
 *.test.js
+!src/lib/remarkSustainabilityHighlight.test.js
 *.spec.js
 
 # Logs

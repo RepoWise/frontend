@@ -32,7 +32,9 @@ import {
 import 'highlight.js/styles/atom-one-dark.css'
 import { Dashboard } from './Dashboard'
 import { ThemeToggle } from './ThemeToggle'
+import { SustainabilityLegend } from './SustainabilityLegend'
 import { useAuth } from '../contexts/AuthContext'
+import { remarkSustainabilityHighlight } from '../lib/remarkSustainabilityHighlight'
 
 function ChatInterface() {
   const { user, logout, isAuthenticated } = useAuth()
@@ -854,6 +856,10 @@ function ChatInterface() {
               </motion.div>
             )}
 
+            {messages.some((msg) => msg.type === 'assistant') && (
+              <SustainabilityLegend />
+            )}
+
             {/* Messages */}
             {messages.map((msg, idx) => (
               <motion.div
@@ -942,7 +948,7 @@ function ChatInterface() {
                         {/* Main Answer */}
                         <div className="prose dark:prose-invert prose-lg max-w-none">
                           <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
+                            remarkPlugins={[remarkGfm, remarkSustainabilityHighlight]}
                             rehypePlugins={[rehypeHighlight]}
                             components={{
                               p: ({ children }) => (
