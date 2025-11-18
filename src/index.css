@@ -59,3 +59,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+.entity-username {
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.entity-doc {
+  color: #38bdf8;
+  font-weight: 600;
+}
