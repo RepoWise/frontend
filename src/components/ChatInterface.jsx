@@ -5,6 +5,7 @@ import { api } from '../lib/api'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
+import rehypeRaw from 'rehype-raw'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Sparkles,
@@ -34,6 +35,7 @@ import 'highlight.js/styles/atom-one-dark.css'
 import { Dashboard } from './Dashboard'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '../contexts/AuthContext'
+import { highlightEntities } from '../lib/highlightEntities'
 
 const EXAMPLE_REPOSITORIES = [
   {
@@ -235,9 +237,13 @@ function ChatInterface() {
 
       const uniqueSources = Object.values(sourcesByPath)
 
+      const rawResponse = data?.data?.response || 'No response received'
+      const styledResponse = highlightEntities(rawResponse)
+
       setMessages(prev => [...prev, {
         type: 'assistant',
-        content: data?.data?.response || 'No response received',
+        content: rawResponse,
+        formattedContent: styledResponse,
         sources: uniqueSources,
         metadata: data?.data?.metadata || {},
         suggestedQuestions: data?.data?.suggested_questions || [],
@@ -1034,7 +1040,7 @@ function ChatInterface() {
                         <div className="prose dark:prose-invert prose-lg max-w-none">
                           <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
-                            rehypePlugins={[rehypeHighlight]}
+                            rehypePlugins={[rehypeRaw, rehypeHighlight]}
                             components={{
                               p: ({ children }) => (
                                 <p className="text-base dark:text-gray-300 text-gray-700 mb-4" style={{ lineHeight: '1.7' }}>{children}</p>
@@ -1075,7 +1081,7 @@ function ChatInterface() {
                               ),
                             }}
                           >
-                            {msg.content}
+                            {msg.formattedContent || msg.content}
                           </ReactMarkdown>
                         </div>
 
