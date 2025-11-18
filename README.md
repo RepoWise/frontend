@@ -65,6 +65,21 @@ Modern React-based frontend for exploring and querying open-source repository do
 2. Click "Add Repo"
 3. Wait for the indexing to complete (you'll see real-time progress)
 
+### Curated Example Repositories
+
+First-time visitors see a set of quick-select cards with vetted repositories so you can try RepoWise instantly:
+
+- `RepoWise/frontend` – showcases the production UI and governance docs
+- `RepoWise/backend` – demonstrates how the orchestration API is documented
+- `Nafiz43/EvidenceBot` – highlights a community-driven AI agent project
+- `Nafiz43/ReACTive` – illustrates complex automation workflows and issues
+
+These examples are chosen because they:
+
+- Are public and fully open-source
+- Contain governance, contribution, and automation-focused documentation that exercises every RAG step (summaries, reformulations, etc.)
+- Are actively maintained so users see realistic indexing performance and commit/issue histories
+
 ### Querying a Repository
 
 1. Once a repository is indexed, you'll see suggested questions

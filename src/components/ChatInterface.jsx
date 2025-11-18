@@ -27,12 +27,40 @@ import {
   X,
   Check,
   LogOut,
-  UserCircle
+  UserCircle,
+  Link2
 } from 'lucide-react'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Dashboard } from './Dashboard'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '../contexts/AuthContext'
+
+const EXAMPLE_REPOSITORIES = [
+  {
+    name: 'RepoWise Frontend',
+    description: 'Official UI for RepoWise – perfect for testing conversational flows.',
+    url: 'https://github.com/RepoWise/frontend',
+    highlights: ['React + Vite', 'AI-first UX']
+  },
+  {
+    name: 'RepoWise Backend',
+    description: 'The orchestration API that powers RepoWise’s RAG pipelines.',
+    url: 'https://github.com/RepoWise/backend',
+    highlights: ['FastAPI', 'Vector indexing']
+  },
+  {
+    name: 'EvidenceBot',
+    description: 'Community bot for verifying claims with citations.',
+    url: 'https://github.com/Nafiz43/EvidenceBot',
+    highlights: ['Open-source agent', 'Automated QA']
+  },
+  {
+    name: 'ReACTive',
+    description: 'Sample project showcasing modern ReAct-style automations.',
+    url: 'https://github.com/Nafiz43/ReACTive',
+    highlights: ['Multi-agent', 'Issue triage']
+  }
+]
 
 function ChatInterface() {
   const { user, logout, isAuthenticated } = useAuth()
@@ -278,11 +306,21 @@ function ChatInterface() {
     inputRef.current?.focus()
   }
 
+  const startRepositoryIndexing = (repoUrl) => {
+    const trimmedRepo = repoUrl?.trim()
+    if (!trimmedRepo) return
+    setGithubUrl(trimmedRepo)
+    setIndexingStatus({ status: 'loading', message: 'Scraping and indexing repository...' })
+    addRepoMutation.mutate(trimmedRepo)
+  }
+
   const handleAddRepository = (e) => {
     e.preventDefault()
-    if (!githubUrl.trim()) return
-    setIndexingStatus({ status: 'loading', message: 'Scraping and indexing repository...' })
-    addRepoMutation.mutate(githubUrl)
+    startRepositoryIndexing(githubUrl)
+  }
+
+  const handleExampleSelect = (repoUrl) => {
+    startRepositoryIndexing(repoUrl)
   }
 
   // Handler for project selection from dropdown
@@ -814,6 +852,59 @@ function ChatInterface() {
                       : "Enter a GitHub repository URL above to start exploring projects documents with AI."
                   )}
                 </p>
+
+                {!selectedProject && (
+                  <div className="max-w-4xl mx-auto mb-12">
+                    <div className="flex items-center justify-center gap-2 text-sm font-medium dark:text-emerald-300 text-emerald-700 mb-4">
+                      <Sparkles className="w-4 h-4" />
+                      Try a curated open-source repository
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {EXAMPLE_REPOSITORIES.map((repo, idx) => (
+                        <motion.button
+                          key={repo.url}
+                          type="button"
+                          onClick={() => handleExampleSelect(repo.url)}
+                          disabled={addRepoMutation.isPending}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.05 }}
+                          className="text-left w-full p-5 rounded-2xl border
+                                     dark:bg-gray-900/60 dark:border-gray-800 dark:hover:border-emerald-500/60 dark:hover:bg-gray-900
+                                     bg-white border-gray-200 hover:border-emerald-500/60 hover:bg-emerald-50/30
+                                     transition-all group disabled:opacity-60"
+                        >
+                          <div className="flex items-start justify-between gap-3 mb-3">
+                            <div>
+                              <p className="text-xs uppercase tracking-wide text-emerald-500 font-semibold mb-1">Featured repo</p>
+                              <h3 className="text-lg font-semibold dark:text-white text-gray-900">{repo.name}</h3>
+                            </div>
+                            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
+                              <Link2 className="w-4 h-4" />
+                            </div>
+                          </div>
+                          <p className="text-sm dark:text-gray-400 text-gray-600 mb-4">{repo.description}</p>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {repo.highlights.map(highlight => (
+                              <span
+                                key={highlight}
+                                className="px-2.5 py-1 rounded-full text-xs font-medium
+                                           dark:bg-gray-800/80 dark:text-gray-200
+                                           bg-gray-100 text-gray-700"
+                              >
+                                {highlight}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm font-semibold text-emerald-500 group-hover:gap-3 transition-all">
+                            Launch example
+                            <Sparkles className="w-4 h-4" />
+                          </div>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Suggested Questions - only show when project is indexed */}
                 {selectedProject && (
