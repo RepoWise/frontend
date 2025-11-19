@@ -1135,7 +1135,6 @@ function ChatInterface() {
                                         <h4 className="text-sm font-medium dark:text-white text-gray-900 truncate">
                                           {source.file_path.split('/').pop()}
                                         </h4>
-                                        <ExternalLink className="w-3 h-3 dark:text-gray-500 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                       </div>
                                       <p className="text-xs dark:text-gray-500 text-gray-600 truncate">
                                         {source.file_path}
