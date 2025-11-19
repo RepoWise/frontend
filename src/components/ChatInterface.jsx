@@ -634,8 +634,8 @@ function ChatInterface() {
               </div> */}
             </div>
 
-            <div className="flex items-center gap-3">
-              <form onSubmit={handleAddRepository} className="flex gap-2 min-w-[400px]">
+            <div className="flex items-center gap-3 flex-1 justify-end">
+              <form onSubmit={handleAddRepository} className="flex gap-2 flex-1 max-w-2xl">
                 <div className="relative flex-1">
                   <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                   <input
@@ -649,7 +649,7 @@ function ChatInterface() {
                 <button
                   type="submit"
                   disabled={!githubUrl.trim() || addRepoMutation.isPending}
-                  className="px-5 py-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 text-sm font-semibold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+                  className="px-5 py-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 text-sm font-semibold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5 flex-shrink-0"
                 >
                   <Github className="w-4 h-4" />
                   Add Repo
