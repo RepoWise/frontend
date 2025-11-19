@@ -16,7 +16,7 @@ import {
   Shield,
   Users,
   GitBranch,
-  Share2,
+  Copy,
   Download,
   Pencil,
   ExternalLink,
@@ -1217,8 +1217,8 @@ function ChatInterface() {
                               </>
                             ) : (
                               <>
-                                <Share2 className="w-4 h-4" />
-                                <span>Share</span>
+                                <Copy className="w-4 h-4" />
+                                <span>Copy</span>
                               </>
                             )}
                           </button>
@@ -1231,7 +1231,7 @@ function ChatInterface() {
                                      dark:text-gray-400 dark:hover:text-gray-300 text-gray-700 hover:text-gray-900"
                           >
                             <Download className="w-4 h-4" />
-                            <span>Export</span>
+                            <span>Download</span>
                           </button>
                           <button
                             onClick={() => handleEdit(idx)}
