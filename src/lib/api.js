@@ -78,9 +78,9 @@ export const api = {
       project_id: projectId,
       query,
       max_results: options.maxResults || 5,
-      temperature: options.temperature || 0.3,
+      temperature: options.temperature || 0,
       stream: false,
-      conversation_history: options.conversationHistory || null,
+      conversation_state: options.conversationState || null,
     }),
 
   search: (query, options = {}) =>

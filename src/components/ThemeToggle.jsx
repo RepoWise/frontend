@@ -24,14 +24,14 @@ export function ThemeToggle() {
       {/* Icon container with rotation animation */}
       <motion.div
         initial={{ rotate: 0 }}
-        animate={{ rotate: theme === 'dark' ? 0 : 180 }}
+        animate={{ rotate: theme === 'dark' ? 180 : 0 }}
         transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
         className="relative z-10"
       >
         {theme === 'dark' ? (
-          <Moon className="w-5 h-5 text-foreground" />
-        ) : (
           <Sun className="w-5 h-5 text-foreground" />
+        ) : (
+          <Moon className="w-5 h-5 text-foreground" />
         )}
       </motion.div>
 

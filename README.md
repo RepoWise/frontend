@@ -106,10 +106,13 @@ Click the sun/moon icon in the header to switch between light and dark themes.
 frontend/
 ├── src/
 │   ├── components/      # React components
-│   │   ├── Dashboard.jsx
+│   │   ├── ChatInterface.jsx  # Main chat UI component
 │   │   └── ThemeToggle.jsx
 │   ├── contexts/        # React contexts
-│   │   └── ThemeContext.jsx
+│   │   ├── ThemeContext.jsx
+│   │   └── AuthContext.jsx
+│   ├── lib/             # Utilities and API client
+│   │   └── api.js
 │   ├── App.jsx          # Main application component
 │   ├── main.jsx         # Application entry point
 │   └── index.css        # Global styles and Tailwind
@@ -123,14 +126,15 @@ frontend/
 
 ## Key Components
 
-### App.jsx
+### ChatInterface.jsx
 
-Main application component containing:
-- Repository management (add/remove)
-- Query interface
-- Chat history
-- Loading states
-- Error handling
+Main chat interface component containing:
+- Repository input and management (Add Repo / Change Repo)
+- Query interface with suggested questions
+- Chat history with markdown rendering
+- Source attribution display
+- Running summary for multi-turn conversations
+- Loading states and error handling
 
 ### ThemeToggle.jsx
 
@@ -145,10 +149,6 @@ Global theme management:
 - React Context for theme state
 - localStorage persistence
 - Light/dark mode switching
-
-### Dashboard.jsx
-
-(Coming Soon) Analytics dashboard for repository insights.
 
 ## Styling
 
