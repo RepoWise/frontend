@@ -110,15 +110,7 @@ function ChatInterface() {
     }
   }, [messages])
 
-  // Auto-dismiss indexing status messages after 5 seconds (but not loading state)
-  useEffect(() => {
-    if (indexingStatus && indexingStatus.status !== 'loading') {
-      const timer = setTimeout(() => {
-        setIndexingStatus(null)
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [indexingStatus])
+  // Note: Indexing status messages now stay until manually dismissed by user
 
   // Close profile menu when clicking outside
   useEffect(() => {
