@@ -69,10 +69,10 @@ Modern React-based frontend for exploring and querying open-source repository do
 
 First-time visitors see a set of quick-select cards with vetted repositories so you can try RepoWise instantly:
 
-- `RepoWise/frontend` – showcases the production UI and governance docs
-- `RepoWise/backend` – demonstrates how the orchestration API is documented
-- `Nafiz43/EvidenceBot` – highlights a community-driven AI agent project
-- `Nafiz43/ReACTive` – illustrates complex automation workflows and issues
+- `google/meridian` – Meridian is an MMM framework that enables advertisers to set up and run their own in-house models.
+- `microsoft/lisa` – LISA is developed and maintained by Microsoft, to empower Linux validation.
+- `netflix/hollow` – Hollow is a java library and toolset for disseminating in-memory datasets from a single producer to many consumers for high performance read-only access.
+- `apple/pkl` – A configuration as code language with rich validation and tooling.
 
 These examples are chosen because they:
 
