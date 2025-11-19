@@ -1125,7 +1125,7 @@ function ChatInterface() {
                                     className="flex items-start space-x-4 p-4
                                              dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
                                              bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-gray-300
-                                             rounded-xl transition-all group cursor-pointer"
+                                             rounded-xl transition-all"
                                   >
                                     <div className={`flex-shrink-0 p-2 ${colors.bg} rounded-lg border ${colors.border}`}>
                                       {getSourceIcon(source.file_type)}
