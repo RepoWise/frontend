@@ -29,7 +29,8 @@ import {
   Check,
   LogOut,
   UserCircle,
-  Link2
+  Link2,
+  RefreshCw
 } from 'lucide-react'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Dashboard } from './Dashboard'
@@ -73,6 +74,7 @@ function ChatInterface() {
   // Default to null, will be set when projects load
   const [selectedProject, setSelectedProject] = useState(null)
   const [githubUrl, setGithubUrl] = useState('')
+  const [isRepoLocked, setIsRepoLocked] = useState(false) // Track if repo input is locked after successful add
   const [query, setQuery] = useState('')
   const [messages, setMessages] = useState([])
   const [activeTabs, setActiveTabs] = useState({}) // Track active tab per message index
@@ -81,6 +83,7 @@ function ChatInterface() {
   const [editingMessageId, setEditingMessageId] = useState(null) // Track which message is being edited
   const [editedQuery, setEditedQuery] = useState('') // Store edited query text
   const [loadingStage, setLoadingStage] = useState(0) // Track loading animation stage
+  const [conversationState, setConversationState] = useState(null) // Running summary state
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   const messageRefs = useRef({}) // Store refs for each message
@@ -152,6 +155,8 @@ function ChatInterface() {
             setSelectedProject(data.data.project.id)
           }
           setMessages([])
+          setConversationState(null) // Reset conversation state
+          setIsRepoLocked(true) // Lock the input after successful add
           return
         }
 
@@ -166,6 +171,8 @@ function ChatInterface() {
           setSelectedProject(data.data.project.id)
         }
         setMessages([])
+        setConversationState(null) // Reset conversation state
+        setIsRepoLocked(true) // Lock the input after successful add
       } catch (err) {
         console.error('Error processing indexing response:', err)
         setIndexingStatus({
@@ -202,9 +209,13 @@ function ChatInterface() {
 
   // Query mutation
   const queryMutation = useMutation({
-    mutationFn: ({ projectId, query, conversationHistory }) =>
-      api.query(projectId, query, { conversationHistory }),
+    mutationFn: ({ projectId, query, conversationState }) =>
+      api.query(projectId, query, { conversationState }),
     onSuccess: (data) => {
+      // Update conversation state from response (running summary)
+      if (data?.data?.conversation_state) {
+        setConversationState(data.data.conversation_state)
+      }
       // Safely handle sources with null checking
       const sources = data?.data?.sources || []
 
@@ -271,15 +282,6 @@ function ChatInterface() {
     e.preventDefault()
     if (!query.trim() || !selectedProject) return
 
-    // Build conversation history from previous messages (limit to last 5 pairs = 10 messages)
-    const conversationHistory = messages
-      .filter(msg => msg.type === 'user' || msg.type === 'assistant')
-      .slice(-10) // Keep last 10 messages
-      .map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.content
-      }))
-
     // Add user message
     setMessages(prev => [...prev, {
       type: 'user',
@@ -287,11 +289,11 @@ function ChatInterface() {
       timestamp: new Date()
     }])
 
-    // Send query with conversation history
+    // Send query with conversation state (running summary)
     queryMutation.mutate({
       projectId: selectedProject,
       query,
-      conversationHistory: conversationHistory.length > 0 ? conversationHistory : null
+      conversationState: conversationState
     })
     setQuery('')
     // Reset textarea height to minimum after submission
@@ -316,6 +318,19 @@ function ChatInterface() {
 
   const handleAddRepository = (e) => {
     e.preventDefault()
+
+    // If repo is locked, unlock it for editing (Change Repo behavior)
+    if (isRepoLocked) {
+      setIsRepoLocked(false)
+      setGithubUrl('') // Clear the URL for new input
+      setSelectedProject(null) // Clear selected project
+      setMessages([]) // Clear chat messages
+      setConversationState(null) // Reset conversation state
+      setIndexingStatus(null) // Clear any status messages
+      return
+    }
+
+    // Otherwise, add the repository
     startRepositoryIndexing(githubUrl)
   }
 
@@ -329,6 +344,7 @@ function ChatInterface() {
     if (projectId) {
       setSelectedProject(projectId)
       setMessages([]) // Clear messages when switching projects
+      setConversationState(null) // Reset conversation state
     }
   }
 
@@ -385,17 +401,12 @@ function ChatInterface() {
   const handleEditSubmit = (messageIdx) => {
     if (!editedQuery.trim()) return
 
-    // Build conversation history up to (but not including) the message being edited
-    const conversationHistory = messages
-      .slice(0, messageIdx)
-      .filter(msg => msg.type === 'user' || msg.type === 'assistant')
-      .map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.type === 'user' ? msg.content : msg.content
-      }))
-
     // Remove all messages from the editing point onward
     setMessages(prev => prev.slice(0, messageIdx))
+
+    // Reset conversation state when editing (restart from that point)
+    // The conversation will rebuild naturally from the new exchange
+    setConversationState(null)
 
     // Add the new edited user message
     setMessages(prev => [...prev, {
@@ -404,11 +415,11 @@ function ChatInterface() {
       timestamp: new Date()
     }])
 
-    // Submit the new query
+    // Submit the new query with no conversation state (fresh start from edit point)
     queryMutation.mutate({
       projectId: selectedProject,
       query: editedQuery,
-      conversationHistory: conversationHistory.length > 0 ? conversationHistory : null
+      conversationState: null
     })
 
     // Clear editing state
@@ -643,16 +654,36 @@ function ChatInterface() {
                     value={githubUrl}
                     onChange={(e) => setGithubUrl(e.target.value)}
                     placeholder="Enter GitHub repository URL (e.g., https://github.com/owner/repo)"
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-900/50 border border-gray-800 dark:bg-gray-900/50 dark:border-gray-800 bg-white/50 border-gray-200 rounded-xl text-sm dark:text-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    disabled={isRepoLocked}
+                    className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all ${
+                      isRepoLocked
+                        ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-800/70 dark:border-gray-700 dark:text-gray-400'
+                        : 'bg-white/50 border-gray-200 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-gray-800 dark:text-white'
+                    }`}
                   />
                 </div>
                 <button
                   type="submit"
-                  disabled={!githubUrl.trim() || addRepoMutation.isPending}
-                  className="px-5 py-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 text-sm font-semibold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5 flex-shrink-0"
+                  disabled={(!githubUrl.trim() && !isRepoLocked) || addRepoMutation.isPending}
+                  className={`px-5 py-2.5 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2 text-sm font-semibold shadow-lg hover:-translate-y-0.5 flex-shrink-0 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-emerald-500/20 hover:shadow-emerald-500/30 ${
+                    isRepoLocked ? 'animate-shimmer' : ''
+                  }`}
+                  style={isRepoLocked ? {
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 1s ease-in-out'
+                  } : {}}
                 >
-                  <Github className="w-4 h-4" />
-                  Add Repo
+                  {isRepoLocked ? (
+                    <>
+                      <RefreshCw className="w-4 h-4" />
+                      Change Repo
+                    </>
+                  ) : (
+                    <>
+                      <Github className="w-4 h-4" />
+                      Add Repo
+                    </>
+                  )}
                 </button>
               </form>
 
@@ -725,9 +756,13 @@ function ChatInterface() {
                   <button
                     onClick={() => navigate('/auth')}
                     className="flex items-center gap-2 px-5 py-2.5
-                             bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700
-                             text-white rounded-xl transition-all duration-200
-                             text-sm font-semibold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+                             border border-gray-300 dark:border-gray-600
+                             text-gray-700 dark:text-gray-300
+                             hover:border-emerald-500 hover:text-emerald-600
+                             dark:hover:border-emerald-400 dark:hover:text-emerald-400
+                             hover:bg-emerald-500/5 dark:hover:bg-emerald-500/10
+                             rounded-xl transition-all duration-200
+                             text-sm font-medium hover:-translate-y-0.5"
                   >
                     <UserCircle className="w-4 h-4" />
                     Login
@@ -1616,15 +1651,15 @@ function ChatInterface() {
               href="https://www.ucdavis.edu"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
+              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
             >
               UC Davis
             </a>, by{" "}
             <a
-              href="https://github.com/sankalp112kashyap"
+              href="https://www.linkedin.com/in/sankalp-kashyap"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
+              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
             >
               Sankalp Kashyap
             </a>,{" "}
@@ -1632,7 +1667,7 @@ function ChatInterface() {
               href="https://www.linkedin.com/in/arjashok"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
+              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
             >
               Arjun Ashok
             </a>,{" "}
@@ -1640,7 +1675,7 @@ function ChatInterface() {
               href="https://nafiz43.github.io/portfolio/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
+              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
             >
               Nafiz Imtiaz Khan
             </a>, and{" "}
@@ -1648,7 +1683,7 @@ function ChatInterface() {
               href="https://www.cs.ucdavis.edu/~filkov/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
+              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
             >
               Vladimir Filkov
             </a>
@@ -1660,7 +1695,7 @@ function ChatInterface() {
               href="https://repowise.github.io/RepoWise-website/"
               target="_blank"
               rel="noreferrer noopener"
-              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-4"
+              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
             >
               repowise.github.io
             </a>
