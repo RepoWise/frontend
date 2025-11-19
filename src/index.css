@@ -84,3 +84,34 @@
   color: #dc2626;
   font-weight: 600;
 }
+
+.tooltip-target {
+  position: relative;
+  cursor: help;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  background: #1f2937;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  width: max-content;
+  max-width: 240px;
+  top: 120%;
+  left: 0;
+  z-index: 20;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.tooltip-target:hover .tooltip,
+.tooltip-target:focus .tooltip,
+.tooltip-target:focus-visible .tooltip {
+  visibility: visible;
+  opacity: 1;
+}

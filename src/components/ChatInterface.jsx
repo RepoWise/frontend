@@ -1186,12 +1186,33 @@ function ChatInterface() {
                                             />
                                           </div>
                                           <span className={`text-xs font-medium ${colors.text}`}>
-                                            {relevanceScore}%
+                                            <span
+                                              className="tooltip-target"
+                                              aria-label="Relevance percentage"
+                                            >
+                                              {relevanceScore}%
+                                              <span className="tooltip">
+                                                The relevance score represented as a percentage. Higher values indicate
+                                                stronger alignment with your query.
+                                              </span>
+                                            </span>
                                           </span>
                                         </div>
                                         {source.matchCount && source.matchCount > 1 && (
                                           <span className="text-xs dark:text-emerald-400 text-emerald-600 font-medium">
-                                            ({source.matchCount} {source.matchCount === 1 ? 'match' : 'matches'})
+                                            (
+                                              {source.matchCount}{' '}
+                                              <span
+                                                className="tooltip-target"
+                                                aria-label="Matches tooltip"
+                                              >
+                                                {source.matchCount === 1 ? 'match' : 'matches'}
+                                                <span className="tooltip">
+                                                  The number of retrieved items (files, commits, metadata, or signals)
+                                                  that matched your query or context.
+                                                </span>
+                                              </span>
+                                            )
                                           </span>
                                         )}
                                         {source.file_type && (
@@ -1349,12 +1370,33 @@ function ChatInterface() {
                                         />
                                       </div>
                                       <span className={`text-xs font-medium ${colors.text}`}>
-                                        {relevanceScore}%
+                                        <span
+                                          className="tooltip-target"
+                                          aria-label="Relevance percentage"
+                                        >
+                                          {relevanceScore}%
+                                          <span className="tooltip">
+                                            The relevance score represented as a percentage. Higher values indicate
+                                            stronger alignment with your query.
+                                          </span>
+                                        </span>
                                       </span>
                                     </div>
                                     {source.matchCount && source.matchCount > 1 && (
                                       <span className="text-xs dark:text-emerald-400 text-emerald-600 font-medium">
-                                        ({source.matchCount} {source.matchCount === 1 ? 'match' : 'matches'})
+                                        (
+                                          {source.matchCount}{' '}
+                                          <span
+                                            className="tooltip-target"
+                                            aria-label="Matches tooltip"
+                                          >
+                                            {source.matchCount === 1 ? 'match' : 'matches'}
+                                            <span className="tooltip">
+                                              The number of retrieved items (files, commits, metadata, or signals) that
+                                              matched your query or context.
+                                            </span>
+                                          </span>
+                                        )
                                       </span>
                                     )}
                                     {source.file_type && (
