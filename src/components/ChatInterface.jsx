@@ -110,15 +110,7 @@ function ChatInterface() {
     }
   }, [messages])
 
-  // Auto-dismiss indexing status messages after 5 seconds (but not loading state)
-  useEffect(() => {
-    if (indexingStatus && indexingStatus.status !== 'loading') {
-      const timer = setTimeout(() => {
-        setIndexingStatus(null)
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [indexingStatus])
+  // Note: Indexing status messages now stay until manually dismissed by user
 
   // Close profile menu when clicking outside
   useEffect(() => {
@@ -1133,7 +1125,7 @@ function ChatInterface() {
                                     className="flex items-start space-x-4 p-4
                                              dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
                                              bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-gray-300
-                                             rounded-xl transition-all group cursor-pointer"
+                                             rounded-xl transition-all"
                                   >
                                     <div className={`flex-shrink-0 p-2 ${colors.bg} rounded-lg border ${colors.border}`}>
                                       {getSourceIcon(source.file_type)}
@@ -1143,7 +1135,6 @@ function ChatInterface() {
                                         <h4 className="text-sm font-medium dark:text-white text-gray-900 truncate">
                                           {source.file_path.split('/').pop()}
                                         </h4>
-                                        <ExternalLink className="w-3 h-3 dark:text-gray-500 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                       </div>
                                       <p className="text-xs dark:text-gray-500 text-gray-600 truncate">
                                         {source.file_path}
