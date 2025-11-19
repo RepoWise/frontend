@@ -36,6 +36,11 @@ import { Dashboard } from './Dashboard'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '../contexts/AuthContext'
 import { highlightEntities } from '../lib/highlightEntities'
+import {
+  highlightSustainabilityTerms,
+  SUSTAINABILITY_LEGEND,
+  SUSTAINABILITY_COLORS
+} from '../lib/sustainabilityHighlights'
 
 const EXAMPLE_REPOSITORIES = [
   {
@@ -238,7 +243,8 @@ function ChatInterface() {
       const uniqueSources = Object.values(sourcesByPath)
 
       const rawResponse = data?.data?.response || 'No response received'
-      const styledResponse = highlightEntities(rawResponse)
+      const entityHighlighted = highlightEntities(rawResponse)
+      const styledResponse = highlightSustainabilityTerms(entityHighlighted)
 
       setMessages(prev => [...prev, {
         type: 'assistant',
@@ -1036,6 +1042,31 @@ function ChatInterface() {
                     {/* Answer Tab */}
                     {(activeTabs[idx] || 'answer') === 'answer' && (
                       <div className="space-y-6">
+                        {/* Sustainability Legend */}
+                        <div className="rounded-2xl border border-emerald-500/20 dark:border-emerald-400/30 bg-emerald-50/40 dark:bg-emerald-500/5 p-4">
+                          <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+                            Sustainability signals
+                          </div>
+                          <div className="mt-3 flex flex-wrap gap-4 text-sm">
+                            {SUSTAINABILITY_LEGEND.map((item) => (
+                              <div key={item.color} className="flex items-center gap-2">
+                                <span
+                                  className="h-2.5 w-2.5 rounded-full"
+                                  style={{ backgroundColor: SUSTAINABILITY_COLORS[item.color] }}
+                                />
+                                <div className="flex flex-col">
+                                  <span className="font-semibold text-gray-900 dark:text-white">
+                                    {item.label}
+                                  </span>
+                                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                                    {item.description}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
                         {/* Main Answer */}
                         <div className="prose dark:prose-invert prose-lg max-w-none">
                           <ReactMarkdown

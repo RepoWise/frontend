@@ -11,6 +11,7 @@ node_modules/
 /coverage
 *.test.js
 *.spec.js
+!src/**/*.test.js
 
 # Logs
 logs
