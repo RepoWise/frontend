@@ -16,7 +16,7 @@ import {
   Shield,
   Users,
   GitBranch,
-  Share2,
+  Copy,
   Download,
   Pencil,
   ExternalLink,
@@ -40,28 +40,28 @@ import { highlightSustainabilityTerms } from '../lib/sustainabilityHighlights'
 
 const EXAMPLE_REPOSITORIES = [
   {
-    name: 'RepoWise Frontend',
-    description: 'Official UI for RepoWise – perfect for testing conversational flows.',
-    url: 'https://github.com/RepoWise/frontend',
-    highlights: ['React + Vite', 'AI-first UX']
+    name: 'Google meridian',
+    description: 'Meridian is an MMM framework that enables advertisers to set up and run their own in-house models.',
+    url: 'https://github.com/google/meridian',
+    highlights: ['marketing', 'bayesian causal inference']
   },
   {
-    name: 'RepoWise Backend',
-    description: 'The orchestration API that powers RepoWise’s RAG pipelines.',
-    url: 'https://github.com/RepoWise/backend',
-    highlights: ['FastAPI', 'Vector indexing']
+    name: 'Apple pkl',
+    description: 'A configuration as code language with rich validation and tooling.',
+    url: 'https://github.com/apple/pkl',
+    highlights: ['kotlin', 'configuration']
   },
   {
-    name: 'EvidenceBot',
-    description: 'Community bot for verifying claims with citations.',
-    url: 'https://github.com/Nafiz43/EvidenceBot',
-    highlights: ['Open-source agent', 'Automated QA']
+    name: 'Netflix Hollow',
+    description: 'Hollow is a java library and toolset for disseminating in-memory datasets from a single producer to many consumers for high performance read-only access.',
+    url: 'https://github.com/Netflix/hollow',
+    highlights: ['java', 'high-performant']
   },
   {
-    name: 'ReACTive',
-    description: 'Sample project showcasing modern ReAct-style automations.',
-    url: 'https://github.com/Nafiz43/ReACTive',
-    highlights: ['Multi-agent', 'Issue triage']
+    name: 'Microsoft Lisa',
+    description: 'LISA is developed and maintained by Microsoft, to empower Linux validation.',
+    url: 'https://github.com/microsoft/lisa',
+    highlights: ['testing', 'linux', 'hyperv cloudtesting', 'linux-compatibility']
   }
 ]
 
@@ -904,10 +904,10 @@ function ChatInterface() {
                               </span>
                             ))}
                           </div>
-                          <div className="flex items-center gap-2 text-sm font-semibold text-emerald-500 group-hover:gap-3 transition-all">
+                          {/* <div className="flex items-center gap-2 text-sm font-semibold text-emerald-500 group-hover:gap-3 transition-all">
                             Launch example
                             <Sparkles className="w-4 h-4" />
-                          </div>
+                          </div> */}
                         </motion.button>
                       ))}
                     </div>
@@ -1217,8 +1217,8 @@ function ChatInterface() {
                               </>
                             ) : (
                               <>
-                                <Share2 className="w-4 h-4" />
-                                <span>Share</span>
+                                <Copy className="w-4 h-4" />
+                                <span>Copy</span>
                               </>
                             )}
                           </button>
@@ -1231,7 +1231,7 @@ function ChatInterface() {
                                      dark:text-gray-400 dark:hover:text-gray-300 text-gray-700 hover:text-gray-900"
                           >
                             <Download className="w-4 h-4" />
-                            <span>Export</span>
+                            <span>Download</span>
                           </button>
                           <button
                             onClick={() => handleEdit(idx)}
