@@ -98,21 +98,45 @@ export const SUSTAINABILITY_COLOR_METADATA = {
   green: {
     title: 'Healthy sustainability signal',
     description: 'Positive, low-risk sustainability indicators',
-    className: 'sustainability-green'
+    className: 'sustainability-green',
+    ariaLabel: 'Healthy sustainability signal',
+    indicatorColor: '#16a34a'
   },
   yellow: {
     title: 'Warning signal',
     description: 'Early warnings or moderate concerns',
-    className: 'sustainability-yellow'
+    className: 'sustainability-yellow',
+    ariaLabel: 'Warning sustainability signal',
+    indicatorColor: '#eab308'
   },
   red: {
     title: 'Critical risk',
     description: 'High-risk or severe sustainability issues',
-    className: 'sustainability-red'
+    className: 'sustainability-red',
+    ariaLabel: 'Critical sustainability risk',
+    indicatorColor: '#dc2626'
   }
 }
 
-const TERM_GROUPS = [
+export const SUSTAINABILITY_LEGEND_ITEMS = [
+  {
+    color: 'green',
+    label: 'Healthy / low-risk signals',
+    description: 'Reinforces strong sustainability posture'
+  },
+  {
+    color: 'yellow',
+    label: 'Warning signs',
+    description: 'Monitor and intervene before risks grow'
+  },
+  {
+    color: 'red',
+    label: 'Critical risks',
+    description: 'Immediate action recommended'
+  }
+]
+
+export const SUSTAINABILITY_TERM_GROUPS = [
   { color: 'green', terms: GREEN_TERMS },
   { color: 'yellow', terms: YELLOW_TERMS },
   { color: 'red', terms: RED_TERMS }
@@ -123,7 +147,7 @@ const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const termEntries = []
 export const SUSTAINABILITY_TERM_LOOKUP = new Map()
 
-TERM_GROUPS.forEach(({ color, terms }) => {
+SUSTAINABILITY_TERM_GROUPS.forEach(({ color, terms }) => {
   terms.forEach((term) => {
     const normalized = term.toLowerCase()
     const entry = { term, color, normalized }
@@ -141,5 +165,7 @@ const regexSource = regexPattern ? `\\b(${regexPattern})\\b` : ''
 
 export const createHighlightRegex = () =>
   regexSource ? new RegExp(regexSource, 'gi') : null
+
+export const SUSTAINABILITY_HIGHLIGHT_REGEX = createHighlightRegex()
 
 export const SUSTAINABILITY_TERM_ENTRIES = termEntries

@@ -1,7 +1,7 @@
 import { visit } from 'unist-util-visit'
 import {
-  createHighlightRegex,
   SUSTAINABILITY_COLOR_METADATA,
+  SUSTAINABILITY_HIGHLIGHT_REGEX,
   SUSTAINABILITY_TERM_LOOKUP
 } from './sustainabilityTerms'
 
@@ -15,19 +15,20 @@ const createHighlightNode = (value, color) => {
     data: {
       hName: 'span',
       hProperties: {
-        className: metadata.className,
+        className: ['sustainability-highlight', metadata.className].filter(Boolean).join(' '),
         title: metadata.title,
+        'aria-label': metadata.ariaLabel || metadata.title,
+        'data-color': color,
       }
     }
   }
 }
 
-export const splitTextIntoHighlightNodes = (value) => {
+export const splitTextIntoHighlightNodes = (value, regex = SUSTAINABILITY_HIGHLIGHT_REGEX) => {
   if (typeof value !== 'string' || !value.length) {
     return [createTextNode(value || '')]
   }
 
-  const regex = createHighlightRegex()
   if (!regex) {
     return [createTextNode(value)]
   }

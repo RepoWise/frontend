@@ -1,22 +1,7 @@
-import { SUSTAINABILITY_COLOR_METADATA } from '../lib/sustainabilityTerms'
-
-const LEGEND_ITEMS = [
-  {
-    color: 'green',
-    label: 'Healthy / low-risk signals',
-    description: 'Reinforces strong sustainability posture'
-  },
-  {
-    color: 'yellow',
-    label: 'Warning signs',
-    description: 'Monitor and intervene before risks grow'
-  },
-  {
-    color: 'red',
-    label: 'Critical risks',
-    description: 'Immediate action recommended'
-  }
-]
+import {
+  SUSTAINABILITY_COLOR_METADATA,
+  SUSTAINABILITY_LEGEND_ITEMS
+} from '../lib/sustainabilityTerms'
 
 export function SustainabilityLegend() {
   return (
@@ -26,13 +11,14 @@ export function SustainabilityLegend() {
         Sustainability signal legend
       </div>
       <div className="grid gap-3 md:grid-cols-3">
-        {LEGEND_ITEMS.map(({ color, label, description }) => {
+        {SUSTAINABILITY_LEGEND_ITEMS.map(({ color, label, description }) => {
           const metadata = SUSTAINABILITY_COLOR_METADATA[color]
           return (
             <div key={color} className="flex items-start gap-3">
               <span
-                className={`mt-1 inline-flex h-3 w-3 rounded-full ${metadata?.className || ''}`}
-                style={{ backgroundColor: 'currentColor' }}
+                className="mt-1 inline-flex h-3 w-3 rounded-full"
+                style={{ backgroundColor: metadata?.indicatorColor || '#10b981' }}
+                aria-label={metadata?.ariaLabel}
                 aria-hidden="true"
               />
               <div>
