@@ -201,7 +201,8 @@ const AuthPage = () => {
             )}
           </AnimatePresence>
 
-          {/* OAuth Buttons */}
+          {/* OAuth Buttons - Hidden for now */}
+          {/*
           <div className="space-y-3 mb-6">
             <button
               onClick={() => handleOAuthLogin('google')}
@@ -232,7 +233,6 @@ const AuthPage = () => {
             </button>
           </div>
 
-          {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full dark:border-gray-700 border-gray-300 border-t"></div>
@@ -243,6 +243,7 @@ const AuthPage = () => {
               </span>
             </div>
           </div>
+          */}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
