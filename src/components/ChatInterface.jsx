@@ -647,8 +647,29 @@ function ChatInterface() {
 
             <div className="flex items-center gap-3 flex-1 justify-end">
               <form onSubmit={handleAddRepository} className="flex gap-2 flex-1 max-w-2xl">
-                <div className="relative flex-1">
-                  <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <motion.div
+                  className="relative flex-1"
+                  animate={
+                    availableProjects.length === 0 && !isRepoLocked
+                      ? {
+                          boxShadow: [
+                            '0 0 0 0 rgba(16, 185, 129, 0)',
+                            '0 0 20px 4px rgba(16, 185, 129, 0.15)',
+                            '0 0 20px 4px rgba(16, 185, 129, 0.15)',
+                            '0 0 0 0 rgba(16, 185, 129, 0)',
+                          ],
+                        }
+                      : { boxShadow: '0 0 0 0 rgba(16, 185, 129, 0)' }
+                  }
+                  transition={{
+                    duration: 2.5,
+                    repeat: availableProjects.length === 0 && !isRepoLocked ? Infinity : 0,
+                    ease: [0.4, 0.0, 0.2, 1],
+                    times: [0, 0.4, 0.6, 1],
+                  }}
+                  style={{ borderRadius: '0.75rem' }}
+                >
+                  <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10" />
                   <input
                     type="text"
                     value={githubUrl}
@@ -658,10 +679,12 @@ function ChatInterface() {
                     className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all ${
                       isRepoLocked
                         ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-800/70 dark:border-gray-700 dark:text-gray-400'
+                        : availableProjects.length === 0
+                        ? 'bg-white/50 border-emerald-500/40 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-emerald-400/30 dark:text-white'
                         : 'bg-white/50 border-gray-200 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-gray-800 dark:text-white'
                     }`}
                   />
-                </div>
+                </motion.div>
                 <button
                   type="submit"
                   disabled={(!githubUrl.trim() && !isRepoLocked) || addRepoMutation.isPending}
