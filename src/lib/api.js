@@ -90,6 +90,10 @@ export const api = {
       n_results: options.nResults || 5,
       file_types: options.fileTypes || null,
     }),
+
+  // View tracking
+  recordView: () => apiClient.post('/record_view'),
+  getViewCount: () => apiClient.get('/view_count'),
 };
 
 export default api;

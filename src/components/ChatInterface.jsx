@@ -136,7 +136,30 @@ function ChatInterface() {
     refetchInterval: 30000, // Refetch every 30 seconds to keep list updated
   })
 
+  // Fetch view count for dashboard footer
+  const { data: viewCountData, refetch: refetchViewCount } = useQuery({
+    queryKey: ['viewCount'],
+    queryFn: () => api.getViewCount().then((res) => res.data),
+    refetchInterval: 30000,
+  })
+
+  // Record a view when the dashboard is used
+  useEffect(() => {
+    const trackView = async () => {
+      try {
+        await api.recordView()
+        await refetchViewCount()
+      } catch (error) {
+        console.error('Failed to record view:', error)
+      }
+    }
+
+    trackView()
+  }, [refetchViewCount])
+
   const availableProjects = projectsData?.data?.projects || []
+
+  const viewCount = viewCountData?.view_count ?? viewCountData?.count
 
   // Add repository and index mutation
   const addRepoMutation = useMutation({
@@ -1722,6 +1745,9 @@ function ChatInterface() {
             >
               repowise.github.io
             </a>
+          </p>
+          <p className="text-gray-500 dark:text-gray-500">
+            RepoWise Views: {viewCount ?? '—'}
           </p>
         </div>
       </footer>
