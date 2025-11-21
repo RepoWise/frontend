@@ -189,9 +189,10 @@ function ChatInterface() {
 
   // Add repository and index mutation
   const addRepoMutation = useMutation({
-    mutationFn: (githubUrl) => api.addRepository(githubUrl),
-    onSuccess: async (data) => {
+    mutationFn: ({ githubUrl }) => api.addRepository(githubUrl),
+    onSuccess: async (data, variables) => {
       try {
+        const forceTrackProcessedRepo = variables?.forceTrackProcessedRepo ?? false
         const wasAlreadyIndexed = data?.data?.status === 'already_exists'
 
         // Check if repository already exists
@@ -225,7 +226,7 @@ function ChatInterface() {
         setConversationState(null) // Reset conversation state
         setIsRepoLocked(true) // Lock the input after successful add
 
-        if (!wasAlreadyIndexed) {
+        if (forceTrackProcessedRepo || !wasAlreadyIndexed) {
           await trackProcessedRepository()
         }
       } catch (err) {
@@ -363,12 +364,13 @@ function ChatInterface() {
     inputRef.current?.focus()
   }
 
-  const startRepositoryIndexing = (repoUrl) => {
+  const startRepositoryIndexing = (repoUrl, options = {}) => {
+    const { forceTrackProcessedRepo = false } = options
     const trimmedRepo = repoUrl?.trim()
     if (!trimmedRepo) return
     setGithubUrl(trimmedRepo)
     setIndexingStatus({ status: 'loading', message: 'Scraping and indexing repository...' })
-    addRepoMutation.mutate(trimmedRepo)
+    addRepoMutation.mutate({ githubUrl: trimmedRepo, forceTrackProcessedRepo })
   }
 
   const handleAddRepository = (e) => {
@@ -390,7 +392,7 @@ function ChatInterface() {
   }
 
   const handleExampleSelect = (repoUrl) => {
-    startRepositoryIndexing(repoUrl)
+    startRepositoryIndexing(repoUrl, { forceTrackProcessedRepo: true })
   }
 
   // Handler for project selection from dropdown
