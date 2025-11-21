@@ -97,6 +97,10 @@ export const api = {
 
   // Users
   getUserCount: () => apiClient.get('/auth/users/count'),
+
+  // Processed repositories analytics
+  trackProcessedRepo: () => apiClient.post('/track-processed-repo'),
+  getProcessedRepoCount: () => apiClient.get('/processed-repo-count'),
 };
 
 export default api;
