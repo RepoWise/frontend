@@ -147,7 +147,6 @@ function ChatInterface() {
   const { data: userCountData } = useQuery({
     queryKey: ['userCount'],
     queryFn: () => api.getUserCount().then((res) => res.data),
-    enabled: isAuthenticated,
     refetchInterval: 30000,
   })
 
