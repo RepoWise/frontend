@@ -143,6 +143,14 @@ function ChatInterface() {
     refetchInterval: 30000,
   })
 
+  // Fetch user count for dashboard footer
+  const { data: usersData } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => api.listUsers().then((res) => res.data),
+    enabled: isAuthenticated,
+    refetchInterval: 30000,
+  })
+
   // Record a view when the dashboard is used
   useEffect(() => {
     const trackView = async () => {
@@ -160,6 +168,13 @@ function ChatInterface() {
   const availableProjects = projectsData?.data?.projects || []
 
   const viewCount = viewCountData?.view_count ?? viewCountData?.count
+  const userCount = Array.isArray(usersData?.users)
+    ? usersData.users.length
+    : Array.isArray(usersData)
+      ? usersData.length
+      : Array.isArray(usersData?.data)
+        ? usersData.data.length
+        : null
 
   // Add repository and index mutation
   const addRepoMutation = useMutation({
@@ -1746,9 +1761,11 @@ function ChatInterface() {
               repowise.github.io
             </a>
           </p>
-          <p className="text-gray-500 dark:text-gray-500">
-            RepoWise Views: {viewCount ?? '—'}
-          </p>
+          <div className="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-500">
+            <span>RepoWise Views: {viewCount ?? '—'}</span>
+            <span className="h-4 w-px bg-gray-300 dark:bg-gray-600" aria-hidden="true"></span>
+            <span>RepoWise Users: {userCount ?? '—'}</span>
+          </div>
         </div>
       </footer>
       

@@ -94,6 +94,9 @@ export const api = {
   // View tracking
   recordView: () => apiClient.post('/record_view'),
   getViewCount: () => apiClient.get('/view_count'),
+
+  // Users
+  listUsers: () => apiClient.get('/auth/users'),
 };
 
 export default api;
