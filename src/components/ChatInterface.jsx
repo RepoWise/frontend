@@ -702,44 +702,49 @@ function ChatInterface() {
 
             <div className="flex items-center gap-3 flex-1 justify-end">
               <form onSubmit={handleAddRepository} className="flex gap-2 flex-1 max-w-2xl">
-                <motion.div
-                  className="relative flex-1"
-                  animate={
-                    availableProjects.length === 0 && !isRepoLocked
-                      ? {
-                          boxShadow: [
-                            '0 0 0 0 rgba(16, 185, 129, 0)',
-                            '0 0 20px 4px rgba(16, 185, 129, 0.15)',
-                            '0 0 20px 4px rgba(16, 185, 129, 0.15)',
-                            '0 0 0 0 rgba(16, 185, 129, 0)',
-                          ],
-                        }
-                      : { boxShadow: '0 0 0 0 rgba(16, 185, 129, 0)' }
-                  }
-                  transition={{
-                    duration: 2.5,
-                    repeat: availableProjects.length === 0 && !isRepoLocked ? Infinity : 0,
-                    ease: [0.4, 0.0, 0.2, 1],
-                    times: [0, 0.4, 0.6, 1],
-                  }}
-                  style={{ borderRadius: '0.75rem' }}
-                >
-                  <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10" />
-                  <input
-                    type="text"
-                    value={githubUrl}
-                    onChange={(e) => setGithubUrl(e.target.value)}
-                    placeholder="Enter GitHub repository URL (e.g., https://github.com/owner/repo)"
-                    disabled={isRepoLocked}
-                    className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all ${
-                      isRepoLocked
-                        ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-800/70 dark:border-gray-700 dark:text-gray-400'
-                        : availableProjects.length === 0
-                        ? 'bg-white/50 border-emerald-500/40 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-emerald-400/30 dark:text-white'
-                        : 'bg-white/50 border-gray-200 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-gray-800 dark:text-white'
-                    }`}
-                  />
-                </motion.div>
+                <div className="relative flex-1">
+                  {/* Animated wave border wrapper */}
+                  {availableProjects.length === 0 && !isRepoLocked && (
+                    <motion.div
+                      className="absolute inset-0 rounded-xl"
+                      style={{
+                        background: 'linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.3) 25%, rgba(16, 185, 129, 0.8) 50%, rgba(16, 185, 129, 0.3) 75%, transparent 100%)',
+                        backgroundSize: '200% 100%',
+                        padding: '2px',
+                        WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                        WebkitMaskComposite: 'xor',
+                        maskComposite: 'exclude',
+                        filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))',
+                      }}
+                      animate={{
+                        backgroundPosition: ['0% 0%', '200% 0%'],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                    />
+                  )}
+
+                  <div className="relative">
+                    <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10" />
+                    <input
+                      type="text"
+                      value={githubUrl}
+                      onChange={(e) => setGithubUrl(e.target.value)}
+                      placeholder="Enter GitHub repository URL (e.g., https://github.com/owner/repo)"
+                      disabled={isRepoLocked}
+                      className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all ${
+                        isRepoLocked
+                          ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-800/70 dark:border-gray-700 dark:text-gray-400'
+                          : availableProjects.length === 0
+                          ? 'bg-white/50 border-emerald-500/40 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-emerald-400/30 dark:text-white'
+                          : 'bg-white/50 border-gray-200 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-gray-800 dark:text-white'
+                      }`}
+                    />
+                  </div>
+                </div>
                 <button
                   type="submit"
                   disabled={(!githubUrl.trim() && !isRepoLocked) || addRepoMutation.isPending}
@@ -1083,7 +1088,7 @@ function ChatInterface() {
                                 handleCancelEdit()
                               }
                             }}
-                            className="w-full bg-gray-900/50 border border-emerald-500/50 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+                            className="w-full bg-gray-100 border border-emerald-500/50 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none dark:bg-gray-900/50 dark:text-white dark:border-emerald-500/50"
                             rows={3}
                             autoFocus
                           />
@@ -1097,11 +1102,11 @@ function ChatInterface() {
                             </button>
                             <button
                               onClick={handleCancelEdit}
-                              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-sm font-medium transition-all"
+                              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium transition-all dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300"
                             >
                               Cancel
                             </button>
-                            <span className="text-xs text-gray-500 ml-2">
+                            <span className="text-xs text-gray-600 ml-2 dark:text-gray-500">
                               Press Enter to submit · Esc to cancel
                             </span>
                           </div>
