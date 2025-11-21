@@ -144,9 +144,9 @@ function ChatInterface() {
   })
 
   // Fetch user count for dashboard footer
-  const { data: usersData } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => api.listUsers().then((res) => res.data),
+  const { data: userCountData } = useQuery({
+    queryKey: ['userCount'],
+    queryFn: () => api.getUserCount().then((res) => res.data),
     enabled: isAuthenticated,
     refetchInterval: 30000,
   })
@@ -168,13 +168,7 @@ function ChatInterface() {
   const availableProjects = projectsData?.data?.projects || []
 
   const viewCount = viewCountData?.view_count ?? viewCountData?.count
-  const userCount = Array.isArray(usersData?.users)
-    ? usersData.users.length
-    : Array.isArray(usersData)
-      ? usersData.length
-      : Array.isArray(usersData?.data)
-        ? usersData.data.length
-        : null
+  const userCount = userCountData?.count ?? userCountData?.user_count ?? null
 
   // Add repository and index mutation
   const addRepoMutation = useMutation({

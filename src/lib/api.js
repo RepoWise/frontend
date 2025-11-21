@@ -96,7 +96,7 @@ export const api = {
   getViewCount: () => apiClient.get('/view_count'),
 
   // Users
-  listUsers: () => apiClient.get('/auth/users'),
+  getUserCount: () => apiClient.get('/auth/users/count'),
 };
 
 export default api;
