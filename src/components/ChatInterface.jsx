@@ -1706,7 +1706,7 @@ function ChatInterface() {
               href="https://www.ucdavis.edu"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
+              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
             >
               UC Davis
             </a>, by{" "}
@@ -1714,7 +1714,7 @@ function ChatInterface() {
               href="https://www.linkedin.com/in/sankalp-kashyap"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
+              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
             >
               Sankalp Kashyap
             </a>,{" "}
@@ -1722,7 +1722,7 @@ function ChatInterface() {
               href="https://www.linkedin.com/in/arjashok"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
+              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
             >
               Arjun Ashok
             </a>,{" "}
@@ -1730,7 +1730,7 @@ function ChatInterface() {
               href="https://nafiz43.github.io/portfolio/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
+              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
             >
               Nafiz Imtiaz Khan
             </a>, and{" "}
@@ -1738,7 +1738,7 @@ function ChatInterface() {
               href="https://www.cs.ucdavis.edu/~filkov/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
+              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
             >
               Vladimir Filkov
             </a>
@@ -1750,12 +1750,12 @@ function ChatInterface() {
               href="https://repowise.github.io/RepoWise-website/"
               target="_blank"
               rel="noreferrer noopener"
-              className="text-gray-500 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-400 underline underline-offset-4 transition-colors"
+              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
             >
               repowise.github.io
             </a>
           </p>
-          <div className="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-500">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-gray-500 dark:text-gray-500">
             <span>RepoWise Views: {viewCount ?? '—'}</span>
             <span className="h-4 w-px bg-gray-300 dark:bg-gray-600" aria-hidden="true"></span>
             <span>RepoWise Users: {userCount ?? '—'}</span>
