@@ -151,6 +151,13 @@ function ChatInterface() {
     refetchInterval: 30000,
   })
 
+  // Fetch processed repository count for dashboard footer
+  const { data: processedRepoCountData, refetch: refetchProcessedRepoCount } = useQuery({
+    queryKey: ['processedRepoCount'],
+    queryFn: () => api.getProcessedRepoCount().then((res) => res.data),
+    refetchInterval: 30000,
+  })
+
   // Record a view when the dashboard is used
   useEffect(() => {
     const trackView = async () => {
@@ -169,14 +176,26 @@ function ChatInterface() {
 
   const viewCount = viewCountData?.view_count ?? viewCountData?.count
   const userCount = userCountData?.count ?? userCountData?.user_count ?? null
+  const processedRepoCount = processedRepoCountData?.processed_repo_count ?? processedRepoCountData?.count ?? null
+
+  const trackProcessedRepository = async () => {
+    try {
+      await api.trackProcessedRepo()
+      await refetchProcessedRepoCount()
+    } catch (error) {
+      console.error('Failed to track processed repository:', error)
+    }
+  }
 
   // Add repository and index mutation
   const addRepoMutation = useMutation({
     mutationFn: (githubUrl) => api.addRepository(githubUrl),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       try {
+        const wasAlreadyIndexed = data?.data?.status === 'already_exists'
+
         // Check if repository already exists
-        if (data?.data?.status === 'already_exists') {
+        if (wasAlreadyIndexed) {
           setIndexingStatus({
             status: 'success',
             message: 'Project added successfully',
@@ -205,6 +224,10 @@ function ChatInterface() {
         setMessages([])
         setConversationState(null) // Reset conversation state
         setIsRepoLocked(true) // Lock the input after successful add
+
+        if (!wasAlreadyIndexed) {
+          await trackProcessedRepository()
+        }
       } catch (err) {
         console.error('Error processing indexing response:', err)
         setIndexingStatus({
@@ -1759,6 +1782,8 @@ function ChatInterface() {
             <span>RepoWise Views: {viewCount ?? '—'}</span>
             <span className="h-4 w-px bg-gray-300 dark:bg-gray-600" aria-hidden="true"></span>
             <span>RepoWise Users: {userCount ?? '—'}</span>
+            <span className="h-4 w-px bg-gray-300 dark:bg-gray-600" aria-hidden="true"></span>
+            <span>Processed Repo Count: {processedRepoCount ?? '—'}</span>
           </div>
         </div>
       </footer>
