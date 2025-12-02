@@ -373,6 +373,18 @@ export function Dashboard({ selectedProject }) {
             </div>
           </motion.div>
         )}
+
+        <div className="mt-10 text-center text-sm text-gray-400">
+          We’d really appreciate your thoughts on this tool. Please share your feedback here:{' '}
+          <a
+            href="https://forms.gle/GUQyYY6SijDbtUVe9"
+            className="text-emerald-400 hover:text-emerald-300 underline"
+            target="_blank"
+            rel="noreferrer"
+          >
+            https://forms.gle/GUQyYY6SijDbtUVe9
+          </a>
+        </div>
       </div>
     </div>
   )
