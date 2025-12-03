@@ -4,7 +4,7 @@
  * Supports email/password and OAuth (Google, GitHub)
  */
 import { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
 import {
@@ -24,10 +24,12 @@ const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [infoMessage, setInfoMessage] = useState('')
 
   const { login, signup, loginWithOAuth, getOAuthUrl, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const location = useLocation()
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -35,6 +37,14 @@ const AuthPage = () => {
       navigate('/', { replace: true })
     }
   }, [isAuthenticated, navigate])
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setInfoMessage(location.state.message)
+      setErrorMessage('')
+      navigate(location.pathname, { replace: true, state: {} })
+    }
+  }, [location, navigate])
 
   // Handle OAuth callback
   useEffect(() => {
@@ -186,6 +196,21 @@ const AuthPage = () => {
                      bg-white border-2 border-gray-200
                      rounded-2xl shadow-2xl p-8"
         >
+          {/* Info Message */}
+          <AnimatePresence mode="wait">
+            {infoMessage && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 p-4 dark:bg-emerald-500/10 dark:border-emerald-500/30 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start space-x-3"
+              >
+                <AlertCircle className="w-5 h-5 dark:text-emerald-300 text-emerald-700 flex-shrink-0 mt-0.5" />
+                <span className="text-sm dark:text-emerald-200 text-emerald-800">{infoMessage}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Error Message */}
           <AnimatePresence mode="wait">
             {errorMessage && (

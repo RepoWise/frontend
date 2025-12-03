@@ -3,18 +3,29 @@
  * Manages user authentication state, login, signup, logout
  * Provides authentication utilities throughout the app
  */
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const AuthContext = createContext(null)
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const DEFAULT_INACTIVITY_TIMEOUT_MINUTES = 5
+const INACTIVITY_LOGOUT_MESSAGE = 'You were logged out due to inactivity.'
+
+const inactivityTimeoutMinutes = Number(import.meta.env.VITE_INACTIVITY_TIMEOUT_MINUTES)
+const INACTIVITY_TIMEOUT_MS =
+  Number.isFinite(inactivityTimeoutMinutes) && inactivityTimeoutMinutes > 0
+    ? inactivityTimeoutMinutes * 60 * 1000
+    : DEFAULT_INACTIVITY_TIMEOUT_MINUTES * 60 * 1000
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [token, setToken] = useState(null)
+  const inactivityTimerRef = useRef(null)
+
+  const navigate = useNavigate()
 
   // Initialize auth state from localStorage
   useEffect(() => {
@@ -168,6 +179,8 @@ export const AuthProvider = ({ children }) => {
     // Clear stored auth data
     localStorage.removeItem('repowise_token')
     localStorage.removeItem('repowise_user')
+    sessionStorage.removeItem('oauth_state')
+    sessionStorage.removeItem('oauth_return_url')
 
     // Clear state
     setToken(null)
@@ -206,6 +219,47 @@ export const AuthProvider = ({ children }) => {
       return null
     }
   }, [token, logout])
+
+  const clearInactivityTimer = useCallback(() => {
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current)
+      inactivityTimerRef.current = null
+    }
+  }, [])
+
+  const handleInactivityLogout = useCallback(() => {
+    logout()
+    navigate('/auth', { replace: true, state: { message: INACTIVITY_LOGOUT_MESSAGE } })
+  }, [logout, navigate])
+
+  const startInactivityTimer = useCallback(() => {
+    clearInactivityTimer()
+    inactivityTimerRef.current = setTimeout(handleInactivityLogout, INACTIVITY_TIMEOUT_MS)
+  }, [clearInactivityTimer, handleInactivityLogout])
+
+  const resetInactivityTimer = useCallback(() => {
+    if (isAuthenticated) {
+      startInactivityTimer()
+    }
+  }, [isAuthenticated, startInactivityTimer])
+
+  useEffect(() => {
+    const activityEvents = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart']
+
+    if (isAuthenticated) {
+      startInactivityTimer()
+      const activityHandler = () => resetInactivityTimer()
+
+      activityEvents.forEach((event) => window.addEventListener(event, activityHandler))
+
+      return () => {
+        activityEvents.forEach((event) => window.removeEventListener(event, activityHandler))
+        clearInactivityTimer()
+      }
+    }
+
+    clearInactivityTimer()
+  }, [isAuthenticated, resetInactivityTimer, startInactivityTimer, clearInactivityTimer])
 
   const value = {
     user,

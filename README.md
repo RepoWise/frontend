@@ -48,6 +48,8 @@ Modern React-based frontend for exploring and querying open-source repository do
    Edit `.env` and configure:
    ```
    VITE_API_BASE_URL=http://localhost:8000
+   # Optional: override default 5-minute inactivity timeout (minutes)
+   VITE_INACTIVITY_TIMEOUT_MINUTES=5
    ```
 
 4. **Start the development server**
@@ -90,6 +92,12 @@ These examples are chosen because they:
 ### Theme Toggle
 
 Click the sun/moon icon in the header to switch between light and dark themes.
+
+### Session Timeout
+
+- Authenticated users are automatically signed out after 5 minutes of inactivity (mouse, keyboard, scroll, or tap).
+- A banner on the login screen explains when a session ends due to inactivity.
+- Customize the timeout by setting `VITE_INACTIVITY_TIMEOUT_MINUTES` in your `.env` file.
 
 ## Development
 
