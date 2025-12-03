@@ -38,6 +38,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '../contexts/AuthContext'
 import { highlightEntities } from '../lib/highlightEntities'
 import { highlightSustainabilityTerms } from '../lib/sustainabilityHighlights'
+import { formatResponseLayout } from '../lib/responseFormatter'
 
 const EXAMPLE_REPOSITORIES = [
   {
@@ -297,7 +298,8 @@ function ChatInterface() {
       const uniqueSources = Object.values(sourcesByPath)
 
       const rawResponse = data?.data?.response || 'No response received'
-      const entityHighlighted = highlightEntities(rawResponse)
+      const structuredResponse = formatResponseLayout(rawResponse)
+      const entityHighlighted = highlightEntities(structuredResponse)
       const styledResponse = highlightSustainabilityTerms(entityHighlighted)
 
       setMessages(prev => [...prev, {
