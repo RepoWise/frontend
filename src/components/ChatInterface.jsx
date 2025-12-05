@@ -29,11 +29,8 @@ import {
   Check,
   LogOut,
   UserCircle,
-  RefreshCw,
-  Plus,
-  Info,
-  Award,
-  HelpCircle
+  Link2,
+  RefreshCw
 } from 'lucide-react'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Dashboard } from './Dashboard'
@@ -69,167 +66,6 @@ const EXAMPLE_REPOSITORIES = [
   }
 ]
 
-// Confidence chip component for displaying confidence levels
-const ConfidenceChip = ({ confidenceLabel, score, chunkCount }) => {
-  // Map confidence labels to colors
-  const getConfidenceStyles = (label) => {
-    switch (label) {
-      case 'Very High':
-        return {
-          bg: 'bg-emerald-500/10 dark:bg-emerald-500/10',
-          border: 'border-emerald-500/30 dark:border-emerald-500/30',
-          text: 'text-emerald-700 dark:text-emerald-400',
-          icon: 'text-emerald-600 dark:text-emerald-400'
-        }
-      case 'High':
-        return {
-          bg: 'bg-blue-500/10 dark:bg-blue-500/10',
-          border: 'border-blue-500/30 dark:border-blue-500/30',
-          text: 'text-blue-700 dark:text-blue-400',
-          icon: 'text-blue-600 dark:text-blue-400'
-        }
-      case 'Medium':
-        return {
-          bg: 'bg-amber-500/10 dark:bg-amber-500/10',
-          border: 'border-amber-500/30 dark:border-amber-500/30',
-          text: 'text-amber-700 dark:text-amber-400',
-          icon: 'text-amber-600 dark:text-amber-400'
-        }
-      case 'Low':
-        return {
-          bg: 'bg-red-500/10 dark:bg-red-500/10',
-          border: 'border-red-500/30 dark:border-red-500/30',
-          text: 'text-red-700 dark:text-red-400',
-          icon: 'text-red-600 dark:text-red-400'
-        }
-      default:
-        return {
-          bg: 'bg-gray-500/10 dark:bg-gray-500/10',
-          border: 'border-gray-500/30 dark:border-gray-500/30',
-          text: 'text-gray-700 dark:text-gray-400',
-          icon: 'text-gray-600 dark:text-gray-400'
-        }
-    }
-  }
-
-  const styles = getConfidenceStyles(confidenceLabel)
-
-  return (
-    <div className="group relative inline-flex items-center gap-1.5">
-      <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border ${styles.bg} ${styles.border}`}>
-        <Award className={`w-3.5 h-3.5 ${styles.icon}`} />
-        <span className={`text-xs font-medium ${styles.text}`}>
-          {confidenceLabel}
-        </span>
-      </div>
-
-      {/* Hover tooltip with detailed information */}
-      <div className="absolute left-0 top-full mt-2 w-48 p-2 bg-gray-900 dark:bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 pointer-events-none">
-        <div className="space-y-1">
-          <div className="flex justify-between">
-            <span className="text-gray-400">Confidence:</span>
-            <span className="font-medium">{confidenceLabel}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Score:</span>
-            <span className="font-medium">{(score * 100).toFixed(0)}%</span>
-          </div>
-          {chunkCount > 1 && (
-            <div className="flex justify-between">
-              <span className="text-gray-400">Chunks:</span>
-              <span className="font-medium">{chunkCount}</span>
-            </div>
-          )}
-        </div>
-        <div className="mt-1.5 pt-1.5 border-t border-gray-700 text-gray-400 text-xs">
-          Aggregated from {chunkCount === 1 ? '1 chunk' : `${chunkCount} chunks`} using Noisy OR
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// Overall answer confidence indicator - shows ONE badge for entire answer
-const AnswerConfidenceIndicator = ({ confidence, sourceCount }) => {
-  const getConfidenceLevel = (score) => {
-    if (score >= 0.8) return 'high'
-    if (score >= 0.5) return 'moderate'
-    return 'limited'
-  }
-
-  const confidenceLevel = getConfidenceLevel(confidence)
-
-  const config = {
-    high: {
-      icon: CheckCircle,
-      text: 'High confidence answer',
-      color: 'text-emerald-600 dark:text-emerald-400',
-      bgColor: 'bg-emerald-500/10 dark:bg-emerald-500/10',
-      borderColor: 'border-emerald-500/20 dark:border-emerald-500/20',
-      iconColor: 'text-emerald-600 dark:text-emerald-500',
-      tooltip: 'This answer is well-supported by multiple authoritative sources from the repository'
-    },
-    moderate: {
-      icon: AlertCircle,
-      text: 'Moderate confidence answer',
-      color: 'text-amber-600 dark:text-amber-400',
-      bgColor: 'bg-amber-500/10 dark:bg-amber-500/10',
-      borderColor: 'border-amber-500/20 dark:border-amber-500/20',
-      iconColor: 'text-amber-600 dark:text-amber-500',
-      tooltip: 'This answer is based on available sources but may benefit from additional verification'
-    },
-    limited: {
-      icon: HelpCircle,
-      text: 'Limited information available',
-      color: 'text-gray-600 dark:text-gray-400',
-      bgColor: 'bg-gray-500/10 dark:bg-gray-500/10',
-      borderColor: 'border-gray-500/20 dark:border-gray-500/20',
-      iconColor: 'text-gray-600 dark:text-gray-500',
-      tooltip: 'Few sources found for this query. Consider rephrasing your question or checking the documentation directly'
-    }
-  }
-
-  const { icon: Icon, text, color, bgColor, borderColor, iconColor, tooltip } = config[confidenceLevel]
-
-  return (
-    <div className="group relative inline-flex items-center gap-2 mt-4 mb-3">
-      <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${bgColor} ${borderColor}`}>
-        <Icon className={`w-4 h-4 ${iconColor}`} />
-        <span className={`text-sm font-medium ${color}`}>
-          {text}
-        </span>
-        <Info className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 cursor-help" />
-      </div>
-
-      {/* Hover tooltip */}
-      <div className="absolute left-0 top-full mt-2 w-72 p-3 bg-gray-900 dark:bg-gray-800 text-white text-xs rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none">
-        <p className="text-gray-200 mb-2">{tooltip}</p>
-        <div className="pt-2 border-t border-gray-700">
-          <div className="flex justify-between text-gray-400">
-            <span>Based on:</span>
-            <span className="font-medium text-white">
-              {sourceCount} {sourceCount === 1 ? 'source' : 'sources'}
-            </span>
-          </div>
-          <div className="flex justify-between text-gray-400 mt-1">
-            <span>Confidence score:</span>
-            <span className="font-medium text-white">{(confidence * 100).toFixed(0)}%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// Preprocesses markdown content (currently minimal processing to avoid formatting issues)
-const enhanceMarkdownContent = (content) => {
-  if (!content) return content
-
-  // Return content as-is - LLM should handle its own formatting
-  // This prevents double-wrapping and formatting conflicts
-  return content
-}
-
 function ChatInterface() {
   const { user, logout, isAuthenticated } = useAuth()
   const navigate = useNavigate()
@@ -248,7 +84,6 @@ function ChatInterface() {
   const [editedQuery, setEditedQuery] = useState('') // Store edited query text
   const [loadingStage, setLoadingStage] = useState(0) // Track loading animation stage
   const [conversationState, setConversationState] = useState(null) // Running summary state
-  const [showFooter, setShowFooter] = useState(false) // Track footer visibility based on scroll
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   const messageRefs = useRef({}) // Store refs for each message
@@ -293,28 +128,6 @@ function ChatInterface() {
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [showProfileMenu])
-
-  // Show footer on scroll or when messages exist
-  useEffect(() => {
-    const handleScroll = () => {
-      // On landing page: show footer as soon as user starts scrolling
-      if (messages.length === 0) {
-        if (window.scrollY > 10) {
-          setShowFooter(true)
-        } else {
-          setShowFooter(false)
-        }
-      }
-    }
-
-    // Always show footer when there are messages (chat has started)
-    if (messages.length > 0) {
-      setShowFooter(true)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [messages.length])
 
   // Fetch available projects
   const { data: projectsData } = useQuery({
@@ -458,11 +271,30 @@ function ChatInterface() {
       if (data?.data?.conversation_state) {
         setConversationState(data.data.conversation_state)
       }
-      // Backend now handles aggregation with Noisy OR and provides confidence labels
+      // Safely handle sources with null checking
       const sources = data?.data?.sources || []
 
-      // Filter out invalid sources (sources are already aggregated and deduplicated by backend)
-      const validSources = sources.filter(source => source && source.file_path)
+      // Deduplicate sources by file_path, keeping highest score and counting matches
+      const sourcesByPath = {}
+
+      sources.forEach(source => {
+        if (!source || !source.file_path) return // Skip invalid sources
+
+        if (!sourcesByPath[source.file_path]) {
+          sourcesByPath[source.file_path] = {
+            ...source,
+            matchCount: 1
+          }
+        } else {
+          sourcesByPath[source.file_path].matchCount++
+          // Keep the highest score
+          if (source.score > sourcesByPath[source.file_path].score) {
+            sourcesByPath[source.file_path].score = source.score
+          }
+        }
+      })
+
+      const uniqueSources = Object.values(sourcesByPath)
 
       const rawResponse = data?.data?.response || 'No response received'
       const entityHighlighted = highlightEntities(rawResponse)
@@ -472,7 +304,7 @@ function ChatInterface() {
         type: 'assistant',
         content: rawResponse,
         formattedContent: styledResponse,
-        sources: validSources,
+        sources: uniqueSources,
         metadata: data?.data?.metadata || {},
         suggestedQuestions: data?.data?.suggested_questions || [],
         timestamp: new Date(),
@@ -583,7 +415,7 @@ function ChatInterface() {
     const msg = messages[messageIdx]
     if (!msg) return
 
-    const shareText = `Question: ${msg.query}\n\nAnswer:\n${msg.content}\n\nSources:\n${msg.sources.map(s => `- ${s.file_path} (Confidence: ${s.confidence_label || 'Medium'})${s.chunk_count > 1 ? ` - ${s.chunk_count} chunks` : ''}`).join('\n')}`
+    const shareText = `Question: ${msg.query}\n\nAnswer:\n${msg.content}\n\nSources:\n${msg.sources.map(s => `- ${s.file_path} (${(s.score * 100).toFixed(0)}%)`).join('\n')}`
 
     try {
       await navigator.clipboard.writeText(shareText)
@@ -598,7 +430,7 @@ function ChatInterface() {
     const msg = messages[messageIdx]
     if (!msg) return
 
-    const markdown = `# Question\n${msg.query}\n\n## Answer\n${msg.content}\n\n## Sources\n${msg.sources.map(s => `- **${s.file_path}** (Confidence: ${s.confidence_label || 'Medium'})${s.chunk_count > 1 ? ` - ${s.chunk_count} chunks` : ''}`).join('\n')}\n\n---\nGenerated by RepoWise\n${new Date().toLocaleString()}`
+    const markdown = `# Question\n${msg.query}\n\n## Answer\n${msg.content}\n\n## Sources\n${msg.sources.map(s => `- **${s.file_path}** (Relevance: ${(s.score * 100).toFixed(0)}%)${s.matchCount > 1 ? ` - ${s.matchCount} matches` : ''}`).join('\n')}\n\n---\nGenerated by RepoWise\n${new Date().toLocaleString()}`
 
     const blob = new Blob([markdown], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
@@ -655,7 +487,6 @@ function ChatInterface() {
     setEditingMessageId(null)
     setEditedQuery('')
   }
-
 
   // Generate dynamic related questions based on conversation context
   const getRelatedQuestions = () => {
@@ -753,11 +584,10 @@ function ChatInterface() {
     const queryLower = query.toLowerCase()
 
     // Determine query type for context-aware messages
-    const isProjectDoc = queryLower.includes('maintain') || queryLower.includes('contribut') ||
+    const isGovernance = queryLower.includes('maintain') || queryLower.includes('contribut') ||
                          queryLower.includes('pull request') || queryLower.includes('security') ||
                          queryLower.includes('vote') || queryLower.includes('decision') ||
-                         queryLower.includes('governance') || queryLower.includes('license') ||
-                         queryLower.includes('readme') || queryLower.includes('documentation')
+                         queryLower.includes('governance') || queryLower.includes('license')
 
     const isCommits = queryLower.includes('commit') || queryLower.includes('contributor') ||
                       queryLower.includes('author') || queryLower.includes('code') ||
@@ -768,12 +598,12 @@ function ChatInterface() {
                      queryLower.includes('closed') || queryLower.includes('report')
 
     // Context-specific loading stages
-    if (isProjectDoc) {
+    if (isGovernance) {
       return [
-        { icon: Search, text: "Searching project documentation...", color: "text-blue-400" },
-        { icon: FileText, text: "Reading project documents...", color: "text-purple-400" },
-        { icon: Shield, text: "Analyzing project content...", color: "text-emerald-400" },
-        { icon: Sparkles, text: "Synthesizing insights...", color: "text-amber-400" }
+        { icon: Search, text: "Searching governance documents...", color: "text-blue-400" },
+        { icon: FileText, text: "Reading CONTRIBUTING.md and CODE_OF_CONDUCT.md...", color: "text-purple-400" },
+        { icon: Shield, text: "Analyzing project policies...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Synthesizing governance insights...", color: "text-amber-400" }
       ]
     } else if (isCommits) {
       return [
@@ -830,15 +660,15 @@ function ChatInterface() {
     <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-2 sm:gap-4">
-            <div className="flex items-center space-x-2 sm:space-x-6">
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="p-1.5 sm:p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg">
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg">
+                  <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-base sm:text-lg font-semibold dark:text-white text-gray-900">
+                  <h1 className="text-lg font-semibold dark:text-white text-gray-900">
                     RepoWise
                   </h1>
                 </div>
@@ -871,9 +701,8 @@ function ChatInterface() {
               </div> */}
             </div>
 
-            <div className="flex items-center gap-1.5 sm:gap-3 flex-1 justify-end">
-              {/* Desktop: Inline form */}
-              <form onSubmit={handleAddRepository} className="hidden md:flex gap-2 flex-1 max-w-2xl">
+            <div className="flex items-center gap-3 flex-1 justify-end">
+              <form onSubmit={handleAddRepository} className="flex gap-2 flex-1 max-w-2xl">
                 <div className="relative flex-1">
                   {/* Animated wave border wrapper */}
                   {availableProjects.length === 0 && !isRepoLocked && (
@@ -920,7 +749,7 @@ function ChatInterface() {
                 <button
                   type="submit"
                   disabled={(!githubUrl.trim() && !isRepoLocked) || addRepoMutation.isPending}
-                  className={`px-3 sm:px-5 py-2.5 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2 text-sm font-semibold shadow-lg hover:-translate-y-0.5 flex-shrink-0 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-emerald-500/20 hover:shadow-emerald-500/30 ${
+                  className={`px-5 py-2.5 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2 text-sm font-semibold shadow-lg hover:-translate-y-0.5 flex-shrink-0 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-emerald-500/20 hover:shadow-emerald-500/30 ${
                     isRepoLocked ? 'animate-shimmer' : ''
                   }`}
                   style={isRepoLocked ? {
@@ -931,12 +760,12 @@ function ChatInterface() {
                   {isRepoLocked ? (
                     <>
                       <RefreshCw className="w-4 h-4" />
-                      <span className="hidden lg:inline">Change Repo</span>
+                      Change Repo
                     </>
                   ) : (
                     <>
                       <Github className="w-4 h-4" />
-                      <span className="hidden lg:inline">Add Repo</span>
+                      Add Repo
                     </>
                   )}
                 </button>
@@ -944,11 +773,11 @@ function ChatInterface() {
 
               {/* Project Selector Dropdown */}
               {availableProjects.length > 0 && (
-                <div className="relative min-w-[140px] sm:min-w-[220px]">
+                <div className="relative min-w-[220px]">
                   <select
                     value={selectedProject || ''}
                     onChange={handleProjectSelect}
-                    className="w-full pl-3 sm:pl-4 pr-8 sm:pr-10 py-2 sm:py-2.5 bg-gray-900/50 border border-gray-800 dark:bg-gray-900/50 dark:border-gray-800 bg-white/50 border-gray-200 rounded-xl text-xs sm:text-sm dark:text-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all appearance-none cursor-pointer font-medium"
+                    className="w-full pl-4 pr-10 py-2.5 bg-gray-900/50 border border-gray-800 dark:bg-gray-900/50 dark:border-gray-800 bg-white/50 border-gray-200 rounded-xl text-sm dark:text-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all appearance-none cursor-pointer font-medium"
                   >
                     <option value="" disabled>Select a project</option>
                     {availableProjects.map((project) => (
@@ -957,21 +786,19 @@ function ChatInterface() {
                       </option>
                     ))}
                   </select>
-                  <Github className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-emerald-500 pointer-events-none" />
+                  <Github className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500 pointer-events-none" />
                 </div>
               )}
 
               {/* Theme Toggle */}
-              <div className="hidden sm:block">
-                <ThemeToggle />
-              </div>
+              <ThemeToggle />
 
               {/* Authentication Status */}
               {isAuthenticated && user ? (
-                <div ref={profileMenuRef} className="relative pl-2 sm:pl-3 border-l dark:border-gray-700 border-gray-200">
+                <div ref={profileMenuRef} className="relative pl-3 border-l dark:border-gray-700 border-gray-200">
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full
+                    className="w-10 h-10 rounded-full
                              dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600
                              bg-gray-200 hover:bg-gray-300 border-2 border-gray-300
                              flex items-center justify-center
@@ -979,7 +806,7 @@ function ChatInterface() {
                              hover:scale-105"
                     title={`${user.first_name} ${user.last_name}`}
                   >
-                    <span className="text-xs sm:text-sm font-semibold dark:text-gray-200 text-gray-700">
+                    <span className="text-sm font-semibold dark:text-gray-200 text-gray-700">
                       {user.first_name?.[0]}{user.last_name?.[0]}
                     </span>
                   </button>
@@ -1009,89 +836,25 @@ function ChatInterface() {
                   )}
                 </div>
               ) : (
-                <div className="pl-2 sm:pl-3 border-l dark:border-gray-700 border-gray-200">
+                <div className="pl-3 border-l dark:border-gray-700 border-gray-200">
                   <button
                     onClick={() => navigate('/auth')}
-                    className="flex items-center gap-1 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5
+                    className="flex items-center gap-2 px-5 py-2.5
                              border border-gray-300 dark:border-gray-600
                              text-gray-700 dark:text-gray-300
                              hover:border-emerald-500 hover:text-emerald-600
                              dark:hover:border-emerald-400 dark:hover:text-emerald-400
                              hover:bg-emerald-500/5 dark:hover:bg-emerald-500/10
                              rounded-xl transition-all duration-200
-                             text-xs sm:text-sm font-medium hover:-translate-y-0.5"
+                             text-sm font-medium hover:-translate-y-0.5"
                   >
-                    <UserCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Login</span>
+                    <UserCircle className="w-4 h-4" />
+                    Login
                   </button>
                 </div>
               )}
             </div>
           </div>
-
-          {/* Mobile: Full-width form below navbar */}
-          <form onSubmit={handleAddRepository} className="md:hidden mt-3 flex gap-2">
-            <div className="relative flex-1">
-              {/* Animated wave border wrapper for mobile */}
-              {availableProjects.length === 0 && !isRepoLocked && (
-                <motion.div
-                  className="absolute inset-0 rounded-xl"
-                  style={{
-                    background: 'linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.3) 25%, rgba(16, 185, 129, 0.8) 50%, rgba(16, 185, 129, 0.3) 75%, transparent 100%)',
-                    backgroundSize: '200% 100%',
-                    padding: '2px',
-                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                    WebkitMaskComposite: 'xor',
-                    maskComposite: 'exclude',
-                    filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))',
-                  }}
-                  animate={{
-                    backgroundPosition: ['0% 0%', '200% 0%'],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: 'linear',
-                  }}
-                />
-              )}
-
-              <div className="relative">
-                <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10" />
-                <input
-                  type="text"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
-                  placeholder="github.com/owner/repo"
-                  disabled={isRepoLocked}
-                  className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all ${
-                    isRepoLocked
-                      ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-800/70 dark:border-gray-700 dark:text-gray-400'
-                      : availableProjects.length === 0
-                      ? 'bg-white/50 border-emerald-500/40 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-emerald-400/30 dark:text-white dark:placeholder-gray-400'
-                      : 'bg-white/50 border-gray-200 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-gray-800 dark:text-white dark:placeholder-gray-400'
-                  }`}
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              disabled={(!githubUrl.trim() && !isRepoLocked) || addRepoMutation.isPending}
-              className={`px-4 py-2.5 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2 text-sm font-semibold shadow-lg flex-shrink-0 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-emerald-500/20 ${
-                isRepoLocked ? 'animate-shimmer' : ''
-              }`}
-              style={isRepoLocked ? {
-                backgroundSize: '200% 100%',
-                animation: 'shimmer 1s ease-in-out'
-              } : {}}
-            >
-              {isRepoLocked ? (
-                <RefreshCw className="w-4 h-4" />
-              ) : (
-                <Plus className="w-5 h-5" />
-              )}
-            </button>
-          </form>
 
           {/* Indexing Status */}
           {indexingStatus && (
@@ -1189,15 +952,15 @@ function ChatInterface() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="text-center py-8"
+                className="text-center py-16"
               >
-                <div className="inline-flex p-5 bg-gradient-to-br from-emerald-500/10 to-teal-600/10 rounded-2xl border border-emerald-500/20 mb-4">
-                  <Sparkles className="w-12 h-12 text-emerald-500" />
+                <div className="inline-flex p-6 bg-gradient-to-br from-emerald-500/10 to-teal-600/10 rounded-2xl border border-emerald-500/20 mb-8">
+                  <Sparkles className="w-16 h-16 text-emerald-500" />
                 </div>
-                <h2 className="text-xl font-medium dark:text-gray-400 text-gray-500 mb-8">
+                <h2 className="text-3xl font-bold dark:text-white text-gray-900 mb-4">
                   Where OSS exploration begins!
                 </h2>
-                <p className="text-base dark:text-gray-400 text-gray-600 max-w-2xl mx-auto mb-8">
+                <p className="text-lg dark:text-gray-400 text-gray-600 max-w-2xl mx-auto mb-12">
                   {isAuthenticated && user ? (
                     selectedProject
                       ? `Hi ${user.first_name}, ask anything about this project's governance, contribution guidelines, commit, or issue tracking.`
@@ -1210,11 +973,12 @@ function ChatInterface() {
                 </p>
 
                 {!selectedProject && (
-                  <div className="max-w-6xl mx-auto">
-                    <h3 className="text-sm font-medium dark:text-gray-400 text-gray-500 text-center mb-4">
-                      Featured Repositories
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="max-w-4xl mx-auto mb-12">
+                    <div className="flex items-center justify-center gap-2 text-sm font-medium dark:text-emerald-300 text-emerald-700 mb-4">
+                      <Sparkles className="w-4 h-4" />
+                      Try a curated open-source repository
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {EXAMPLE_REPOSITORIES.map((repo, idx) => (
                         <motion.button
                           key={repo.url}
@@ -1224,32 +988,37 @@ function ChatInterface() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.05 }}
-                          className="relative text-left w-full p-4 rounded-xl border h-44 flex flex-col
-                                     dark:bg-gray-900/60 dark:border-gray-800 dark:hover:border-emerald-500 dark:hover:bg-gray-900
-                                     bg-white border-gray-200 hover:border-emerald-500 hover:bg-emerald-50/30
-                                     hover:scale-[1.02] hover:shadow-lg transition-all group disabled:opacity-60 cursor-pointer"
+                          className="text-left w-full p-5 rounded-2xl border
+                                     dark:bg-gray-900/60 dark:border-gray-800 dark:hover:border-emerald-500/60 dark:hover:bg-gray-900
+                                     bg-white border-gray-200 hover:border-emerald-500/60 hover:bg-emerald-50/30
+                                     transition-all group disabled:opacity-60"
                         >
-                          <h3 className="text-sm font-semibold dark:text-white text-gray-900 mb-2">{repo.name}</h3>
-                          <p className="text-xs dark:text-gray-400 text-gray-600 mb-2 line-clamp-3 flex-1">{repo.description}</p>
-                          <div className="flex flex-wrap gap-1.5 mb-1">
-                            {repo.highlights.slice(0, 2).map(highlight => (
+                          <div className="flex items-start justify-between gap-3 mb-3">
+                            <div>
+                              <p className="text-xs uppercase tracking-wide text-emerald-500 font-semibold mb-1">Featured repo</p>
+                              <h3 className="text-lg font-semibold dark:text-white text-gray-900">{repo.name}</h3>
+                            </div>
+                            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
+                              <Link2 className="w-4 h-4" />
+                            </div>
+                          </div>
+                          <p className="text-sm dark:text-gray-400 text-gray-600 mb-4">{repo.description}</p>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {repo.highlights.map(highlight => (
                               <span
                                 key={highlight}
-                                className="px-2 py-0.5 rounded-md text-xs font-medium
-                                           dark:bg-gray-800/80 dark:text-gray-300
-                                           bg-gray-100 text-gray-600"
+                                className="px-2.5 py-1 rounded-full text-xs font-medium
+                                           dark:bg-gray-800/80 dark:text-gray-200
+                                           bg-gray-100 text-gray-700"
                               >
                                 {highlight}
                               </span>
                             ))}
                           </div>
-                          {/* Hover action indicator */}
-                          <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span className="text-xs font-medium text-emerald-500 flex items-center gap-1">
-                              <span>+ Add</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </span>
-                          </div>
+                          {/* <div className="flex items-center gap-2 text-sm font-semibold text-emerald-500 group-hover:gap-3 transition-all">
+                            Launch example
+                            <Sparkles className="w-4 h-4" />
+                          </div> */}
                         </motion.button>
                       ))}
                     </div>
@@ -1387,147 +1156,84 @@ function ChatInterface() {
                             rehypePlugins={[rehypeRaw, rehypeHighlight]}
                             components={{
                               p: ({ children }) => (
-                                <p className="text-base dark:text-gray-300 text-gray-800 mb-5 leading-relaxed" style={{ lineHeight: '1.75' }}>{children}</p>
-                              ),
-                              a: ({ children, href }) => (
-                                <a
-                                  href={href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline decoration-blue-600/40 hover:decoration-blue-600/80 dark:decoration-blue-400/40 dark:hover:decoration-blue-400/80 decoration-1 underline-offset-2 transition-all duration-200 font-medium"
-                                >
-                                  {children}
-                                </a>
+                                <p className="text-base dark:text-gray-300 text-gray-700 mb-4" style={{ lineHeight: '1.7' }}>{children}</p>
                               ),
                               h1: ({ children }) => (
-                                <h1 className="text-3xl font-bold dark:text-white text-gray-900 mb-6 mt-2">{children}</h1>
+                                <h1 className="text-3xl font-bold dark:text-white text-gray-900 mb-6">{children}</h1>
                               ),
                               h2: ({ children }) => (
-                                <h2 className="text-2xl font-bold dark:text-white text-gray-900 mb-5 mt-8">{children}</h2>
+                                <h2 className="text-2xl font-bold dark:text-white text-gray-900 mb-4 mt-8">{children}</h2>
                               ),
                               h3: ({ children }) => (
-                                <h3 className="text-xl font-semibold dark:text-white text-gray-900 mb-4 mt-6">{children}</h3>
+                                <h3 className="text-xl font-semibold dark:text-white text-gray-900 mb-3 mt-6">{children}</h3>
                               ),
                               ul: ({ children }) => (
-                                <ul className="space-y-2.5 mb-5 pl-6 list-disc marker:text-emerald-500 dark:marker:text-emerald-400">{children}</ul>
-                              ),
-                              ol: ({ children }) => (
-                                <ol className="space-y-2.5 mb-5 pl-6 list-decimal marker:text-emerald-500 dark:marker:text-emerald-400">{children}</ol>
+                                <ul className="space-y-2 mb-4">{children}</ul>
                               ),
                               li: ({ children }) => (
-                                <li className="dark:text-gray-300 text-gray-800 leading-relaxed pl-2">{children}</li>
+                                <li className="dark:text-gray-300 text-gray-700 leading-relaxed">{children}</li>
                               ),
                               code: ({ node, inline, children, ...props }) => {
                                 if (inline) {
                                   return (
-                                    <code className="px-2 py-0.5 dark:bg-gray-800/80 dark:text-emerald-400 bg-emerald-50 text-emerald-700 rounded-md text-[0.9em] font-mono border dark:border-gray-700/50 border-emerald-200/50" {...props}>
+                                    <code className="px-1.5 py-0.5 dark:bg-gray-800 dark:text-emerald-400 bg-emerald-50 text-emerald-700 rounded text-sm font-mono" {...props}>
                                       {children}
                                     </code>
                                   )
                                 }
                                 return (
-                                  <code className="block dark:bg-gray-900/50 dark:text-gray-300 bg-gray-50 text-gray-800 p-4 rounded-lg overflow-x-auto text-sm font-mono border dark:border-gray-800 border-gray-200 my-4" {...props}>
+                                  <code className="block dark:bg-gray-900 dark:text-gray-300 bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto text-sm" {...props}>
                                     {children}
                                   </code>
                                 )
                               },
                               blockquote: ({ children }) => (
-                                <blockquote className="border-l-4 border-emerald-500 dark:border-emerald-400 pl-4 py-2 italic dark:text-gray-400 text-gray-600 my-5 dark:bg-gray-900/30 bg-gray-50/50 rounded-r-lg">
+                                <blockquote className="border-l-4 border-emerald-500 pl-4 italic dark:text-gray-400 text-gray-600 my-4">
                                   {children}
                                 </blockquote>
                               ),
-                              strong: ({ children }) => (
-                                <strong className="font-semibold dark:text-white text-gray-900">{children}</strong>
-                              ),
-                              em: ({ children }) => (
-                                <em className="italic dark:text-gray-300 text-gray-700">{children}</em>
-                              ),
                             }}
                           >
-                            {enhanceMarkdownContent(msg.formattedContent || msg.content)}
+                            {msg.formattedContent || msg.content}
                           </ReactMarkdown>
                         </div>
 
                         {/* Source Cards */}
                         {msg.sources && msg.sources.length > 0 && (
                           <div className="space-y-3">
-                            <div className="flex items-center space-x-2 text-sm dark:text-gray-500 text-gray-600 flex-wrap">
+                            <div className="flex items-center space-x-2 text-sm dark:text-gray-500 text-gray-600">
                               <FileText className="w-4 h-4" />
                               <span className="font-medium">Sources</span>
                               <span className="dark:text-gray-600 text-gray-400">·</span>
                               <span>{msg.sources.length} {msg.sources.length === 1 ? 'document' : 'documents'}</span>
-
-                              {/* Inline Confidence Indicator */}
-                              {msg.metadata?.answer_confidence !== undefined && (() => {
-                                const conf = msg.metadata.answer_confidence
-                                const level = conf >= 0.8 ? 'high' : conf >= 0.5 ? 'moderate' : 'limited'
-                                const config = {
-                                  high: {
-                                    bg: 'bg-emerald-500/10 dark:bg-emerald-500/10',
-                                    text: 'text-emerald-600 dark:text-emerald-400',
-                                    border: 'border border-emerald-500/20',
-                                    icon: CheckCircle,
-                                    tooltip: 'Well-supported by authoritative sources'
-                                  },
-                                  moderate: {
-                                    bg: 'bg-amber-500/10 dark:bg-amber-500/10',
-                                    text: 'text-amber-600 dark:text-amber-400',
-                                    border: 'border border-amber-500/20',
-                                    icon: AlertCircle,
-                                    tooltip: 'Based on available sources, may benefit from verification'
-                                  },
-                                  limited: {
-                                    bg: 'bg-gray-500/10 dark:bg-gray-500/10',
-                                    text: 'text-gray-600 dark:text-gray-400',
-                                    border: 'border border-gray-500/20',
-                                    icon: HelpCircle,
-                                    tooltip: 'Limited sources found, consider rephrasing query'
-                                  }
-                                }
-                                const { bg, text, border, icon: Icon, tooltip } = config[level]
-                                const labels = { high: 'High', moderate: 'Moderate', limited: 'Limited' }
-
-                                return (
-                                  <>
-                                    <span className="dark:text-gray-600 text-gray-400">·</span>
-                                    <div
-                                      className={`group relative flex items-center gap-1 px-2 py-0.5 rounded ${bg} ${border}`}
-                                      title={tooltip}
-                                    >
-                                      <Icon className={`w-3 h-3 ${text}`} />
-                                      <span className={`text-xs font-medium ${text}`}>
-                                        {labels[level]} Confidence
-                                      </span>
-                                    </div>
-                                  </>
-                                )
-                              })()}
                             </div>
-                            <div className="grid grid-cols-1 gap-2">
+                            <div className="grid grid-cols-1 gap-3">
                               {msg.sources.map((source, i) => {
-                                // Get confidence styles based on confidence label from backend
-                                const getConfidenceBorderColor = (label) => {
-                                  switch (label) {
-                                    case 'Very High': return 'border-emerald-500/20'
-                                    case 'High': return 'border-blue-500/20'
-                                    case 'Medium': return 'border-amber-500/20'
-                                    case 'Low': return 'border-red-500/20'
-                                    default: return 'border-gray-500/20'
+                                const relevanceScore = (source.score * 100).toFixed(0)
+                                const scoreColor = relevanceScore >= 70 ? 'emerald' : relevanceScore >= 40 ? 'blue' : 'amber'
+
+                                // Color class mappings for Tailwind purge
+                                const colorClasses = {
+                                  emerald: {
+                                    bg: 'bg-emerald-500/10',
+                                    border: 'border-emerald-500/20',
+                                    gradient: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
+                                    text: 'text-emerald-600 dark:text-emerald-400'
+                                  },
+                                  blue: {
+                                    bg: 'bg-blue-500/10',
+                                    border: 'border-blue-500/20',
+                                    gradient: 'bg-gradient-to-r from-blue-500 to-blue-600',
+                                    text: 'text-blue-600 dark:text-blue-400'
+                                  },
+                                  amber: {
+                                    bg: 'bg-amber-500/10',
+                                    border: 'border-amber-500/20',
+                                    gradient: 'bg-gradient-to-r from-amber-500 to-amber-600',
+                                    text: 'text-amber-600 dark:text-amber-400'
                                   }
                                 }
-
-                                const getConfidenceBg = (label) => {
-                                  switch (label) {
-                                    case 'Very High': return 'bg-emerald-500/10'
-                                    case 'High': return 'bg-blue-500/10'
-                                    case 'Medium': return 'bg-amber-500/10'
-                                    case 'Low': return 'bg-red-500/10'
-                                    default: return 'bg-gray-500/10'
-                                  }
-                                }
-
-                                const borderColor = getConfidenceBorderColor(source.confidence_label)
-                                const bgColor = getConfidenceBg(source.confidence_label)
+                                const colors = colorClasses[scoreColor]
 
                                 return (
                                   <motion.div
@@ -1535,40 +1241,64 @@ function ChatInterface() {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className={`flex items-center gap-3 p-2.5 rounded-lg transition-all cursor-pointer
-                                             dark:bg-gray-900/30 dark:hover:bg-gray-800/50 dark:border-gray-800/50 dark:hover:border-gray-700
-                                             bg-gray-50/50 hover:bg-gray-100/80 border border-gray-200/50 hover:border-gray-300
-                                             ${i === 0 ? 'border-l-2 !border-l-emerald-500 dark:bg-emerald-950/5' : ''}`}
+                                    className="flex items-start space-x-4 p-4
+                                             dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                             bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-gray-300
+                                             rounded-xl transition-all"
                                   >
-                                    <div className={`flex-shrink-0 p-1.5 ${bgColor} rounded border ${borderColor}`}>
+                                    <div className={`flex-shrink-0 p-2 ${colors.bg} rounded-lg border ${colors.border}`}>
                                       {getSourceIcon(source.file_type)}
                                     </div>
-                                    <div className="flex-1 min-w-0 flex items-center gap-2">
-                                      <div className="flex-1 min-w-0">
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center space-x-2 mb-1">
                                         <h4 className="text-sm font-medium dark:text-white text-gray-900 truncate">
                                           {source.file_path.split('/').pop()}
                                         </h4>
-                                        <p className="text-xs dark:text-gray-500 text-gray-600 truncate mt-0.5">
-                                          {source.file_path}
-                                        </p>
                                       </div>
-                                      <div className="flex items-center gap-1.5 flex-shrink-0">
-                                        {/* Primary source badge for first source */}
-                                        {i === 0 && (
-                                          <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded text-[10px] font-medium whitespace-nowrap">
-                                            Primary
+                                      <p className="text-xs dark:text-gray-500 text-gray-600 truncate">
+                                        {source.file_path}
+                                      </p>
+                                      <div className="flex items-center space-x-3 mt-2">
+                                        <div className="flex items-center space-x-1.5">
+                                          <div className="h-1.5 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden w-16">
+                                            <div
+                                              className={`h-full ${colors.gradient}`}
+                                              style={{ width: `${relevanceScore}%` }}
+                                            />
+                                          </div>
+                                          <span className={`text-xs font-medium ${colors.text}`}>
+                                            <span
+                                              className="tooltip-target"
+                                              aria-label="Relevance percentage"
+                                            >
+                                              {relevanceScore}%
+                                              <span className="tooltip">
+                                                The relevance score represented as a percentage. Higher values indicate
+                                                stronger alignment with your query.
+                                              </span>
+                                            </span>
+                                          </span>
+                                        </div>
+                                        {source.matchCount && source.matchCount > 1 && (
+                                          <span className="text-xs dark:text-emerald-400 text-emerald-600 font-medium">
+                                            (
+                                              {source.matchCount}{' '}
+                                              <span
+                                                className="tooltip-target"
+                                                aria-label="Matches tooltip"
+                                              >
+                                                {source.matchCount === 1 ? 'match' : 'matches'}
+                                                <span className="tooltip">
+                                                  The number of retrieved items (files, commits, metadata, or signals)
+                                                  that matched your query or context.
+                                                </span>
+                                              </span>
+                                            )
                                           </span>
                                         )}
-                                        {/* File type badge */}
                                         {source.file_type && (
-                                          <span className="px-1.5 py-0.5 dark:bg-gray-800/50 dark:text-gray-400 bg-gray-200/50 text-gray-700 rounded text-[10px] capitalize font-medium whitespace-nowrap">
+                                          <span className="px-2 py-0.5 dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-700 rounded text-xs capitalize font-medium">
                                             {source.file_type.replace('_', ' ')}
-                                          </span>
-                                        )}
-                                        {/* Chunk count (only if > 1) */}
-                                        {source.chunk_count && source.chunk_count > 1 && (
-                                          <span className="text-[10px] dark:text-gray-500 text-gray-600 whitespace-nowrap">
-                                            {source.chunk_count} {source.chunk_count === 1 ? 'section' : 'sections'}
                                           </span>
                                         )}
                                       </div>
@@ -1581,60 +1311,51 @@ function ChatInterface() {
                         )}
 
                         {/* Action Buttons */}
-                        <div className="flex items-center gap-1 pt-3 border-t dark:border-gray-800/50 border-gray-200/50">
+                        <div className="flex items-center space-x-2 pt-4 border-t dark:border-gray-800 border-gray-200">
                           <button
                             onClick={() => handleShare(idx)}
-                            data-tooltip={copiedMessageId === idx ? "Copied!" : "Copy"}
-                            className="group relative p-2 rounded-lg transition-all
-                                     dark:hover:bg-gray-800/50 hover:bg-gray-100
-                                     dark:text-gray-500 dark:hover:text-gray-300
-                                     text-gray-500 hover:text-gray-700"
+                            className="flex items-center space-x-2 px-4 py-2
+                                     dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                     bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400
+                                     rounded-lg transition-all text-sm
+                                     dark:text-gray-400 dark:hover:text-gray-300 text-gray-700 hover:text-gray-900"
                           >
                             {copiedMessageId === idx ? (
-                              <Check className="w-4 h-4 dark:text-emerald-400 text-emerald-600" />
+                              <>
+                                <Check className="w-4 h-4 dark:text-emerald-400 text-emerald-600" />
+                                <span className="dark:text-emerald-400 text-emerald-600">Copied!</span>
+                              </>
                             ) : (
-                              <Copy className="w-4 h-4" />
+                              <>
+                                <Copy className="w-4 h-4" />
+                                <span>Copy</span>
+                              </>
                             )}
-                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium
-                                           dark:bg-gray-900 bg-gray-800 text-white rounded
-                                           opacity-0 group-hover:opacity-100 pointer-events-none
-                                           transition-opacity duration-200 whitespace-nowrap">
-                              {copiedMessageId === idx ? "Copied!" : "Copy"}
-                            </span>
                           </button>
                           <button
                             onClick={() => handleExport(idx)}
-                            data-tooltip="Download"
-                            className="group relative p-2 rounded-lg transition-all
-                                     dark:hover:bg-gray-800/50 hover:bg-gray-100
-                                     dark:text-gray-500 dark:hover:text-gray-300
-                                     text-gray-500 hover:text-gray-700"
+                            className="flex items-center space-x-2 px-4 py-2
+                                     dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                     bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400
+                                     rounded-lg transition-all text-sm
+                                     dark:text-gray-400 dark:hover:text-gray-300 text-gray-700 hover:text-gray-900"
                           >
                             <Download className="w-4 h-4" />
-                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium
-                                           dark:bg-gray-900 bg-gray-800 text-white rounded
-                                           opacity-0 group-hover:opacity-100 pointer-events-none
-                                           transition-opacity duration-200 whitespace-nowrap">
-                              Download
-                            </span>
+                            <span>Download</span>
                           </button>
                           <button
                             onClick={() => handleEdit(idx)}
                             disabled={editingMessageId !== null && editingMessageId !== idx - 1}
-                            data-tooltip="Edit"
-                            className="group relative p-2 rounded-lg transition-all
-                                     dark:hover:bg-gray-800/50 hover:bg-gray-100
-                                     dark:text-gray-500 dark:hover:text-gray-300
-                                     text-gray-500 hover:text-gray-700
-                                     disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                            className="flex items-center space-x-2 px-4 py-2
+                                     dark:bg-gray-900/50 dark:hover:bg-gray-800/50 dark:border-gray-800 dark:hover:border-gray-700
+                                     bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400
+                                     rounded-lg transition-all text-sm
+                                     dark:text-gray-400 dark:hover:text-gray-300
+                                     text-gray-700 hover:text-gray-900
+                                     disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <Pencil className="w-4 h-4" />
-                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium
-                                           dark:bg-gray-900 bg-gray-800 text-white rounded
-                                           opacity-0 group-hover:opacity-100 pointer-events-none
-                                           transition-opacity duration-200 whitespace-nowrap">
-                              Edit
-                            </span>
+                            <span>Edit</span>
                           </button>
                         </div>
 
@@ -1676,122 +1397,95 @@ function ChatInterface() {
 
                     {/* Sources Tab */}
                     {(activeTabs[idx] || 'answer') === 'sources' && msg.sources && (
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2 text-sm dark:text-gray-500 text-gray-600 flex-wrap">
-                          <span>
-                            {msg.sources.length} source {msg.sources.length === 1 ? 'document' : 'documents'} referenced
-                          </span>
-
-                          {/* Inline Confidence Indicator */}
-                          {msg.metadata?.answer_confidence !== undefined && (() => {
-                            const conf = msg.metadata.answer_confidence
-                            const level = conf >= 0.8 ? 'high' : conf >= 0.5 ? 'moderate' : 'limited'
-                            const config = {
-                              high: {
-                                bg: 'bg-emerald-500/10 dark:bg-emerald-500/10',
-                                text: 'text-emerald-600 dark:text-emerald-400',
-                                border: 'border border-emerald-500/20',
-                                icon: CheckCircle,
-                                tooltip: 'Well-supported by authoritative sources'
-                              },
-                              moderate: {
-                                bg: 'bg-amber-500/10 dark:bg-amber-500/10',
-                                text: 'text-amber-600 dark:text-amber-400',
-                                border: 'border border-amber-500/20',
-                                icon: AlertCircle,
-                                tooltip: 'Based on available sources, may benefit from verification'
-                              },
-                              limited: {
-                                bg: 'bg-gray-500/10 dark:bg-gray-500/10',
-                                text: 'text-gray-600 dark:text-gray-400',
-                                border: 'border border-gray-500/20',
-                                icon: HelpCircle,
-                                tooltip: 'Limited sources found, consider rephrasing query'
-                              }
-                            }
-                            const { bg, text, border, icon: Icon, tooltip } = config[level]
-                            const labels = { high: 'High', moderate: 'Moderate', limited: 'Limited' }
-
-                            return (
-                              <>
-                                <span className="dark:text-gray-600 text-gray-400">·</span>
-                                <div
-                                  className={`group relative flex items-center gap-1 px-2 py-0.5 rounded ${bg} ${border}`}
-                                  title={tooltip}
-                                >
-                                  <Icon className={`w-3 h-3 ${text}`} />
-                                  <span className={`text-xs font-medium ${text}`}>
-                                    {labels[level]} Confidence
-                                  </span>
-                                </div>
-                              </>
-                            )
-                          })()}
-                        </div>
+                      <div className="space-y-3">
+                        <p className="text-sm dark:text-gray-500 text-gray-600">
+                          {msg.sources.length} source {msg.sources.length === 1 ? 'document' : 'documents'} referenced
+                        </p>
                         {msg.sources.map((source, i) => {
-                          // Get confidence styles based on confidence label from backend
-                          const getConfidenceBorderColor = (label) => {
-                            switch (label) {
-                              case 'Very High': return 'border-emerald-500/20'
-                              case 'High': return 'border-blue-500/20'
-                              case 'Medium': return 'border-amber-500/20'
-                              case 'Low': return 'border-red-500/20'
-                              default: return 'border-gray-500/20'
+                          const relevanceScore = (source.score * 100).toFixed(0)
+                          const scoreColor = relevanceScore >= 70 ? 'emerald' : relevanceScore >= 40 ? 'blue' : 'amber'
+
+                          // Color class mappings for Tailwind purge
+                          const colorClasses = {
+                            emerald: {
+                              bg: 'bg-emerald-500/10',
+                              border: 'border-emerald-500/20',
+                              gradient: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
+                              text: 'text-emerald-600 dark:text-emerald-400'
+                            },
+                            blue: {
+                              bg: 'bg-blue-500/10',
+                              border: 'border-blue-500/20',
+                              gradient: 'bg-gradient-to-r from-blue-500 to-blue-600',
+                              text: 'text-blue-600 dark:text-blue-400'
+                            },
+                            amber: {
+                              bg: 'bg-amber-500/10',
+                              border: 'border-amber-500/20',
+                              gradient: 'bg-gradient-to-r from-amber-500 to-amber-600',
+                              text: 'text-amber-600 dark:text-amber-400'
                             }
                           }
-
-                          const getConfidenceBg = (label) => {
-                            switch (label) {
-                              case 'Very High': return 'bg-emerald-500/10'
-                              case 'High': return 'bg-blue-500/10'
-                              case 'Medium': return 'bg-amber-500/10'
-                              case 'Low': return 'bg-red-500/10'
-                              default: return 'bg-gray-500/10'
-                            }
-                          }
-
-                          const borderColor = getConfidenceBorderColor(source.confidence_label)
-                          const bgColor = getConfidenceBg(source.confidence_label)
+                          const colors = colorClasses[scoreColor]
 
                           return (
                             <div
                               key={i}
-                              className={`flex items-center gap-3 p-2.5 rounded-lg transition-all cursor-pointer
-                                       dark:bg-gray-900/30 dark:hover:bg-gray-800/50 dark:border-gray-800/50 dark:hover:border-gray-700
-                                       bg-gray-50/50 hover:bg-gray-100/80 border border-gray-200/50 hover:border-gray-300
-                                       ${i === 0 ? 'border-l-2 !border-l-emerald-500 dark:bg-emerald-950/5' : ''}`}
+                              className="p-4 dark:bg-gray-900/50 dark:border-gray-800 bg-white border-2 border-gray-200 rounded-xl space-y-2"
                             >
-                              <div className={`flex-shrink-0 p-1.5 ${bgColor} rounded border ${borderColor}`}>
-                                {getSourceIcon(source.file_type)}
-                              </div>
-                              <div className="flex-1 min-w-0 flex items-center gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-medium dark:text-white text-gray-900 truncate">
+                              <div className="flex items-center space-x-3">
+                                <div className={`p-2 ${colors.bg} rounded-lg border ${colors.border}`}>
+                                  {getSourceIcon(source.file_type)}
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="text-sm font-medium dark:text-white text-gray-900">
                                     {source.file_path.split('/').pop()}
                                   </h4>
-                                  <p className="text-xs dark:text-gray-500 text-gray-600 truncate mt-0.5">
-                                    {source.file_path}
-                                  </p>
-                                </div>
-                                <div className="flex items-center gap-1.5 flex-shrink-0">
-                                  {/* Primary source badge for first source */}
-                                  {i === 0 && (
-                                    <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded text-[10px] font-medium whitespace-nowrap">
-                                      Primary
-                                    </span>
-                                  )}
-                                  {/* File type badge */}
-                                  {source.file_type && (
-                                    <span className="px-1.5 py-0.5 dark:bg-gray-800/50 dark:text-gray-400 bg-gray-200/50 text-gray-700 rounded text-[10px] capitalize font-medium whitespace-nowrap">
-                                      {source.file_type.replace('_', ' ')}
-                                    </span>
-                                  )}
-                                  {/* Chunk count (only if > 1) */}
-                                  {source.chunk_count && source.chunk_count > 1 && (
-                                    <span className="text-[10px] dark:text-gray-500 text-gray-600 whitespace-nowrap">
-                                      {source.chunk_count} {source.chunk_count === 1 ? 'section' : 'sections'}
-                                    </span>
-                                  )}
+                                  <p className="text-xs dark:text-gray-500 text-gray-600">{source.file_path}</p>
+                                  <div className="flex items-center space-x-3 mt-2">
+                                    <div className="flex items-center space-x-1.5">
+                                      <div className="h-1.5 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden w-16">
+                                        <div
+                                          className={`h-full ${colors.gradient}`}
+                                          style={{ width: `${relevanceScore}%` }}
+                                        />
+                                      </div>
+                                      <span className={`text-xs font-medium ${colors.text}`}>
+                                        <span
+                                          className="tooltip-target"
+                                          aria-label="Relevance percentage"
+                                        >
+                                          {relevanceScore}%
+                                          <span className="tooltip">
+                                            The relevance score represented as a percentage. Higher values indicate
+                                            stronger alignment with your query.
+                                          </span>
+                                        </span>
+                                      </span>
+                                    </div>
+                                    {source.matchCount && source.matchCount > 1 && (
+                                      <span className="text-xs dark:text-emerald-400 text-emerald-600 font-medium">
+                                        (
+                                          {source.matchCount}{' '}
+                                          <span
+                                            className="tooltip-target"
+                                            aria-label="Matches tooltip"
+                                          >
+                                            {source.matchCount === 1 ? 'match' : 'matches'}
+                                            <span className="tooltip">
+                                              The number of retrieved items (files, commits, metadata, or signals) that
+                                              matched your query or context.
+                                            </span>
+                                          </span>
+                                        )
+                                      </span>
+                                    )}
+                                    {source.file_type && (
+                                      <span className="px-2 py-0.5 dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-700 rounded text-xs capitalize font-medium">
+                                        {source.file_type.replace('_', ' ')}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -2033,8 +1727,7 @@ function ChatInterface() {
       </div>
       )}
 
-        {showFooter && (
-        <footer className="bg-white/80 dark:bg-[#090909]/80 border-t border-gray-200 dark:border-gray-800 transition-opacity duration-300">
+        <footer className="bg-white/80 dark:bg-[#090909]/80 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-5xl mx-auto px-6 py-6 text-center space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
           <p>
             Developed at the DECAL Lab, in the CS Department,{" "}
@@ -2100,8 +1793,7 @@ function ChatInterface() {
           </div>
         </div>
       </footer>
-        )}
-
+      
     </div>
   )
 }
