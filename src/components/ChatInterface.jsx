@@ -741,55 +741,65 @@ function ChatInterface() {
 
   const relatedQuestions = getRelatedQuestions()
 
-  // Generate dynamic loading messages based on query context
-  const getLoadingStages = (query) => {
+  // Generate dynamic loading messages based on query context and backend intent
+  const getLoadingStages = (query, intent = null) => {
+    // Prioritize backend intent over keyword matching for accuracy
+    if (intent === 'ISSUES' || intent === 'issues') {
+      return [
+        { icon: Search, text: "Scanning issue tracker...", color: "text-blue-400" },
+        { icon: AlertCircle, text: "Analyzing issues...", color: "text-purple-400" },
+        { icon: Code, text: "Processing results...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
+      ]
+    } else if (intent === 'COMMITS' || intent === 'commits') {
+      return [
+        { icon: Search, text: "Scanning commit history...", color: "text-blue-400" },
+        { icon: GitBranch, text: "Analyzing commits...", color: "text-purple-400" },
+        { icon: Code, text: "Processing results...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
+      ]
+    } else if (intent === 'PROJECT_DOC_BASED' || intent === 'project_doc_based') {
+      return [
+        { icon: Search, text: "Searching documentation...", color: "text-blue-400" },
+        { icon: FileText, text: "Reading project files...", color: "text-purple-400" },
+        { icon: Shield, text: "Analyzing content...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
+      ]
+    }
+
+    // Fallback: Use keyword matching if intent is not provided
     const queryLower = query.toLowerCase()
 
-    // Determine query type for context-aware messages
-    const isProjectDoc = queryLower.includes('maintain') || queryLower.includes('contribut') ||
-                         queryLower.includes('pull request') || queryLower.includes('security') ||
-                         queryLower.includes('vote') || queryLower.includes('decision') ||
-                         queryLower.includes('governance') || queryLower.includes('license') ||
-                         queryLower.includes('readme') || queryLower.includes('documentation')
-
     const isCommits = queryLower.includes('commit') || queryLower.includes('contributor') ||
-                      queryLower.includes('author') || queryLower.includes('code') ||
-                      queryLower.includes('file') || queryLower.includes('change')
+                      queryLower.includes('author') || queryLower.includes('code change') ||
+                      (queryLower.includes('file') && queryLower.includes('change'))
 
     const isIssues = queryLower.includes('issue') || queryLower.includes('bug') ||
-                     queryLower.includes('ticket') || queryLower.includes('open') ||
-                     queryLower.includes('closed') || queryLower.includes('report')
+                     queryLower.includes('ticket') ||
+                     (queryLower.includes('open') && queryLower.includes('closed'))
 
-    // Context-specific loading stages
-    if (isProjectDoc) {
+    if (isCommits) {
       return [
-        { icon: Search, text: "Searching project documentation...", color: "text-blue-400" },
-        { icon: FileText, text: "Reading project documents...", color: "text-purple-400" },
-        { icon: Shield, text: "Analyzing project content...", color: "text-emerald-400" },
-        { icon: Sparkles, text: "Synthesizing insights...", color: "text-amber-400" }
-      ]
-    } else if (isCommits) {
-      return [
-        { icon: Search, text: "Querying commit history...", color: "text-blue-400" },
-        { icon: GitBranch, text: "Analyzing contributor activity...", color: "text-purple-400" },
-        { icon: Code, text: "Processing code changes...", color: "text-emerald-400" },
-        { icon: Sparkles, text: "Generating insights...", color: "text-amber-400" }
+        { icon: Search, text: "Scanning commit history...", color: "text-blue-400" },
+        { icon: GitBranch, text: "Analyzing commits...", color: "text-purple-400" },
+        { icon: Code, text: "Processing results...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
       ]
     } else if (isIssues) {
       return [
         { icon: Search, text: "Scanning issue tracker...", color: "text-blue-400" },
-        { icon: AlertCircle, text: "Analyzing issue patterns...", color: "text-purple-400" },
-        { icon: Users, text: "Evaluating community engagement...", color: "text-emerald-400" },
-        { icon: Sparkles, text: "Compiling results...", color: "text-amber-400" }
+        { icon: AlertCircle, text: "Analyzing issues...", color: "text-purple-400" },
+        { icon: Code, text: "Processing results...", color: "text-emerald-400" },
+        { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
       ]
     }
 
-    // Default loading stages
+    // Default loading stages for documentation-based queries
     return [
-      { icon: Search, text: "Understanding your question...", color: "text-blue-400" },
-      { icon: FileText, text: "Searching relevant documents...", color: "text-purple-400" },
-      { icon: Code, text: "Analyzing context...", color: "text-emerald-400" },
-      { icon: Pencil, text: "Crafting response...", color: "text-amber-400" }
+      { icon: Search, text: "Searching documentation...", color: "text-blue-400" },
+      { icon: FileText, text: "Reading project files...", color: "text-purple-400" },
+      { icon: Shield, text: "Analyzing content...", color: "text-emerald-400" },
+      { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
     ]
   }
 
@@ -1456,19 +1466,15 @@ function ChatInterface() {
             {/* Loading State - Two phases: Detailed (first 2) vs Compact (3+) */}
             {queryMutation.isPending && (() => {
               const lastUserMessage = messages.filter(m => m.type === 'user').pop()
+              // Don't use previous intent - rely on keyword matching for current query
               const loadingStages = lastUserMessage ? getLoadingStages(lastUserMessage.content) : getLoadingStages('')
               const currentStage = loadingStages[loadingStage]
               const Icon = currentStage.icon
 
               // Compact loader for queries 3+ (Gemini-inspired)
               if (queryCount > 2) {
-                const compactStageTexts = [
-                  "Searching documents...",
-                  "Reading project files...",
-                  "Analyzing content...",
-                  "Generating answer..."
-                ]
-                const compactText = compactStageTexts[loadingStage % compactStageTexts.length]
+                // Use full stage text from getLoadingStages
+                const compactText = currentStage.text
 
                 return (
                   <motion.div
@@ -1549,7 +1555,7 @@ function ChatInterface() {
                               </p>
                             </motion.div>
                           </AnimatePresence>
-                          <div className="flex items-center space-x-2 mt-2">
+                          <div className="flex items-center mt-2">
                             <div className="flex space-x-1">
                               {loadingStages.map((_, idx) => (
                                 <div key={idx} className={`h-1 rounded-full transition-all duration-300 ${
@@ -1558,9 +1564,6 @@ function ChatInterface() {
                                 }`} />
                               ))}
                             </div>
-                            <span className="text-xs dark:text-gray-500 text-gray-600">
-                              Step {loadingStage + 1} of {loadingStages.length}
-                            </span>
                           </div>
                         </div>
                       </div>
