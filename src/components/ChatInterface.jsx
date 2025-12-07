@@ -38,6 +38,8 @@ import {
 import 'highlight.js/styles/atom-one-dark.css'
 import { Dashboard } from './Dashboard'
 import { ThemeToggle } from './ThemeToggle'
+import { LandingHero } from './LandingHero'
+import { TopNavigationBar } from './TopNavigationBar'
 import { useAuth } from '../contexts/AuthContext'
 import { highlightEntities } from '../lib/highlightEntities'
 import { highlightSustainabilityTerms } from '../lib/sustainabilityHighlights'
@@ -249,6 +251,7 @@ function ChatInterface() {
   const [loadingStage, setLoadingStage] = useState(0) // Track loading animation stage
   const [conversationState, setConversationState] = useState(null) // Running summary state
   const [showFooter, setShowFooter] = useState(false) // Track footer visibility based on scroll
+  const [queryCount, setQueryCount] = useState(0) // Track number of queries for this project
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   const messageRefs = useRef({}) // Store refs for each message
@@ -315,6 +318,13 @@ function ChatInterface() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [messages.length])
+
+  // Reset query count and messages when project changes
+  useEffect(() => {
+    setQueryCount(0)
+    setMessages([])
+    setConversationState(null)
+  }, [selectedProject])
 
   // Fetch available projects
   const { data: projectsData } = useQuery({
@@ -489,6 +499,9 @@ function ChatInterface() {
       timestamp: new Date()
     }])
 
+    // Increment query count for loading UI decision
+    setQueryCount(prev => prev + 1)
+
     // Send query with conversation state (running summary)
     queryMutation.mutate({
       projectId: selectedProject,
@@ -632,6 +645,10 @@ function ChatInterface() {
     setEditedQuery('')
   }
 
+  const handleChangeRepo = () => {
+    setIsRepoLocked(false)
+    setGithubUrl('')
+  }
 
   // Generate dynamic related questions based on conversation context
   const getRelatedQuestions = () => {
@@ -771,8 +788,8 @@ function ChatInterface() {
     return [
       { icon: Search, text: "Understanding your question...", color: "text-blue-400" },
       { icon: FileText, text: "Searching relevant documents...", color: "text-purple-400" },
-      { icon: Sparkles, text: "Analyzing context...", color: "text-emerald-400" },
-      { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
+      { icon: Code, text: "Analyzing context...", color: "text-emerald-400" },
+      { icon: Pencil, text: "Crafting response...", color: "text-amber-400" }
     ]
   }
 
@@ -805,362 +822,57 @@ function ChatInterface() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-2 sm:gap-4">
-            <div className="flex items-center space-x-2 sm:space-x-6">
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="p-1.5 sm:p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg">
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-base sm:text-lg font-semibold dark:text-white text-gray-900">
-                    RepoWise
-                  </h1>
-                </div>
-              </div>
-
-              {/* Navigation Tabs */}
-              {/* <div className="flex items-center space-x-1 bg-gray-900/50 p-1 rounded-lg border border-gray-800">
-                <button
-                  onClick={() => setActiveView('dashboard')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeView === 'dashboard'
-                      ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg'
-                      : 'text-gray-400 hover:text-gray-300'
-                  }`}
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Dashboard
-                </button>
-                <button
-                  onClick={() => setActiveView('chat')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeView === 'chat'
-                      ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg'
-                      : 'text-gray-400 hover:text-gray-300'
-                  }`}
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Chat
-                </button>
-              </div> */}
-            </div>
-
-            <div className="flex items-center gap-1.5 sm:gap-3 flex-1 justify-end">
-              {/* Desktop: Inline form */}
-              <form onSubmit={handleAddRepository} className="hidden md:flex gap-2 flex-1 max-w-2xl">
-                <div className="relative flex-1">
-                  {/* Animated wave border wrapper */}
-                  {availableProjects.length === 0 && !isRepoLocked && (
-                    <motion.div
-                      className="absolute inset-0 rounded-xl"
-                      style={{
-                        background: 'linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.3) 25%, rgba(16, 185, 129, 0.8) 50%, rgba(16, 185, 129, 0.3) 75%, transparent 100%)',
-                        backgroundSize: '200% 100%',
-                        padding: '2px',
-                        WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                        WebkitMaskComposite: 'xor',
-                        maskComposite: 'exclude',
-                        filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))',
-                      }}
-                      animate={{
-                        backgroundPosition: ['0% 0%', '200% 0%'],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: 'linear',
-                      }}
-                    />
-                  )}
-
-                  <div className="relative">
-                    <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10" />
-                    <input
-                      type="text"
-                      value={githubUrl}
-                      onChange={(e) => setGithubUrl(e.target.value)}
-                      placeholder="Enter GitHub repository URL (e.g., https://github.com/owner/repo)"
-                      disabled={isRepoLocked}
-                      className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all ${
-                        isRepoLocked
-                          ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-800/70 dark:border-gray-700 dark:text-gray-400'
-                          : availableProjects.length === 0
-                          ? 'bg-white/50 border-emerald-500/40 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-emerald-400/30 dark:text-white'
-                          : 'bg-white/50 border-gray-200 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-gray-800 dark:text-white'
-                      }`}
-                    />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  disabled={(!githubUrl.trim() && !isRepoLocked) || addRepoMutation.isPending}
-                  className={`px-3 sm:px-5 py-2.5 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2 text-sm font-semibold shadow-lg hover:-translate-y-0.5 flex-shrink-0 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-emerald-500/20 hover:shadow-emerald-500/30 ${
-                    isRepoLocked ? 'animate-shimmer' : ''
-                  }`}
-                  style={isRepoLocked ? {
-                    backgroundSize: '200% 100%',
-                    animation: 'shimmer 1s ease-in-out'
-                  } : {}}
-                >
-                  {isRepoLocked ? (
-                    <>
-                      <RefreshCw className="w-4 h-4" />
-                      <span className="hidden lg:inline">Change Repo</span>
-                    </>
-                  ) : (
-                    <>
-                      <Github className="w-4 h-4" />
-                      <span className="hidden lg:inline">Add Repo</span>
-                    </>
-                  )}
-                </button>
-              </form>
-
-              {/* Project Selector Dropdown */}
-              {availableProjects.length > 0 && (
-                <div className="relative min-w-[140px] sm:min-w-[220px]">
-                  <select
-                    value={selectedProject || ''}
-                    onChange={handleProjectSelect}
-                    className="w-full pl-3 sm:pl-4 pr-8 sm:pr-10 py-2 sm:py-2.5 bg-gray-900/50 border border-gray-800 dark:bg-gray-900/50 dark:border-gray-800 bg-white/50 border-gray-200 rounded-xl text-xs sm:text-sm dark:text-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all appearance-none cursor-pointer font-medium"
-                  >
-                    <option value="" disabled>Select a project</option>
-                    {availableProjects.map((project) => (
-                      <option key={project.id} value={project.id} className="dark:bg-gray-800 bg-white">
-                        {project.name} ({project.owner})
-                      </option>
-                    ))}
-                  </select>
-                  <Github className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-emerald-500 pointer-events-none" />
-                </div>
-              )}
-
-              {/* Theme Toggle */}
-              <div className="hidden sm:block">
-                <ThemeToggle />
-              </div>
-
-              {/* Authentication Status */}
-              {isAuthenticated && user ? (
-                <div ref={profileMenuRef} className="relative pl-2 sm:pl-3 border-l dark:border-gray-700 border-gray-200">
-                  <button
-                    onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full
-                             dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600
-                             bg-gray-200 hover:bg-gray-300 border-2 border-gray-300
-                             flex items-center justify-center
-                             transition-all duration-200
-                             hover:scale-105"
-                    title={`${user.first_name} ${user.last_name}`}
-                  >
-                    <span className="text-xs sm:text-sm font-semibold dark:text-gray-200 text-gray-700">
-                      {user.first_name?.[0]}{user.last_name?.[0]}
-                    </span>
-                  </button>
-
-                  {/* Profile Dropdown Menu */}
-                  {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-48
-                                  dark:bg-gray-800 dark:border-gray-700
-                                  bg-white border border-gray-200
-                                  rounded-xl shadow-xl z-50">
-                      <div className="py-1">
-                        <button
-                          onClick={() => {
-                            setShowProfileMenu(false)
-                            handleLogout()
-                          }}
-                          className="w-full flex items-center gap-3 px-4 py-2.5
-                                   dark:text-gray-300 dark:hover:bg-gray-700
-                                   text-gray-700 hover:bg-gray-50
-                                   transition-all duration-150 text-sm"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          Logout
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="pl-2 sm:pl-3 border-l dark:border-gray-700 border-gray-200">
-                  <button
-                    onClick={() => navigate('/auth')}
-                    className="flex items-center gap-1 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5
-                             border border-gray-300 dark:border-gray-600
-                             text-gray-700 dark:text-gray-300
-                             hover:border-emerald-500 hover:text-emerald-600
-                             dark:hover:border-emerald-400 dark:hover:text-emerald-400
-                             hover:bg-emerald-500/5 dark:hover:bg-emerald-500/10
-                             rounded-xl transition-all duration-200
-                             text-xs sm:text-sm font-medium hover:-translate-y-0.5"
-                  >
-                    <UserCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Login</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Mobile: Full-width form below navbar */}
-          <form onSubmit={handleAddRepository} className="md:hidden mt-3 flex gap-2">
-            <div className="relative flex-1">
-              {/* Animated wave border wrapper for mobile */}
-              {availableProjects.length === 0 && !isRepoLocked && (
-                <motion.div
-                  className="absolute inset-0 rounded-xl"
-                  style={{
-                    background: 'linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.3) 25%, rgba(16, 185, 129, 0.8) 50%, rgba(16, 185, 129, 0.3) 75%, transparent 100%)',
-                    backgroundSize: '200% 100%',
-                    padding: '2px',
-                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                    WebkitMaskComposite: 'xor',
-                    maskComposite: 'exclude',
-                    filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))',
-                  }}
-                  animate={{
-                    backgroundPosition: ['0% 0%', '200% 0%'],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: 'linear',
-                  }}
-                />
-              )}
-
-              <div className="relative">
-                <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10" />
-                <input
-                  type="text"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
-                  placeholder="github.com/owner/repo"
-                  disabled={isRepoLocked}
-                  className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all ${
-                    isRepoLocked
-                      ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-800/70 dark:border-gray-700 dark:text-gray-400'
-                      : availableProjects.length === 0
-                      ? 'bg-white/50 border-emerald-500/40 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-emerald-400/30 dark:text-white dark:placeholder-gray-400'
-                      : 'bg-white/50 border-gray-200 text-gray-900 placeholder-gray-500 dark:bg-gray-900/50 dark:border-gray-800 dark:text-white dark:placeholder-gray-400'
-                  }`}
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              disabled={(!githubUrl.trim() && !isRepoLocked) || addRepoMutation.isPending}
-              className={`px-4 py-2.5 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2 text-sm font-semibold shadow-lg flex-shrink-0 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-emerald-500/20 ${
-                isRepoLocked ? 'animate-shimmer' : ''
-              }`}
-              style={isRepoLocked ? {
-                backgroundSize: '200% 100%',
-                animation: 'shimmer 1s ease-in-out'
-              } : {}}
-            >
-              {isRepoLocked ? (
-                <RefreshCw className="w-4 h-4" />
-              ) : (
-                <Plus className="w-5 h-5" />
-              )}
-            </button>
-          </form>
-
-          {/* Indexing Status */}
-          {indexingStatus && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className={`mt-3 p-4 rounded-xl border ${
-                indexingStatus.status === 'success'
-                  ? 'dark:bg-emerald-500/10 dark:border-emerald-500/20 bg-emerald-50 border-emerald-200'
-                  : indexingStatus.status === 'error'
-                  ? 'dark:bg-red-500/10 dark:border-red-500/20 bg-red-50 border-red-200'
-                  : 'dark:bg-blue-500/10 dark:border-blue-500/20 bg-blue-50 border-blue-200'
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-0.5">
-                  {indexingStatus.status === 'loading' && (
-                    <Loader2 className="w-5 h-5 animate-spin dark:text-blue-400 text-blue-600" />
-                  )}
-                  {indexingStatus.status === 'success' && (
-                    <CheckCircle className="w-5 h-5 dark:text-emerald-400 text-emerald-600" />
-                  )}
-                  {indexingStatus.status === 'error' && (
-                    <AlertCircle className="w-5 h-5 dark:text-red-400 text-red-600" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium ${
-                    indexingStatus.status === 'success'
-                      ? 'dark:text-emerald-300 text-emerald-800'
-                      : indexingStatus.status === 'error'
-                      ? 'dark:text-red-300 text-red-800'
-                      : 'dark:text-blue-300 text-blue-800'
-                  }`}>
-                    {indexingStatus.status === 'success' && 'Success!'}
-                    {indexingStatus.status === 'error' && 'Error'}
-                    {indexingStatus.status === 'loading' && 'Processing...'}
-                  </p>
-                  <p className={`text-sm mt-1 ${
-                    indexingStatus.status === 'success'
-                      ? 'dark:text-emerald-400 text-emerald-700'
-                      : indexingStatus.status === 'error'
-                      ? 'dark:text-red-400 text-red-700'
-                      : 'dark:text-blue-400 text-blue-700'
-                  }`}>
-                    {indexingStatus.message}
-                  </p>
-                  {indexingStatus.status === 'error' && (
-                    <p className="text-xs dark:text-gray-500 text-gray-600 mt-2">
-                      💡 Tip: Use format https://github.com/owner/repository
-                    </p>
-                  )}
-                </div>
-                {indexingStatus.status !== 'loading' && (
-                  <button
-                    onClick={() => setIndexingStatus(null)}
-                    className="flex-shrink-0 p-1 dark:hover:bg-gray-800/50 hover:bg-gray-200/50 rounded transition-colors"
-                  >
-                    <X className="w-4 h-4 dark:text-gray-500 dark:hover:text-gray-300 text-gray-400 hover:text-gray-600" />
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </header>
+      <TopNavigationBar
+        selectedProject={selectedProject}
+        githubUrl={githubUrl}
+        isRepoLocked={isRepoLocked}
+        onChangeRepo={handleChangeRepo}
+        onAddRepository={startRepositoryIndexing}
+        isLoading={addRepoMutation.isPending}
+        isAuthenticated={isAuthenticated}
+        user={user}
+        onLogout={handleLogout}
+        onLoginClick={() => navigate('/auth')}
+        availableProjects={availableProjects}
+        onProjectSelect={handleProjectSelect}
+      />
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
-        <AnimatePresence mode="wait">
-          {activeView === 'dashboard' ? (
-            <motion.div
-              key="dashboard"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Dashboard selectedProject={selectedProject} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="chat"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="max-w-5xl mx-auto px-6 py-8">
-                <AnimatePresence mode="popLayout">
-                  {/* Welcome State */}
-                  {messages.length === 0 && (
+        {!selectedProject ? (
+          // Landing Hero - shown when no project is selected
+          <LandingHero
+            onAddRepository={startRepositoryIndexing}
+            isLoading={addRepoMutation.isPending}
+            indexingStatus={indexingStatus}
+            user={user}
+            isAuthenticated={isAuthenticated}
+          />
+        ) : (
+          // Chat/Dashboard Interface - shown when project is selected
+          <AnimatePresence mode="wait">
+            {activeView === 'dashboard' ? (
+              <motion.div
+                key="dashboard"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Dashboard selectedProject={selectedProject} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="chat"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="max-w-5xl mx-auto px-6 py-8">
+                  <AnimatePresence mode="popLayout">
+                    {/* Welcome State */}
+                    {messages.length === 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1174,65 +886,12 @@ function ChatInterface() {
                   Where OSS exploration begins!
                 </h2>
                 <p className="text-base dark:text-gray-400 text-gray-600 max-w-2xl mx-auto mb-8">
-                  {isAuthenticated && user ? (
-                    selectedProject
-                      ? `Hi ${user.first_name}, ask anything about this project's governance, contribution guidelines, commit, or issue tracking.`
-                      : `Hi ${user.first_name}, enter a GitHub repository URL above to start exploring projects documents with AI.`
-                  ) : (
-                    selectedProject
-                      ? "Ask anything about this project's governance, contribution guidelines, commit, or issue tracking."
-                      : "Enter a GitHub repository URL above to start exploring projects documents with AI."
-                  )}
+                  {isAuthenticated && user
+                    ? `Hi ${user.first_name}, ask anything about this project's governance, contribution guidelines, commit, or issue tracking.`
+                    : "Ask anything about this project's governance, contribution guidelines, commit, or issue tracking."}
                 </p>
 
-                {!selectedProject && (
-                  <div className="max-w-6xl mx-auto">
-                    <h3 className="text-sm font-medium dark:text-gray-400 text-gray-500 text-center mb-4">
-                      Featured Repositories
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                      {EXAMPLE_REPOSITORIES.map((repo, idx) => (
-                        <motion.button
-                          key={repo.url}
-                          type="button"
-                          onClick={() => handleExampleSelect(repo.url)}
-                          disabled={addRepoMutation.isPending}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.05 }}
-                          className="relative text-left w-full p-4 rounded-xl border h-44 flex flex-col
-                                     dark:bg-gray-900/60 dark:border-gray-800 dark:hover:border-emerald-500 dark:hover:bg-gray-900
-                                     bg-white border-gray-200 hover:border-emerald-500 hover:bg-emerald-50/30
-                                     hover:scale-[1.02] hover:shadow-lg transition-all group disabled:opacity-60 cursor-pointer"
-                        >
-                          <h3 className="text-sm font-semibold dark:text-white text-gray-900 mb-2">{repo.name}</h3>
-                          <p className="text-xs dark:text-gray-400 text-gray-600 mb-2 line-clamp-3 flex-1">{repo.description}</p>
-                          <div className="flex flex-wrap gap-1.5 mb-1">
-                            {repo.highlights.slice(0, 2).map(highlight => (
-                              <span
-                                key={highlight}
-                                className="px-2 py-0.5 rounded-md text-xs font-medium
-                                           dark:bg-gray-800/80 dark:text-gray-300
-                                           bg-gray-100 text-gray-600"
-                              >
-                                {highlight}
-                              </span>
-                            ))}
-                          </div>
-                          {/* Hover action indicator */}
-                          <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span className="text-xs font-medium text-emerald-500 flex items-center gap-1">
-                              <span>+ Add</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </span>
-                          </div>
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Suggested Questions - only show when project is indexed */}
+                {/* Suggested Questions */}
                 {selectedProject && (
                   <div className="grid grid-cols-2 gap-3 max-w-3xl mx-auto">
                     {[
@@ -1436,32 +1095,39 @@ function ChatInterface() {
                               {/* Inline Confidence Indicator */}
                               {msg.metadata?.answer_confidence !== undefined && (() => {
                                 const conf = msg.metadata.answer_confidence
-                                const level = conf >= 0.8 ? 'high' : conf >= 0.5 ? 'moderate' : 'limited'
+                                const level = conf >= 0.85 ? 'very_high' : conf >= 0.70 ? 'high' : conf >= 0.50 ? 'medium' : 'low'
                                 const config = {
-                                  high: {
+                                  very_high: {
                                     bg: 'bg-emerald-500/10 dark:bg-emerald-500/10',
                                     text: 'text-emerald-600 dark:text-emerald-400',
                                     border: 'border border-emerald-500/20',
                                     icon: CheckCircle,
-                                    tooltip: 'Well-supported by authoritative sources'
+                                    tooltip: 'Very high confidence - strong evidence from multiple authoritative sources'
                                   },
-                                  moderate: {
+                                  high: {
+                                    bg: 'bg-blue-500/10 dark:bg-blue-500/10',
+                                    text: 'text-blue-600 dark:text-blue-400',
+                                    border: 'border border-blue-500/20',
+                                    icon: CheckCircle,
+                                    tooltip: 'High confidence - well-supported by relevant sources'
+                                  },
+                                  medium: {
                                     bg: 'bg-amber-500/10 dark:bg-amber-500/10',
                                     text: 'text-amber-600 dark:text-amber-400',
                                     border: 'border border-amber-500/20',
                                     icon: AlertCircle,
-                                    tooltip: 'Based on available sources, may benefit from verification'
+                                    tooltip: 'Medium confidence - based on available sources, may benefit from verification'
                                   },
-                                  limited: {
-                                    bg: 'bg-gray-500/10 dark:bg-gray-500/10',
-                                    text: 'text-gray-600 dark:text-gray-400',
-                                    border: 'border border-gray-500/20',
+                                  low: {
+                                    bg: 'bg-red-500/10 dark:bg-red-500/10',
+                                    text: 'text-red-600 dark:text-red-400',
+                                    border: 'border border-red-500/20',
                                     icon: HelpCircle,
-                                    tooltip: 'Limited sources found, consider rephrasing query'
+                                    tooltip: 'Low confidence - limited sources found, consider rephrasing query'
                                   }
                                 }
                                 const { bg, text, border, icon: Icon, tooltip } = config[level]
-                                const labels = { high: 'High', moderate: 'Moderate', limited: 'Limited' }
+                                const labels = { very_high: 'Very High', high: 'High', medium: 'Medium', low: 'Low' }
 
                                 return (
                                   <>
@@ -1787,13 +1453,62 @@ function ChatInterface() {
               </motion.div>
             ))}
 
-            {/* Enhanced Loading State - Perplexity-style */}
+            {/* Loading State - Two phases: Detailed (first 2) vs Compact (3+) */}
             {queryMutation.isPending && (() => {
               const lastUserMessage = messages.filter(m => m.type === 'user').pop()
               const loadingStages = lastUserMessage ? getLoadingStages(lastUserMessage.content) : getLoadingStages('')
               const currentStage = loadingStages[loadingStage]
               const Icon = currentStage.icon
 
+              // Compact loader for queries 3+ (Gemini-inspired)
+              if (queryCount > 2) {
+                const compactStageTexts = [
+                  "Searching documents...",
+                  "Reading project files...",
+                  "Analyzing content...",
+                  "Generating answer..."
+                ]
+                const compactText = compactStageTexts[loadingStage % compactStageTexts.length]
+
+                return (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-3 py-4"
+                  >
+                    {/* Animated Sparkles icon */}
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, -5, 0],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <Sparkles className="w-5 h-5 text-emerald-500" />
+                    </motion.div>
+
+                    {/* Cycling stage text */}
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={loadingStage}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.3 }}
+                        className="text-sm font-medium dark:text-gray-400 text-gray-600"
+                      >
+                        {compactText}
+                      </motion.span>
+                    </AnimatePresence>
+                  </motion.div>
+                )
+              }
+
+              // Full detailed progress bar for first 2 queries
               return (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -1936,10 +1651,11 @@ function ChatInterface() {
             </motion.div>
           )}
         </AnimatePresence>
+        )}
       </div>
 
-      {/* Input Area - Fixed at Bottom - Only show in Chat view */}
-      {activeView === 'chat' && (
+      {/* Input Area - Fixed at Bottom - Only show in Chat view and when project is selected */}
+      {activeView === 'chat' && selectedProject && (
       <div className="sticky bottom-0 dark:bg-gradient-to-t dark:from-[#0f0f0f] dark:via-[#0f0f0f] dark:to-transparent
                       bg-gradient-to-t from-white via-white to-transparent pt-8 pb-6">
         <div className="max-w-5xl mx-auto px-6">
@@ -2009,71 +1725,31 @@ function ChatInterface() {
       </div>
       )}
 
-        {showFooter && (
-        <footer className="bg-white/80 dark:bg-[#090909]/80 border-t border-gray-200 dark:border-gray-800 transition-opacity duration-300">
-        <div className="max-w-5xl mx-auto px-6 py-6 text-center space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-          <p>
-            Developed at the DECAL Lab, in the CS Department,{" "}
-            <a
-              href="https://www.ucdavis.edu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
-            >
-              UC Davis
-            </a>, by{" "}
-            <a
-              href="https://www.linkedin.com/in/sankalp-kashyap"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
-            >
-              Sankalp Kashyap
-            </a>,{" "}
-            <a
-              href="https://www.linkedin.com/in/arjashok"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
-            >
-              Arjun Ashok
-            </a>,{" "}
-            <a
-              href="https://nafiz43.github.io/portfolio/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
-            >
-              Nafiz Imtiaz Khan
-            </a>, and{" "}
-            <a
-              href="https://www.cs.ucdavis.edu/~filkov/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
-            >
-              Vladimir Filkov
-            </a>
-
-          </p>
-          <p className="text-gray-500 dark:text-gray-500">
-            RepoWise keeps open-source intelligence playful and purposeful; discover more at{' '}
-            <a
-              href="https://repowise.github.io/RepoWise-website/"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="text-sky-400 dark:text-sky-300 hover:font-semibold transition-colors"
-            >
-              repowise.github.io
-            </a>
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 text-gray-500 dark:text-gray-500">
-            <span>RepoWise Views: {viewCount ?? '—'}</span>
-            <span className="h-4 w-px bg-gray-300 dark:bg-gray-600" aria-hidden="true"></span>
-            <span>RepoWise Users: {userCount ?? '—'}</span>
+        {(showFooter || !selectedProject) && (
+        <footer className="bg-white/80 dark:bg-[#090909]/80 backdrop-blur-sm border-t border-gray-200/50 dark:border-gray-800/50 transition-opacity duration-300">
+          <div className="max-w-5xl mx-auto px-6 py-3 text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-500">
+              Developed by{' '}
+              <a
+                href="https://decallab.cs.ucdavis.edu/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 dark:text-gray-400 underline decoration-gray-400/40 hover:text-blue-600 hover:decoration-blue-600 dark:hover:text-blue-400 dark:hover:decoration-blue-400 font-medium transition-all"
+              >
+                DECAL Lab
+              </a>, UC Davis{' '}
+              <span className="text-gray-400 dark:text-gray-600">·</span>{' '}
+              <a
+                href="https://repowise.github.io/RepoWise-website/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 dark:text-gray-400 underline decoration-gray-400/40 hover:text-blue-600 hover:decoration-blue-600 dark:hover:text-blue-400 dark:hover:decoration-blue-400 font-medium transition-all"
+              >
+                repowise.github.io
+              </a>
+            </p>
           </div>
-        </div>
-      </footer>
+        </footer>
         )}
 
     </div>
