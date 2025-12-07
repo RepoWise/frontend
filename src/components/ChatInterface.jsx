@@ -344,7 +344,13 @@ function ChatInterface() {
   const { data: userCountData } = useQuery({
     queryKey: ['userCount'],
     queryFn: () => api.getUserCount().then((res) => res.data),
-    enabled: isAuthenticated,
+    refetchInterval: 30000,
+  })
+
+  // Fetch processed repository count for dashboard footer
+  const { data: processedRepoCountData, refetch: refetchProcessedRepoCount } = useQuery({
+    queryKey: ['processedRepoCount'],
+    queryFn: () => api.getProcessedRepoCount().then((res) => res.data),
     refetchInterval: 30000,
   })
 
@@ -366,14 +372,27 @@ function ChatInterface() {
 
   const viewCount = viewCountData?.view_count ?? viewCountData?.count
   const userCount = userCountData?.count ?? userCountData?.user_count ?? null
+  const processedRepoCount = processedRepoCountData?.processed_repo_count ?? processedRepoCountData?.count ?? null
+
+  const trackProcessedRepository = async () => {
+    try {
+      await api.trackProcessedRepo()
+      await refetchProcessedRepoCount()
+    } catch (error) {
+      console.error('Failed to track processed repository:', error)
+    }
+  }
 
   // Add repository and index mutation
   const addRepoMutation = useMutation({
-    mutationFn: (githubUrl) => api.addRepository(githubUrl),
-    onSuccess: (data) => {
+    mutationFn: ({ githubUrl }) => api.addRepository(githubUrl),
+    onSuccess: async (data, variables) => {
       try {
+        const forceTrackProcessedRepo = variables?.forceTrackProcessedRepo ?? false
+        const wasAlreadyIndexed = data?.data?.status === 'already_exists'
+
         // Check if repository already exists
-        if (data?.data?.status === 'already_exists') {
+        if (wasAlreadyIndexed) {
           setIndexingStatus({
             status: 'success',
             message: 'Project added successfully',
@@ -402,6 +421,10 @@ function ChatInterface() {
         setMessages([])
         setConversationState(null) // Reset conversation state
         setIsRepoLocked(true) // Lock the input after successful add
+
+        if (forceTrackProcessedRepo || !wasAlreadyIndexed) {
+          await trackProcessedRepository()
+        }
       } catch (err) {
         console.error('Error processing indexing response:', err)
         setIndexingStatus({
@@ -521,12 +544,13 @@ function ChatInterface() {
     inputRef.current?.focus()
   }
 
-  const startRepositoryIndexing = (repoUrl) => {
+  const startRepositoryIndexing = (repoUrl, options = {}) => {
+    const { forceTrackProcessedRepo = false } = options
     const trimmedRepo = repoUrl?.trim()
     if (!trimmedRepo) return
     setGithubUrl(trimmedRepo)
     setIndexingStatus({ status: 'loading', message: 'Scraping and indexing repository...' })
-    addRepoMutation.mutate(trimmedRepo)
+    addRepoMutation.mutate({ githubUrl: trimmedRepo, forceTrackProcessedRepo })
   }
 
   const handleAddRepository = (e) => {
@@ -548,7 +572,7 @@ function ChatInterface() {
   }
 
   const handleExampleSelect = (repoUrl) => {
-    startRepositoryIndexing(repoUrl)
+    startRepositoryIndexing(repoUrl, { forceTrackProcessedRepo: true })
   }
 
   // Handler for project selection from dropdown
