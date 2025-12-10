@@ -170,7 +170,7 @@ export function LandingHero({ onAddRepository, isLoading, indexingStatus, user, 
               value={inputValue}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
-              placeholder="microsoft/TypeScript"
+              placeholder="microsoft/codetour"
               disabled={isLoading}
               className="relative w-full px-6 py-5 text-lg rounded-2xl border-2
                        dark:bg-gray-900/50 dark:border-gray-700 dark:text-white dark:placeholder-gray-500
