@@ -9,6 +9,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import AuthPage from './pages/AuthPage'
 import ProjectsPage from './pages/ProjectsPage'
+import ChatInterface from './components/ChatInterface'
 
 function App() {
   const { isLoading } = useAuth()
@@ -31,7 +32,10 @@ function App() {
       <Route path="/auth" element={<AuthPage />} />
 
       {/* Main chat interface - accessible with or without auth */}
-      <Route path="/" element={<ProjectsPage />} />
+      <Route path="/" element={<ChatInterface />} />
+
+      {/* Projects landing page */}
+      <Route path="/projects" element={<ProjectsPage />} />
 
       {/* Catch all - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
