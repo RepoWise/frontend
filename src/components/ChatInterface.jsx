@@ -1022,7 +1022,7 @@ function ChatInterface() {
                 )}
 
                 {msg.type === 'assistant' && (
-                  <div className="space-y-6">
+                  <div className="space-y-6" data-testid="assistant-message">
                     {/* Tabs */}
                     <div className="flex items-center space-x-1 border-b dark:border-gray-800 border-gray-200">
                       {['answer', 'sources'].map((tab) => (
@@ -1050,7 +1050,7 @@ function ChatInterface() {
                     {(activeTabs[idx] || 'answer') === 'answer' && (
                       <div className="space-y-6">
                         {/* Main Answer */}
-                        <div className="prose dark:prose-invert prose-lg max-w-none">
+                        <div className="prose dark:prose-invert prose-lg max-w-none" data-testid="assistant-answer">
                           <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw, rehypeHighlight]}
@@ -1716,6 +1716,7 @@ function ChatInterface() {
                   }}
                   placeholder="Ask about governance, commits, issues, or contribution guidelines..."
                   disabled={!selectedProject || queryMutation.isPending || editingMessageId !== null}
+                  data-testid="chat-query-input"
                   rows={1}
                   className="w-full bg-transparent border-0 focus:outline-none resize-none
                            dark:text-gray-100 dark:placeholder-gray-500
@@ -1727,6 +1728,7 @@ function ChatInterface() {
               <button
                 type="submit"
                 disabled={!query.trim() || !selectedProject || queryMutation.isPending || editingMessageId !== null}
+                data-testid="chat-send-button"
                 className="flex-shrink-0 p-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
               >
                 <Send className="w-5 h-5" />

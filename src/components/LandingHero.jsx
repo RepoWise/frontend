@@ -170,6 +170,7 @@ export function LandingHero({ onAddRepository, isLoading, indexingStatus, user, 
               value={inputValue}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
+              data-testid="repo-url-input"
               placeholder="microsoft/codetour"
               disabled={isLoading}
               className="relative w-full px-6 py-5 text-lg rounded-2xl border-2
@@ -252,6 +253,7 @@ export function LandingHero({ onAddRepository, isLoading, indexingStatus, user, 
           transition={{ duration: 0.5, delay: 0.5 }}
           onClick={handleSubmit}
           disabled={!inputValue.trim() || isLoading}
+          data-testid="repo-add-button"
           className="px-12 py-4
                    bg-gradient-to-br from-emerald-500 to-teal-600
                    hover:from-emerald-600 hover:to-teal-700
@@ -274,6 +276,8 @@ export function LandingHero({ onAddRepository, isLoading, indexingStatus, user, 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               className="mt-6"
+              data-testid="repo-indexing-status"
+              data-status={indexingStatus.status}
             >
               {indexingStatus.status === 'success' && (
                 <div className="flex items-center justify-center gap-3 text-emerald-600 dark:text-emerald-400">
