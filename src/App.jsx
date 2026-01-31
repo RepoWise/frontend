@@ -9,6 +9,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import AuthPage from './pages/AuthPage'
 import ChatInterface from './components/ChatInterface'
+import ProjectsPage from './pages/ProjectsPage'
 
 function App() {
   const { isLoading } = useAuth()
@@ -32,6 +33,9 @@ function App() {
 
       {/* Main chat interface - accessible with or without auth */}
       <Route path="/" element={<ChatInterface />} />
+
+      {/* UC Davis project listing */}
+      <Route path="/projects" element={<ProjectsPage />} />
 
       {/* Catch all - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />

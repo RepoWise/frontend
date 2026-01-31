@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Sparkles, Github, LogOut, UserCircle, Search, Loader2, ChevronDown, RefreshCw } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -99,6 +100,12 @@ export function TopNavigationBar({
       <header className="absolute top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-end gap-3">
+            <Link
+              to="/projects"
+              className="px-4 py-2 rounded-lg border border-cyan-400/60 text-cyan-700 hover:text-cyan-900 hover:bg-cyan-50 dark:text-cyan-200 dark:hover:text-white dark:hover:bg-cyan-500/20 transition-colors text-sm font-medium"
+            >
+              UC Davis Projects
+            </Link>
             <ThemeToggle />
 
             {isAuthenticated ? (
@@ -330,6 +337,12 @@ export function TopNavigationBar({
 
           {/* Right side: Theme + Auth */}
           <div className="flex items-center gap-3">
+            <Link
+              to="/projects"
+              className="px-4 py-2 rounded-lg border border-cyan-400/60 text-cyan-700 hover:text-cyan-900 hover:bg-cyan-50 dark:text-cyan-200 dark:hover:text-white dark:hover:bg-cyan-500/20 transition-colors text-sm font-medium"
+            >
+              UC Davis Projects
+            </Link>
             <ThemeToggle />
 
             {isAuthenticated ? (
