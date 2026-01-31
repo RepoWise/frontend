@@ -12,6 +12,7 @@ node_modules/
 *.test.js
 *.spec.js
 !src/**/*.test.js
+!tests/e2e/**/*.spec.js
 
 # Logs
 logs
