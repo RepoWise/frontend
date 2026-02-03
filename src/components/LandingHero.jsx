@@ -193,7 +193,7 @@ export function LandingHero({ onAddRepository, isLoading, indexingStatus, user, 
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-full mt-3 w-full
+                className="mt-3 w-full
                          dark:bg-gray-900 dark:border-gray-800
                          bg-white border-gray-200
                          rounded-2xl shadow-2xl border-2 z-50
