@@ -83,6 +83,10 @@ export const api = {
       conversation_state: options.conversationState || null,
     }),
 
+  // Fast intent classification for loading messages
+  classifyIntent: (query) =>
+    apiClient.post('/classify-intent', { query }),
+
   search: (query, options = {}) =>
     apiClient.post('/search', {
       query,

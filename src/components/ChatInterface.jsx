@@ -672,6 +672,11 @@ function ChatInterface() {
   const handleChangeRepo = () => {
     setIsRepoLocked(false)
     setGithubUrl('')
+    setSelectedProject(null) // Clear selected project
+    setMessages([]) // Clear chat messages immediately
+    setConversationState(null) // Reset conversation state to prevent any leak
+    setQueryCount(0) // Reset query count for loading UI
+    setIndexingStatus(null) // Clear any status messages
   }
 
   // Generate dynamic related questions based on conversation context
@@ -765,24 +770,18 @@ function ChatInterface() {
 
   const relatedQuestions = getRelatedQuestions()
 
-  // Generate dynamic loading messages based on query context and backend intent
-  const getLoadingStages = (query, intent = null) => {
-    // Prioritize backend intent over keyword matching for accuracy
-    if (intent === 'ISSUES' || intent === 'issues') {
-      return [
-        { icon: Search, text: "Scanning issue tracker...", color: "text-blue-400" },
-        { icon: AlertCircle, text: "Analyzing issues...", color: "text-purple-400" },
-        { icon: Code, text: "Processing results...", color: "text-emerald-400" },
-        { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
-      ]
-    } else if (intent === 'COMMITS' || intent === 'commits') {
-      return [
-        { icon: Search, text: "Scanning commit history...", color: "text-blue-400" },
-        { icon: GitBranch, text: "Analyzing commits...", color: "text-purple-400" },
-        { icon: Code, text: "Processing results...", color: "text-emerald-400" },
-        { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
-      ]
-    } else if (intent === 'PROJECT_DOC_BASED' || intent === 'project_doc_based') {
+  // Generate dynamic loading messages based on improved keyword matching
+  const getLoadingStages = (query) => {
+    const q = query.toLowerCase()
+
+    // 1. Check for procedure/process questions FIRST - these are PROJECT_DOC_BASED
+    // Patterns: "How do I...", "How can I...", "What steps...", "What are the prerequisites..."
+    const isProcedure = /^(how (do|can|should|would) (i|we)|what (steps|are the (prerequisites|requirements|guidelines|conventions|standards))|where can i find|is it possible to|can you tell me how)/.test(q) ||
+                        /report.*(bug|issue|vulnerability|security)|file.*(bug|issue)|submit.*(pull|pr|issue|feature)|request.*(feature|new)|become.*(maintainer|contributor)/.test(q) ||
+                        /(contribute|contributing|contribution|set up|setup|install|build|run the test|configure|deploy|debug|upgrade)/.test(q) ||
+                        /(code of conduct|license|governance|security policy|coding standards|style guide|branching strategy|release process|review process|roadmap|architecture|documentation)/.test(q)
+
+    if (isProcedure) {
       return [
         { icon: Search, text: "Searching documentation...", color: "text-blue-400" },
         { icon: FileText, text: "Reading project files...", color: "text-purple-400" },
@@ -791,16 +790,13 @@ function ChatInterface() {
       ]
     }
 
-    // Fallback: Use keyword matching if intent is not provided
-    const queryLower = query.toLowerCase()
-
-    const isCommits = queryLower.includes('commit') || queryLower.includes('contributor') ||
-                      queryLower.includes('author') || queryLower.includes('code change') ||
-                      (queryLower.includes('file') && queryLower.includes('change'))
-
-    const isIssues = queryLower.includes('issue') || queryLower.includes('bug') ||
-                     queryLower.includes('ticket') ||
-                     (queryLower.includes('open') && queryLower.includes('closed'))
+    // 2. Check for COMMITS patterns - aggregation queries about commit/contributor data
+    const isCommits = /(commit|contributor|author|committer)/.test(q) ||
+                      /who (are the top|made|wrote|contributed|changed|has been committing|committed)/.test(q) ||
+                      /(show me|list|display).*(commit|contributor|activity|statistics)/.test(q) ||
+                      /how many (commits|contributors|unique|lines)/.test(q) ||
+                      /(most recent commit|commit history|commit frequency|code churn|development activity|lines of code)/.test(q) ||
+                      /(which|what) (files|developer|day).*(modified|changed|commit|most)/.test(q)
 
     if (isCommits) {
       return [
@@ -809,7 +805,18 @@ function ChatInterface() {
         { icon: Code, text: "Processing results...", color: "text-emerald-400" },
         { icon: Sparkles, text: "Crafting response...", color: "text-amber-400" }
       ]
-    } else if (isIssues) {
+    }
+
+    // 3. Check for ISSUES patterns - aggregation queries about issue data
+    const isIssues = /how many (issues|bugs|feature requests)/.test(q) ||
+                     /(show me|list|display|what are).*(issues|bugs)/.test(q) ||
+                     /issues?.*(open|closed|labeled|assigned|stale|oldest|critical|commented|discussion|priority|reopened)/.test(q) ||
+                     /(open|closed).*(issues|bugs)/.test(q) ||
+                     /who.*(issue|reporter|filed|assigned|closed|responds|labels)/.test(q) ||
+                     /(issue|bug).*(ratio|rate|closure|statistics|trend|creation|triage|attention)/.test(q) ||
+                     /what issues (are|have|need|were|mention|block)/.test(q)
+
+    if (isIssues) {
       return [
         { icon: Search, text: "Scanning issue tracker...", color: "text-blue-400" },
         { icon: AlertCircle, text: "Analyzing issues...", color: "text-purple-400" },
@@ -818,7 +825,7 @@ function ChatInterface() {
       ]
     }
 
-    // Default loading stages for documentation-based queries
+    // 4. Default to documentation messages
     return [
       { icon: Search, text: "Searching documentation...", color: "text-blue-400" },
       { icon: FileText, text: "Reading project files...", color: "text-purple-400" },
@@ -1490,7 +1497,7 @@ function ChatInterface() {
             {/* Loading State - Two phases: Detailed (first 2) vs Compact (3+) */}
             {queryMutation.isPending && (() => {
               const lastUserMessage = messages.filter(m => m.type === 'user').pop()
-              // Don't use previous intent - rely on keyword matching for current query
+              // Use improved keyword matching for accurate loading messages
               const loadingStages = lastUserMessage ? getLoadingStages(lastUserMessage.content) : getLoadingStages('')
               const currentStage = loadingStages[loadingStage]
               const Icon = currentStage.icon
@@ -1687,17 +1694,22 @@ function ChatInterface() {
                       bg-gradient-to-t from-white via-white to-transparent pt-8 pb-6">
         <div className="max-w-5xl mx-auto px-6">
           <form onSubmit={handleSendQuery} className="relative">
-            <div className="flex items-end space-x-3 p-4
+            <div
+              className="flex items-end space-x-3 p-4 cursor-text
                           dark:bg-gray-900/80 dark:border-2 dark:border-gray-700
                           bg-white border-2 border-gray-200
                           backdrop-blur-xl rounded-2xl shadow-2xl transition-all duration-300
                           focus-within:dark:border-emerald-500 focus-within:dark:shadow-[0_0_30px_-5px_rgba(16,185,129,0.6)]
                           focus-within:border-emerald-500 focus-within:shadow-[0_0_20px_-5px_rgba(16,185,129,0.5)]
-                          hover:dark:border-gray-600 hover:border-gray-300">
-              <div
-                className="flex-1 cursor-text"
-                onClick={() => inputRef.current?.focus()}
-              >
+                          hover:dark:border-gray-600 hover:border-gray-300"
+              onClick={(e) => {
+                // Focus textarea when clicking anywhere in the container except the button
+                if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+                  inputRef.current?.focus()
+                }
+              }}
+            >
+              <div className="flex-1">
                 <textarea
                   ref={inputRef}
                   value={query}
@@ -1732,7 +1744,7 @@ function ChatInterface() {
                 type="submit"
                 disabled={!query.trim() || !selectedProject || queryMutation.isPending || editingMessageId !== null}
                 data-testid="chat-send-button"
-                className="flex-shrink-0 p-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+                className="flex-shrink-0 p-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
               >
                 <Send className="w-5 h-5" />
               </button>

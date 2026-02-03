@@ -339,6 +339,7 @@ export function TopNavigationBar({
 
           {/* Right side: Theme + Auth */}
           <div className="flex items-center gap-3">
+            {/* UC Davis Projects button - TEMPORARILY HIDDEN FOR TESTING
             <Link
               to={UC_DAVIS_PROJECTS_PATH}
               className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200/70 bg-white/80 px-3 py-2 text-sm font-medium text-emerald-700 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:text-emerald-800 hover:shadow-emerald-500/20 dark:border-emerald-500/40 dark:bg-[#0b0b0b]/70 dark:text-emerald-200 dark:hover:border-emerald-400 dark:hover:text-emerald-100"
@@ -346,6 +347,7 @@ export function TopNavigationBar({
               UC Davis Projects
               <ExternalLink className="h-4 w-4" />
             </Link>
+            */}
             <ThemeToggle />
 
             {isAuthenticated ? (
