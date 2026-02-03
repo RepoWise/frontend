@@ -925,8 +925,8 @@ function ChatInterface() {
                     : "Ask anything about this project's governance, contribution guidelines, commit, or issue tracking."}
                 </p>
 
-                {/* Suggested Questions */}
-                {selectedProject && (
+                {/* Suggested Questions - TEMPORARILY HIDDEN FOR TESTING */}
+                {/* {selectedProject && (
                   <div className="grid grid-cols-2 gap-3 max-w-3xl mx-auto">
                     {[
                       { q: 'How can I start contributing?', icon: <Users className="w-4 h-4" /> },
@@ -960,7 +960,7 @@ function ChatInterface() {
                       </motion.button>
                     ))}
                   </div>
-                )}
+                )} */}
               </motion.div>
             )}
 
@@ -1314,8 +1314,8 @@ function ChatInterface() {
                           </button>
                         </div>
 
-                        {/* Related Questions - Use API suggestions if available, fallback to hardcoded */}
-                        <div className="space-y-3 pt-4">
+                        {/* Related Questions - TEMPORARILY HIDDEN FOR TESTING */}
+                        {/* <div className="space-y-3 pt-4">
                           <div className="flex items-center space-x-2 text-sm dark:text-gray-500 text-gray-600">
                             <Sparkles className="w-4 h-4" />
                             <span className="font-medium">Suggested Questions</span>
@@ -1346,7 +1346,7 @@ function ChatInterface() {
                               ))
                             })()}
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     )}
 
@@ -1711,11 +1711,14 @@ function ChatInterface() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault()
-                      handleSendQuery(e)
+                      // Only submit if not already loading - allows typing but prevents submission
+                      if (!queryMutation.isPending) {
+                        handleSendQuery(e)
+                      }
                     }
                   }}
                   placeholder="Ask about governance, commits, issues, or contribution guidelines..."
-                  disabled={!selectedProject || queryMutation.isPending || editingMessageId !== null}
+                  disabled={!selectedProject || editingMessageId !== null}
                   data-testid="chat-query-input"
                   rows={1}
                   className="w-full bg-transparent border-0 focus:outline-none resize-none
