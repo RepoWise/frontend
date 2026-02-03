@@ -1,4 +1,7 @@
-const apiBaseEnv = process.env.E2E_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const apiBaseEnv =
+  process.env.E2E_API_BASE_URL ||
+  process.env.VITE_API_BASE_URL ||
+  'https://tianna-unretractive-ellen.ngrok-free.dev/'
 const apiBase = apiBaseEnv.replace(/\/(api)\/?$/, '')
 const healthUrl = new URL('/api/health', apiBase).toString()
 
