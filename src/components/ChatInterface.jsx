@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -235,12 +235,14 @@ const enhanceMarkdownContent = (content) => {
 function ChatInterface() {
   const { user, logout, isAuthenticated } = useAuth()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [activeView] = useState('chat') // 'dashboard' or 'chat'
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   // Default to null, will be set when projects load
   const [selectedProject, setSelectedProject] = useState(null)
   const [githubUrl, setGithubUrl] = useState('')
   const [isRepoLocked, setIsRepoLocked] = useState(false) // Track if repo input is locked after successful add
+  const [urlRepoProcessed, setUrlRepoProcessed] = useState(false) // Track if URL repo param has been processed
   const [query, setQuery] = useState('')
   const [messages, setMessages] = useState([])
   const [activeTabs, setActiveTabs] = useState({}) // Track active tab per message index
@@ -458,6 +460,28 @@ function ChatInterface() {
       })
     },
   })
+
+  // Handle ?repo= URL parameter for deep linking from external pages (e.g., OSS Sustainability Suite)
+  // This auto-loads the repository when user clicks RepoWise link from ProjectsPage
+  useEffect(() => {
+    const repoUrl = searchParams.get('repo')
+
+    // Only process if we have a repo URL and haven't processed it yet
+    if (repoUrl && !urlRepoProcessed && !addRepoMutation.isPending) {
+      setUrlRepoProcessed(true)
+
+      // Clear the URL parameter to prevent re-triggering on refresh
+      setSearchParams({}, { replace: true })
+
+      // Start indexing the repository from URL
+      const trimmedRepo = repoUrl.trim()
+      if (trimmedRepo) {
+        setGithubUrl(trimmedRepo)
+        setIndexingStatus({ status: 'loading', message: 'Scraping and indexing repository...' })
+        addRepoMutation.mutate({ githubUrl: trimmedRepo })
+      }
+    }
+  }, [searchParams, urlRepoProcessed, addRepoMutation.isPending, setSearchParams])
 
   // Query mutation
   const queryMutation = useMutation({

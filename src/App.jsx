@@ -34,8 +34,8 @@ function App() {
       {/* Main chat interface - accessible with or without auth */}
       <Route path="/" element={<ChatInterface />} />
 
-      {/* Projects landing page */}
-      <Route path="/projects" element={<ProjectsPage />} />
+      {/* OSS Sustainability Tools Suite landing page */}
+      <Route path="/oss-sustainability" element={<ProjectsPage />} />
 
       {/* Catch all - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
