@@ -8,7 +8,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import AuthPage from './pages/AuthPage'
-import ProjectsPage from './pages/ProjectsPage'
+import OssSustainabilityPage from './pages/OssSustainabilityPage'
+import OssProjectsPage from './pages/OssProjectsPage'
 import ChatInterface from './components/ChatInterface'
 
 function App() {
@@ -35,7 +36,10 @@ function App() {
       <Route path="/" element={<ChatInterface />} />
 
       {/* OSS Sustainability Tools Suite landing page */}
-      <Route path="/oss-sustainability" element={<ProjectsPage />} />
+      <Route path="/oss-sustainability" element={<OssSustainabilityPage />} />
+
+      {/* UC Davis Projects page */}
+      <Route path="/oss-sustainability/projects" element={<OssProjectsPage />} />
 
       {/* Catch all - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
