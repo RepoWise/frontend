@@ -324,10 +324,29 @@ function OssSustainabilityPageContent() {
       {/* Header */}
       <header className={`sticky top-0 z-50 border-b backdrop-blur-xl transition-colors ${isDark ? 'border-white/[0.06] bg-slate-950/80' : 'border-slate-200/80 bg-white/80'}`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
+          {/* Option 1: Just DECAL Lab 
           <a href="https://decallab.cs.ucdavis.edu/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
             <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>DECAL Lab</span>
             <span className={`hidden sm:inline text-sm ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>UC Davis</span>
-          </a>
+          </a>*/}
+
+          {/* Option 2: DECAL Lab + UC OSPO in header (uncomment to use) */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <a href="https://decallab.cs.ucdavis.edu/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+              <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>DECAL Lab</span>
+              <span className={`hidden sm:inline text-sm ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>UC Davis</span>
+            </a>
+            <span className={`text-sm font-light ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>×</span>
+            <a href="https://ucospo.net/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+              <img
+                src="https://raw.githubusercontent.com/UC-OSPO-Network/ucospo.net/main/jbook/_static/images/logo.svg"
+                alt="UC OSPO"
+                className="h-5 w-auto"
+              />
+              <span className={`text-sm font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>UC OSPO</span>
+            </a>
+          </div>
+         
 
           {/* Theme Toggle */}
           <button
@@ -347,12 +366,11 @@ function OssSustainabilityPageContent() {
             {/* Left: Title and Description */}
             <div className="max-w-2xl">
               <h1 className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                Empowering{' '}
                 <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent">
-                  Open Source
+                  Open-Source Software
                 </span>
                 <br />
-                Sustainability Research
+                Sustainability Tools
               </h1>
 
               <p className={`text-base sm:text-lg lg:text-xl leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
@@ -361,28 +379,48 @@ function OssSustainabilityPageContent() {
               </p>
             </div>
 
-            {/* Right: CTA Card */}
-            <div className="lg:flex-shrink-0">
+            {/* Right: UC OSPO + UC Davis Projects side by side */}
+            <div className="lg:flex-shrink-0 flex flex-col sm:flex-row items-stretch gap-4">
+              {/* UC OSPO Network - uncomment for Option 1 or 3
+              <a
+                href="https://ucospo.net/"
+                target="_blank"
+                rel="noreferrer"
+                className={`group flex items-center justify-center p-5 rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 ${
+                  isDark
+                    ? 'bg-slate-800/50 border-white/10 hover:border-cyan-500/25'
+                    : 'bg-slate-100 border-slate-200 hover:border-cyan-300'
+                }`}
+              >
+                <img
+                  src="https://raw.githubusercontent.com/UC-OSPO-Network/ucospo.net/main/jbook/_static/images/uc-ospo-network-logo.svg"
+                  alt="UC OSPO Network"
+                  className={`h-12 sm:h-14 w-auto ${isDark ? '' : 'invert'}`}
+                />
+              </a>
+              */}
+
+              {/* UC Davis Projects Card */}
               <Link
                 to="/oss-sustainability/projects"
-                className={`group block p-6 rounded-2xl border backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 w-[280px] ${
+                className={`group block px-5 py-4 rounded-2xl border backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 ${
                   isDark
                     ? 'bg-gradient-to-br from-emerald-500/10 via-cyan-500/5 to-transparent border-white/10 hover:border-emerald-500/25'
                     : 'bg-gradient-to-br from-emerald-50/80 via-cyan-50/50 to-transparent border-slate-200 hover:border-emerald-300'
                 }`}
               >
-                <div className={`inline-flex p-2.5 rounded-xl mb-4 ${isDark ? 'bg-emerald-500/10' : 'bg-emerald-50'}`}>
-                  <Github className={`w-6 h-6 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
+                <div className={`inline-flex p-2 rounded-lg mb-2 ${isDark ? 'bg-emerald-500/10' : 'bg-emerald-50'}`}>
+                  <Github className={`w-5 h-5 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
                 </div>
-                <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <h3 className={`text-sm font-semibold mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   Try with UC Davis Projects
                 </h3>
-                <p className={`text-sm mb-4 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  50+ open source repositories
+                <p className={`text-xs mb-2 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  50+ repositories
                 </p>
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-emerald-500 group-hover:gap-2.5 transition-all">
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-500 group-hover:gap-2 transition-all">
                   View Projects
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </Link>
             </div>
@@ -493,17 +531,6 @@ function OssSustainabilityPageContent() {
                 />
               </a>
 
-              {/* UC OSPO Network */}
-              <a href="https://ucospo.net/" target="_blank" rel="noreferrer" className="opacity-70 hover:opacity-100 transition-opacity">
-                <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-800">
-                  <img
-                    src="https://ucospo.net/images/uc-ospo-network-logo.svg"
-                    alt="UC OSPO Network"
-                    className="h-8 sm:h-10 w-auto brightness-110"
-                  />
-                </div>
-              </a>
-
               {/* Google */}
               <a href="https://opensource.google/" target="_blank" rel="noreferrer" className="opacity-70 hover:opacity-100 transition-opacity">
                 <svg viewBox="0 0 272 92" className="h-8 sm:h-10 w-auto">
@@ -516,6 +543,19 @@ function OssSustainabilityPageContent() {
                 </svg>
               </a>
             </div>
+
+            {/* Funding Acknowledgment */}
+            <p className={`text-xs sm:text-sm text-center leading-relaxed max-w-3xl mx-auto mb-10 ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+              This research was supported by the{' '}
+              <a href="https://www.nsf.gov/" target="_blank" rel="noreferrer" className={`transition-colors ${isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}>
+                National Science Foundation
+              </a>{' '}
+              under Grant No. 2020751, as well as by the{' '}
+              <a href="https://sloan.org/" target="_blank" rel="noreferrer" className={`transition-colors ${isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}>
+                Alfred P. Sloan Foundation
+              </a>{' '}
+              through the OSPO for UC initiative (Award No. 2024-22424).
+            </p>
 
             <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm pt-6 sm:pt-8 border-t ${isDark ? 'border-white/[0.06] text-slate-500' : 'border-slate-200 text-slate-500'}`}>
               <a href="https://decallab.cs.ucdavis.edu/" target="_blank" rel="noreferrer" className={`font-medium transition-colors ${isDark ? 'hover:text-white' : 'hover:text-slate-900'}`}>
