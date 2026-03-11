@@ -956,8 +956,8 @@ function ChatInterface() {
                     : "Ask anything about this project's governance, contribution guidelines, commit, or issue tracking."}
                 </p>
 
-                {/* Suggested Questions - TEMPORARILY HIDDEN FOR TESTING */}
-                {/* {selectedProject && (
+                {/* Suggested Questions */}
+                {selectedProject && (
                   <div className="grid grid-cols-2 gap-3 max-w-3xl mx-auto">
                     {[
                       { q: 'How can I start contributing?', icon: <Users className="w-4 h-4" /> },
@@ -991,7 +991,7 @@ function ChatInterface() {
                       </motion.button>
                     ))}
                   </div>
-                )} */}
+                )}
               </motion.div>
             )}
 

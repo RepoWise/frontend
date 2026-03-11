@@ -381,25 +381,6 @@ function OssSustainabilityPageContent() {
 
             {/* Right: UC OSPO + UC Davis Projects side by side */}
             <div className="lg:flex-shrink-0 flex flex-col sm:flex-row items-stretch gap-4">
-              {/* UC OSPO Network - uncomment for Option 1 or 3
-              <a
-                href="https://ucospo.net/"
-                target="_blank"
-                rel="noreferrer"
-                className={`group flex items-center justify-center p-5 rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 ${
-                  isDark
-                    ? 'bg-slate-800/50 border-white/10 hover:border-cyan-500/25'
-                    : 'bg-slate-100 border-slate-200 hover:border-cyan-300'
-                }`}
-              >
-                <img
-                  src="https://raw.githubusercontent.com/UC-OSPO-Network/ucospo.net/main/jbook/_static/images/uc-ospo-network-logo.svg"
-                  alt="UC OSPO Network"
-                  className={`h-12 sm:h-14 w-auto ${isDark ? '' : 'invert'}`}
-                />
-              </a>
-              */}
-
               {/* UC Davis Projects Card */}
               <Link
                 to="/oss-sustainability/projects"
