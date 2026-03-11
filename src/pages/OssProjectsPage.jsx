@@ -352,10 +352,22 @@ function OssProjectsPageContent() {
               <span className="hidden sm:inline">Back to Tools</span>
             </Link>
             <div className={`hidden sm:block h-6 w-px ${isDark ? 'bg-white/10' : 'bg-slate-200'}`} />
-            <a href="https://decallab.cs.ucdavis.edu/" target="_blank" rel="noreferrer" className="hidden sm:flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-              <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>DECAL Lab</span>
-              <span className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>UC Davis</span>
-            </a>
+            {/* DECAL Lab + UC OSPO in header */}
+            <div className="hidden sm:flex items-center gap-2 sm:gap-3">
+              <a href="https://decallab.cs.ucdavis.edu/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>DECAL Lab</span>
+                <span className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>UC Davis</span>
+              </a>
+              <span className={`text-sm font-light ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>×</span>
+              <a href="https://ucospo.net/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                <img
+                  src="https://raw.githubusercontent.com/UC-OSPO-Network/ucospo.net/main/jbook/_static/images/logo.svg"
+                  alt="UC OSPO"
+                  className="h-5 w-auto"
+                />
+                <span className={`text-sm font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>UC OSPO</span>
+              </a>
+            </div>
           </div>
 
           <div className="flex items-center gap-1">
@@ -526,6 +538,19 @@ function OssProjectsPageContent() {
                 </svg>
               </a>
             </div>
+
+            {/* Funding Acknowledgment */}
+            <p className={`text-xs sm:text-sm text-center leading-relaxed max-w-3xl mx-auto mb-10 ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+              This research was supported by the{' '}
+              <a href="https://www.nsf.gov/" target="_blank" rel="noreferrer" className={`transition-colors ${isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}>
+                National Science Foundation
+              </a>{' '}
+              under Grant No. 2020751, as well as by the{' '}
+              <a href="https://sloan.org/" target="_blank" rel="noreferrer" className={`transition-colors ${isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}>
+                Alfred P. Sloan Foundation
+              </a>{' '}
+              through the OSPO for UC initiative (Award No. 2024-22424).
+            </p>
 
             <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm pt-6 sm:pt-8 border-t ${isDark ? 'border-white/[0.06] text-slate-500' : 'border-slate-200 text-slate-500'}`}>
               <a href="https://decallab.cs.ucdavis.edu/" target="_blank" rel="noreferrer" className={`font-medium transition-colors ${isDark ? 'hover:text-white' : 'hover:text-slate-900'}`}>
