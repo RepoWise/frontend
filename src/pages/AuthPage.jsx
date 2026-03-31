@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 
 const AuthPage = () => {
-  const [mode, setMode] = useState('login') // 'login' or 'signup'
+  const [mode, setMode] = useState('login') 
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
