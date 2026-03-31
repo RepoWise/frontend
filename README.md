@@ -1,4 +1,4 @@
-# RepoWise Frontend
+# RepoWise Frontend Documentation
 
 Modern React-based frontend for exploring and querying open-source repository documentation, governance, commits, and issues.
 
