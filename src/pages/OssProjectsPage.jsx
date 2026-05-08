@@ -56,7 +56,6 @@ const projects = [
   { name: 'CRP', url: 'https://github.com/ucdavis/CRP', description: 'Campus resource planning' },
   { name: 'gunrock-tailwind', url: 'https://github.com/ucdavis/gunrock-tailwind', description: 'Tailwind CSS for UC Davis' },
   { name: 'ANNA-AnimalHealthAnalytics', url: 'https://github.com/ucdavis/ANNA-AnimalHealthAnalytics', description: 'Animal health analytics' },
-  { name: 'iwfm', url: 'https://github.com/ucdavis/iwfm', description: 'Integrated water flow model' },
   { name: 'Peaks', url: 'https://github.com/ucdavis/Peaks', description: 'Peak detection algorithms' },
   { name: 'hippo', url: 'https://github.com/ucdavis/hippo', description: 'Hippo application' },
   { name: 'ad419-charts', url: 'https://github.com/ucdavis/ad419-charts', description: 'AD419 charting tools' },
