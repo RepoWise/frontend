@@ -1,11 +1,13 @@
 name: Playwright E2E
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-  schedule:
-    - cron: "0 3 * * *"
+  # Temporarily disabled - backend ngrok URL is unreliable for CI
+  # Re-enable when stable backend URL is available
+  # push:
+  #   branches: ["main"]
+  # pull_request:
+  # schedule:
+  #   - cron: "0 3 * * *"
   workflow_dispatch:
 
 jobs:
