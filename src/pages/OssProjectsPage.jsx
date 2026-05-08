@@ -62,26 +62,6 @@ const projects = [
   { name: 'hippo', url: 'https://github.com/ucdavis/hippo', description: 'Hippo application' },
   { name: 'ad419-charts', url: 'https://github.com/ucdavis/ad419-charts', description: 'AD419 charting tools' },
   { name: 'ECS272-Fall2022', url: 'https://github.com/ucdavis/ECS272-Fall2022', description: 'Information Visualization course' },
-  { name: 'Intro-to-Desktop-GIS-with-QGIS', url: 'https://github.com/ucdavis/Intro-to-Desktop-GIS-with-QGIS', description: 'GIS workshop materials' },
-  { name: 'Spatial_SQL', url: 'https://github.com/ucdavis/Spatial_SQL', description: 'Spatial SQL tutorials' },
-  { name: 'workshop_intro_to_sql', url: 'https://github.com/ucdavis/workshop_intro_to_sql', description: 'SQL workshop materials' },
-  { name: 'workshop_python_basics', url: 'https://github.com/ucdavis/workshop_python_basics', description: 'Python basics workshop' },
-  { name: 'workshop_introduction_to_version_control', url: 'https://github.com/ucdavis/workshop_introduction_to_version_control', description: 'Version control workshop' },
-  { name: 'workshop_web_maps', url: 'https://github.com/ucdavis/workshop_web_maps', description: 'Web mapping workshop' },
-  { name: 'adventures_in_data_science', url: 'https://github.com/ucdavis/adventures_in_data_science', description: 'Data science learning resources' },
-  { name: 'aggie-experts', url: 'https://github.com/ucdavis/aggie-experts', description: 'UC Davis expertise database' },
-  { name: 'aggie-experts-deployment', url: 'https://github.com/ucdavis/aggie-experts-deployment', description: 'Aggie Experts deployment' },
-  { name: 'postgres', url: 'https://github.com/ucdavis/postgres', description: 'PostgreSQL configurations' },
-  { name: 'dams-deployment', url: 'https://github.com/ucdavis/dams-deployment', description: 'DAMS deployment configs' },
-  { name: 'clonalvdjseq', url: 'https://github.com/ucdavis/clonalvdjseq', description: 'VDJ sequencing analysis' },
-  { name: 'scRNA_shiny', url: 'https://github.com/ucdavis/scRNA_shiny', description: 'Single-cell RNA Shiny app' },
-  { name: 'assemblathon2-analysis', url: 'https://github.com/ucdavis/assemblathon2-analysis', description: 'Genome assembly analysis' },
-  { name: 'proc10xG', url: 'https://github.com/ucdavis/proc10xG', description: '10x Genomics processing' },
-  { name: 'sickle', url: 'https://github.com/ucdavis/sickle', description: 'Quality trimming tool' },
-  { name: 'sabre', url: 'https://github.com/ucdavis/sabre', description: 'Barcode demultiplexing' },
-  { name: 'NeuroMabSeq', url: 'https://github.com/ucdavis/NeuroMabSeq', description: 'Neuromab sequencing pipeline' },
-  { name: 'module_counter', url: 'https://github.com/ucdavis/module_counter', description: 'Module counting utility' },
-  { name: 'biocore-tools', url: 'https://github.com/ucdavis/biocore-tools', description: 'Bioinformatics core tools' },
 ];
 
 // Tool configurations
@@ -361,7 +341,7 @@ function OssProjectsPageContent() {
               <span className={`text-sm font-light ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>×</span>
               <a href="https://ucospo.net/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
                 <img
-                  src="https://raw.githubusercontent.com/UC-OSPO-Network/ucospo.net/main/jbook/_static/images/logo.svg"
+                  src="/uc-ospo-logo.png"
                   alt="UC OSPO"
                   className="h-5 w-auto"
                 />
@@ -415,7 +395,7 @@ function OssProjectsPageContent() {
                 UC Davis Open Source Projects
               </h1>
               <p className={`text-sm sm:text-base lg:text-lg max-w-3xl ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                Explore and analyze 50+ UC Davis open source repositories using our research tools.
+                Explore and analyze UC Davis open source repositories using our research tools.
                 Click on any tool button to instantly analyze that project.
               </p>
             </div>
@@ -519,7 +499,7 @@ function OssProjectsPageContent() {
               <a href="https://ucospo.net/" target="_blank" rel="noreferrer" className="opacity-70 hover:opacity-100 transition-opacity">
                 <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-800">
                   <img
-                    src="https://ucospo.net/images/uc-ospo-network-logo.svg"
+                    src="/uc-ospo-logo.png"
                     alt="UC OSPO Network"
                     className="h-8 sm:h-10 w-auto brightness-110"
                   />

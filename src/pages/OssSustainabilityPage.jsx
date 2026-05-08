@@ -339,7 +339,7 @@ function OssSustainabilityPageContent() {
             <span className={`text-sm font-light ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>×</span>
             <a href="https://ucospo.net/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
               <img
-                src="https://raw.githubusercontent.com/UC-OSPO-Network/ucospo.net/main/jbook/_static/images/logo.svg"
+                src="/uc-ospo-logo.png"
                 alt="UC OSPO"
                 className="h-5 w-auto"
               />
@@ -397,7 +397,7 @@ function OssSustainabilityPageContent() {
                   Try with UC Davis Projects
                 </h3>
                 <p className={`text-xs mb-2 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  50+ repositories
+                  30 repositories
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-500 group-hover:gap-2 transition-all">
                   View Projects
@@ -472,7 +472,7 @@ function OssSustainabilityPageContent() {
                   Try the Tools with Real Projects
                 </h2>
                 <p className={`text-base sm:text-lg mb-8 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  Explore 50+ UC Davis open source repositories and analyze them instantly with our research tools.
+                  Explore UC Davis open source repositories and analyze them instantly with our research tools.
                 </p>
                 <Link
                   to="/oss-sustainability/projects"
