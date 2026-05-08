@@ -37,7 +37,6 @@ const projects = [
   { name: 'sitefarm_seed', url: 'https://github.com/ucdavis/sitefarm_seed', description: 'Drupal distribution for UC Davis sites' },
   { name: 'FairMLCourse', url: 'https://github.com/ucdavis/FairMLCourse', description: 'Fairness in Machine Learning course' },
   { name: 'ecs132', url: 'https://github.com/ucdavis/ecs132', description: 'Probability & statistics for CS' },
-  { name: 'UCDArch', url: 'https://github.com/ucdavis/UCDArch', description: 'Architecture framework library' },
   { name: 'Walter', url: 'https://github.com/ucdavis/Walter', description: 'Water management application' },
   { name: 'VIPER', url: 'https://github.com/ucdavis/VIPER', description: 'Veterinary education platform' },
   { name: 'PolicyWonk', url: 'https://github.com/ucdavis/PolicyWonk', description: 'Policy analysis tool' },
@@ -426,10 +425,6 @@ function OssProjectsPageContent() {
                 )}
               </div>
 
-              {/* Projects Count */}
-              <p className={`text-xs sm:text-sm ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
-                {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} available
-              </p>
             </div>
 
             {/* Projects Grid */}
@@ -449,7 +444,7 @@ function OssProjectsPageContent() {
                       : 'bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  Show all {filteredProjects.length} projects
+                  Show all projects
                   <ChevronDown className="h-4 w-4" />
                 </button>
               </div>

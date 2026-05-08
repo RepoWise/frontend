@@ -397,7 +397,7 @@ function OssSustainabilityPageContent() {
                   Try with UC Davis Projects
                 </h3>
                 <p className={`text-xs mb-2 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  30 repositories
+                  UC Davis repositories
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-500 group-hover:gap-2 transition-all">
                   View Projects
