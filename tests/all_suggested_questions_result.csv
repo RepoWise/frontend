@@ -1,0 +1,182 @@
+question_num,category,question,status,confidence,sources_count,failure_reason,response_time_sec,answer_preview
+1,frontend_landing_page,How can I start contributing?,PASSED,0.7268260840639821,3,,60.72," To contribute to the Meridian project, follow these steps as outlined in the CONTRIBUTING.md document:
+
+1. Sign the Contributor License Agreement (CLA) if you haven't already done so. You can find more information about your current agreements on file or sign a new one at <https://cla.developers.go"
+2,frontend_landing_page,What are the required steps before submitting a pull request?,PASSED,0.8375168542796367,2,,31.79," To submit a pull request for the meridian project, follow these steps as outlined in the CONTRIBUTING.md document:
+
+1. Sign the Contributor License Agreement (CLA) if you haven't already done so. You can find more information about this process at <https://cla.developers.google.com/>.
+2. Make your "
+3,frontend_landing_page,What skills or tools do I need to contribute?,PASSED,0.6104230160297518,3,,41.26," To contribute to the Meridian project, you will need the following skills and tools:
+
+1. Programming skills in Python (as Meridian is a Python package) (README.md)
+2. Familiarity with machine learning concepts and techniques, as Meridian is a machine learning model (Meridian basics)
+3. Knowledge of"
+4,frontend_landing_page,How do I report a bug?,PASSED,0.6726402405391952,3,,28.92," To report a bug in the Meridian project, you should post it to the [Issues](https://github.com/google/meridian/issues) tab of the Meridian GitHub repository (CONTRIBUTING.md). The team responds to these questions weekly in batches, so please be patient and don't reach out directly to your Google Ac"
+5,frontend_after_answer_governance,What is the license of this project?,PASSED,1.0,2,,29.08," The license for this project is the Apache License 2.0 (LICENSE). You can find a copy of the license at http://www.apache.org/licenses/LICENSE-2.0. This license allows you to reproduce, prepare Derivative Works of, and distribute copies of the Work or Derivative Works in any medium, with or without"
+6,frontend_after_answer_governance,How do I report a security vulnerability?,PASSED,0.5695623061138372,3,,40.67," To report a security vulnerability in Meridian, follow these steps:
+
+1. Create a new issue on the [Issues](https://github.com/google/meridian/issues) tab of the Meridian GitHub repository (DOCUMENT_NAME: README.md).
+2. Title your issue clearly and concisely, using ""Security Vulnerability"" in the ti"
+7,frontend_after_answer_commits,Who are the three most active committers?,PASSED,0,1,,32.96," Based on the provided commits data, the top 3 most active committers by commit count are:
+
+1. Lukasz Mazurek with 148 commits
+2. Santoso Wijaya with 141 commits
+3. Andy Tan with 116 commits"
+8,frontend_after_answer_commits,What are the five latest commits?,PASSED,0,1,,50.91," Based on the provided commits data, the 5 latest commits are:
+
+1. SHA: 42cffa767cc3cfb580cdb42e6fbaf1ebd0362c2b
+   Author: Andy Tan (andytan@google.com)
+   Date: 2026-02-21 21:54:12+00:00
+   Message: Commit message not provided
+
+2. SHA: 1acfe207f2992f4758d37e5d4466ab2adaddd018
+   Author: Rieman Li "
+9,frontend_after_answer_commits,Which files have the highest total lines added across all commits?,PASSED,0,1,,49.5," Based on the provided commits data, the file with the highest total lines added across all commits is ""meridian/analysis/analyzer_test.py"" with 19943 lines added. The second-highest file is ""meridian/data/simulated_data/csv/geo_all_channels.csv"" with 12482 lines added, followed by ""meridian/model/e"
+10,frontend_after_answer_issues,How many open vs closed issues are there?,PASSED,0,1,,13.91,There are **26 open issues** and **190 closed issues** (216 total). These issues were reported by 113 unique contributors.
+11,frontend_after_answer_issues,What are the three most recently updated issues?,PASSED,0,1,,20.04," The provided issues data shows only the created dates, not the updated ones. Therefore, I cannot determine the three most recently updated issues based on this information."
+12,frontend_after_answer_issues,Which issue has the highest comment count?,PASSED,0,1,,22.65," Based on the provided issues data, the top 1 issue with the highest comment count is:
+
+1. Issue #591: Demo notebook is unable to import pandas
+   Comments: 13 | State: CLOSED | Created: 2024-08-17
+   Reporter: AdimDrewnik"
+13,backend_governance_maintainer,What are the prerequisites for becoming a maintainer on this project?,PASSED,0.7266970782934091,2,,36.16," To become a maintainer on the Meridian project, there is no explicit information provided in the available documents. However, you can contribute to the project by submitting a pull request following the steps outlined in CONTRIBUTING.md and signing the Contributor License Agreement (CLA) before su"
+14,backend_governance_maintainer,"Who currently serves on the governance committee, and how can we reach them?",PASSED,0.6034175845187728,2,,27.83," The available project documents for meridian do not explicitly list members of a governance committee or their contact information. You may find this information in the repository's Governance document if it exists, or by reaching out to the Meridian team through the [Discussions](https://github.co"
+15,backend_governance_maintainer,What responsibilities do maintainers have?,PASSED,0.8121785256026923,2,,30.08," The available project documents for meridian do not explicitly list the specific responsibilities of maintainers. However, based on common practices and the information provided in the README document, maintainers may be responsible for addressing issues reported by users, improving the project, an"
+16,backend_governance_maintainer,How are maintainers selected or elected?,PASSED,0.7189730447739118,2,,26.41," The available project documents for meridian do not explicitly list how maintainers are selected or elected. You may find this information in the repository's governance files, if they exist, or by reaching out to the Meridian team through the [Discussions](https://github.com/google/meridian/discus"
+17,backend_governance_decision_making,How are decisions made when maintainers disagree on a proposed change?,PASSED,0.512444310206739,3,,31.19," Decisions regarding proposed changes in the Meridian project when maintainers disagree are not explicitly stated in the provided documents. However, it is mentioned that all submissions require review and GitHub pull requests are used for this purpose (CONTRIBUTING.md). The resolution of disagreeme"
+18,backend_governance_decision_making,What is the voting process for major changes?,PASSED,0.48664850481945626,2,,34.27," The available project documents for meridian do not contain explicit information about a voting process for major changes. However, they mention that all submissions, including those by project members, require review through GitHub pull requests (README.md). It is also stated that the project foll"
+19,backend_governance_decision_making,Who has veto power in this project?,PASSED,0.8227163310216017,2,,28.32," The available project documents for meridian do not explicitly specify who has veto power within the project. You may find this information in the repository's governance or decision-making policies, if they exist (CONTRIBUTING.md, GOVERNANCE.md). If such documents are not provided, it is recommend"
+20,backend_governance_decision_making,How long does the decision-making process typically take?,PASSED,0.4199861240914929,2,,26.17, The available project documents for meridian do not contain information about the typical duration of the decision-making process. You may find this information in the repository's issue tracker or by reaching out to the maintainers directly. (README)
+21,backend_governance_contribution_process,What steps should I follow before opening a large pull request?,PASSED,0.7529544557073624,2,,43.66," To open a large pull request in the Meridian project, you should follow these steps as outlined in the CONTRIBUTING.md document:
+
+1. Review the [Google's Open Source Community Guidelines](https://opensource.google/conduct/) to ensure your contributions align with the project's values and expectatio"
+22,backend_governance_contribution_process,Are there coding standards or style guides I must follow?,PASSED,0.7757122197927036,2,,42.39," The available project documents for meridian do not explicitly list coding standards or style guides to be followed. You may want to check if similar guidelines are provided in other Google projects, as the CONTRIBUTING.md document mentions that contributors should follow Google's Open Source Commu"
+23,backend_governance_contribution_process,What is the review process once I open a pull request?,PASSED,0.8579736825712961,2,,37.1," To answer your question about the review process for opening a pull request (PR), here's the relevant information from the provided documents:
+
+1. All submissions, including those by project members, require review. This is done using GitHub pull requests ([CONTRIBUTING.md](https://github.com/googl"
+24,backend_governance_contribution_process,How should I structure my commit messages?,PASSED,0.6822690559939498,2,,39.5," To structure your commit messages in the Meridian project, follow these guidelines (CONTRIBUTING.md):
+
+1. Use a concise and descriptive subject line that summarizes the change in less than 50 characters. For example, ""Add new feature: data preprocessing function"" or ""Fix bug: incorrect model traini"
+25,backend_governance_security,How should security vulnerabilities be reported and handled?,PASSED,0.5377794940806433,3,,43.05," To report a security vulnerability in Meridian, you should follow these steps:
+
+1. Do not disclose the vulnerability publicly. Instead, submit a report to the [Google Vulnerability Reward Program](https://vRP.google.com/) (GVRP) or the [Google Security Team](https://security.google.com/reports) if "
+26,backend_governance_security,Who is responsible for security issues?,PASSED,0.8351952121866963,2,,30.6," The available project documents for meridian do not explicitly list a specific individual or team responsible for handling security issues. However, users are encouraged to post security-related concerns in the Issues tab of the Meridian GitHub repository ([Issues](https://github.com/google/meridia"
+27,backend_governance_security,What is the typical response time for security reports?,PASSED,0.4872931463460512,2,,30.64," The available project documents for meridian do not contain information about the typical response time for security reports. You may find this information in the repository's Security or Issues tabs on GitHub, or by reaching out to the Meridian team directly through these channels. It is recommend"
+28,backend_governance_security,Is there a bug bounty program?,PASSED,0.523893607946305,3,,75.31," The available project documents for meridian do not explicitly mention a bug bounty program. You may find information about reporting bugs in the ""Issues"" tab of the Meridian GitHub repository (github.com/google/meridian/issues). If you have any questions or need assistance, feel free to post them "
+29,backend_governance_legal,Does the project require a CLA or DCO for outside contributions?,PASSED,1.0,2,,24.76, The project requires a Contributor License Agreement (CLA) for outside contributions. (CONTRIBUTING.md)
+30,backend_governance_legal,What license does this project use?,PASSED,1.0,2,,27.13, The meridian project uses the Apache License 2.0 (LICENSE). You can find a copy of the license at http://www.apache.org/licenses/LICENSE-2.0. Contributions to the project must comply with the terms and conditions of this license (LICENSE).
+31,backend_governance_legal,Who owns the copyright for contributed code?,PASSED,1.0,1,,227.13," The available project documents for meridian do not explicitly specify who owns the copyright for contributed code. According to the LICENSE document, a ""Contributor"" is defined as any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorpo"
+32,backend_governance_legal,Are there any patent considerations?,FAILED,0.9696768405139786,1,could not connect to llm,1107.18,Error: Could not connect to LLM service. Make sure Ollama is running with: ollama serve
+33,backend_governance_communication,What communication channels does the project recommend for daily coordination?,PASSED,0.9370557390142829,1,,51.75," The available project documents do not explicitly list any specific communication channels for daily coordination. However, users are encouraged to post questions in the [Discussions](https://github.com/google/meridian/discussions) or [Issues](https://github.com/google/meridian/issues) tabs of the "
+34,backend_governance_communication,How do I join the project's Slack or Discord?,PASSED,0.650950509808712,2,,27.38," The available project documents for meridian do not contain information about joining the project's Slack or Discord. You may find this information in the repository's README, CONTRIBUTING, or governance files, but they do not explicitly list any communication channels like Slack or Discord. I cann"
+35,backend_governance_communication,Are there regular community meetings?,PASSED,0.4186672685778557,2,,29.9," The available project documents for meridian do not explicitly mention regular community meetings. You may find updates and discussions in the [Discussions](https://github.com/google/meridian/discussions) tab of the Meridian GitHub repository, as stated in the README.md file. However, it's importan"
+36,backend_governance_communication,How can I reach the maintainers directly?,PASSED,0.6233566311773442,3,,32.03," The available project documents for meridian do not explicitly list specific maintainers. You may find this information in the repository's Contributors page on GitHub or by checking the commit history (README.md). However, it is important to note that the Meridian team responds to questions weekly"
+37,backend_governance_release,How are release managers or release schedules determined?,PASSED,0.7745267716742643,1,,28.72," The available project documents for meridian do not contain information about release managers or release schedules. You may find this information in the repository's governance files, if they exist, or by reaching out to the Meridian team through the [Discussions](https://github.com/google/meridia"
+38,backend_governance_release,What is the typical release cadence?,PASSED,0.8241072598917083,1,,27.9, The available project documents for meridian do not contain information about a typical release cadence. You may find this information in the repository's release history or by checking the GitHub releases page. (README)
+39,backend_governance_release,How can I track the next release?,PASSED,0.6016256620628609,2,,29.35," To track the next release for the Meridian project, you should monitor the ""Releases"" tab on the GitHub repository ([github.com/google/meridian](https://github.com/google/meridian)). The project team does not provide explicit information about when a new release will be made in the available docume"
+40,backend_governance_release,What is the process for including a feature in a release?,PASSED,0.5774053920932063,3,,37.63," To include a feature in a Meridian release, follow these steps:
+
+1. Post your feature request to the [Discussions](https://github.com/google/meridian/discussions) tab of the Meridian GitHub repository (CONTRIBUTING.md).
+2. The Meridian team will review your request and prioritize it based on their "
+41,backend_governance_onboarding,How do we onboard new contributors effectively within current governance rules?,PASSED,0.6116992703961466,3,,52.4," To onboard new contributors effectively within the current governance rules for the Meridian project, follow these steps:
+
+1. Familiarize yourself with the project by reading the [README](README.md) and [CONTRIBUTING](CONTRIBUTING.md) documents. These provide an overview of the project and guidelin"
+42,backend_governance_onboarding,Are there 'good first issues' for new contributors?,PASSED,0.5455545789951157,3,,32.56," The available project documents do not explicitly list 'good first issues' for new contributors. However, you can find potential tasks by browsing the [Issues](https://github.com/google/meridian/issues) tab of the Meridian GitHub repository. Look for issues labeled as ""good first issue"" or ""beginne"
+43,backend_governance_onboarding,What documentation should I read before contributing?,PASSED,0.7784913736112166,3,,29.04," To contribute to the Meridian project, you should first read the CONTRIBUTING.md document. This guide outlines the steps and guidelines for submitting contributions to this project (CONTRIBUTING.md). Additionally, it is recommended that you sign the Contributor License Agreement (CLA) before submit"
+44,backend_governance_onboarding,Is there a mentorship program available?,PASSED,0.4973476041319709,3,,27.78," The available project documents for meridian do not explicitly mention a mentorship program. You may find guidance on using Meridian by referring to the resources listed in the README.md file, such as the user guide ([4](https://developers.google.com/meridian/docs/user-guide/installing)). If you ha"
+45,backend_commits_activity,"How many commits have landed in the last month, and is activity trending up or down?",PASSED,0,0,,28.01,No commits data found matching your query.
+46,backend_commits_activity,What is the commit frequency compared to last quarter?,PASSED,0,0,,31.24,No commits data found matching your query.
+47,backend_commits_activity,Which days of the week see the most commit activity?,PASSED,0,1,,35.13," Based on the provided commits data, it doesn't contain the day of the week for each commit. The data only shows the number of commits per day (0-6), but not the actual days of the week. Therefore, I cannot determine which days see the most commit activity using this data alone."
+48,backend_commits_activity,Has there been a recent spike or drop in activity?,PASSED,0,1,,49.17," Based on the provided commit data, it appears that there has been an increase in activity. Over the past 5 days (from February 18 to February 21), there were 5 commits compared to only 3 commits in the previous 4 days. This represents a 67% increase in activity over this period.
+
+Here are the lates"
+49,backend_commits_contributors,Who are the top five contributors by commit count this quarter?,PASSED,0,1,,36.68," Based on the provided commits data, the top 5 contributors by commit count for this quarter (assuming a quarter is approximately 3 months) are:
+
+1. Lukasz Mazurek with 148 commits
+2. Santoso Wijaya with 141 commits
+3. Andy Tan with 116 commits
+4. Viktoriia Schwartz with 85 commits
+5. Rieman Li with"
+50,backend_commits_contributors,Are there contributors with a sudden drop in activity that we should check in on?,PASSED,0,0,,26.64,No commits data found matching your query.
+51,backend_commits_contributors,How many new contributors joined in the last month?,PASSED,0,1,,30.4," The commit data doesn't contain information about when each contributor started contributing to the repository, so it is not possible to determine how many new contributors joined in the last month based on this data alone."
+52,backend_commits_contributors,What is the contributor retention rate?,PASSED,0,0,,28.4,No commits data found matching your query.
+53,backend_commits_code_churn,Which files or modules have seen the most churn recently?,PASSED,0,1,,100.39," Based on the provided commits data, the following files or modules have seen the most churn recently:
+
+1. `meridian/schema/serde/meridian_serde.py` with 2 commits
+2. `scenarioplanner/__init__.py` with 2 commits
+3. `proto/setup.py` with 2 commits
+4. `proto/mmm/v1/marketing/analysis/marketing_analysi"
+54,backend_commits_code_churn,Which areas of the codebase receive the most frequent commits?,PASSED,0,1,,85.45," Based on the provided commits data, the following are the top 5 areas of the codebase that receive the most frequent commits:
+
+1. `meridian/analysis/analyzer.py` with 147 commits
+2. `CHANGLOG.md` with 178 commits (This is a file where changes are documented, not part of the actual code)
+3. `meridia"
+55,backend_commits_code_churn,Are there files that are frequently modified together?,PASSED,0,0,,39.77,No commits data found matching your query.
+56,backend_commits_code_churn,Which modules have the most refactoring activity?,PASSED,0,0,,5.91,"I'm a project governance assistant designed to help you understand open-source project documentation, contribution guidelines, maintainers, issues, and commit history. Please ask me questions about the selected project's governance, contributors, issues, or commits."
+57,backend_commits_impact,Can we identify the authors responsible for the most lines added or removed?,PASSED,0,0,,21.7,No commits data found matching your query.
+58,backend_commits_impact,Who has contributed the most to documentation?,PASSED,0,1,,83.29," Based on the provided commits data, Santoso Wijaya and Viktoriia Schwartz have contributed the most to documentation with 38 and 37 commits respectively. Here are their specific details:
+
+1. Santoso Wijaya
+   - Commits: 38
+   - SHA examples: abc123, def456, ghi789...
+   - Author email: santosowijay"
+59,backend_commits_impact,Which contributors focus on bug fixes vs. new features?,PASSED,0,0,,36.32,No commits data found matching your query.
+60,backend_commits_impact,What is the average commit size?,PASSED,0,1,,49.8," Based on the provided commits data, it appears that the data represents a single value (463.657143) which seems to be an aggregate metric rather than individual commit sizes. Therefore, I cannot determine the average commit size from this data alone. However, if you have additional information or c"
+61,backend_commits_pr_metrics,"How long, on average, does it take for a pull request to be merged?",PASSED,0,0,,31.68,No commits data found matching your query.
+62,backend_commits_pr_metrics,What percentage of PRs are merged vs. closed?,PASSED,0,0,,41.04,No commits data found matching your query.
+63,backend_commits_pr_metrics,Which PRs have been open the longest?,PASSED,0,1,,50.68," Based on the provided issues data, it doesn't contain any pull requests (PRs). The data only shows open issues. If you have access to pull request data, please analyze that separately."
+64,backend_commits_pr_metrics,How many reviewers typically review each PR?,PASSED,0.4907680461561504,2,,81.6," The available project documents for meridian do not contain specific information about the number of reviewers for each pull request (PR). However, according to the CONTRIBUTING.md document, all submissions require review using GitHub pull requests. You can consult GitHub Help for more information "
+65,backend_issues_status,"How many issues are currently open versus closed, and what's the ratio?",PASSED,0,1,,21.19,There are **26 open issues** and **190 closed issues** (216 total). These issues were reported by 113 unique contributors.
+66,backend_issues_status,What is the trend in open issues over time?,FAILED,0,1,does not contain,57.92," Based on the provided issues data, it appears that there are 5 open issues as of the current date. However, the data does not contain information about the number and statuses of issues at different points in time, so I cannot determine a trend in open issues over time. The data only shows the curr"
+67,backend_issues_status,How many issues were resolved in the last release cycle?,PASSED,0,1,,30.71,There are **26 open issues** and **190 closed issues** (216 total). These issues were reported by 113 unique contributors.
+68,backend_issues_status,What percentage of issues are bugs vs. feature requests?,PASSED,0,1,,85.17," Based on the provided issues data, we can categorize issues as either bugs or feature requests. To calculate the percentages, let's first count the number of each type:
+
+- Bugs: Issues with titles containing ""fix"", ""resolve"", or ""bug"" (case insensitive)
+  - #123: Fix issue with API endpoint respons"
+69,backend_issues_engagement,Which issues have the highest comment counts or longest time open?,PASSED,0,1,,74.62," Based on the provided issues data, the top 5 issues with the highest comment counts are:
+
+1. Issue #264: ResourceExhaustedError for geo-level model on GPU
+   Comments: 11 | State: closed | Created: 2023-08-17
+   Reporter: RagarshV
+
+2. Issue #591: Demo notebook is unable to import pandas
+   Comments"
+70,backend_issues_engagement,Who are the most active issue reporters or triagers?,PASSED,0,1,,84.53," Based on the provided issues data, the most active issue reporters are:
+
+1. cpulavarthi: 95 issues reported/interacted with
+2. dattatreyam23: 82 issues reported/interacted with
+3. gousesb: 44 issues reported/interacted with
+4. AdimDrewnik: 26 issues reported/interacted with
+5. sonriks6: 24 issues r"
+71,backend_issues_engagement,What is the average time to first response on new issues?,PASSED,0,1,,57.69, The issues data doesn't contain this information as it only shows when each issue was created but does not provide details about when the first response occurred.
+72,backend_issues_engagement,"Which issues were updated most recently, and what is their status?",PASSED,0,1,,59.56," Based on the provided issues data, I cannot determine which issues have been updated most recently as the data only shows when each issue was created but not when it was last updated. However, I can show you the most recent issues by creation date and their current status. Here are the 5 most recen"
+73,backend_issues_themes,Are there recurring bug themes or labels that keep resurfacing?,PASSED,0,0,,32.81,No issues data found matching your query.
+74,backend_issues_themes,Which issue labels are most common?,PASSED,0,0,,36.57,No issues data found matching your query.
+75,backend_issues_themes,Are there areas of the codebase with many bug reports?,PASSED,0,1,,49.25," Based on the provided issues data, it is not possible to determine if there are specific areas of the codebase with many bug reports as the issue titles do not provide sufficient information about the affected code or modules. However, some issues mention Python (e.g., #1469, #1453), which could in"
+76,backend_issues_themes,What are the most requested features?,PASSED,0,1,,87.54," Based on the provided issues data, we can identify some recurring themes that may be considered as requested features. Here are the top 5 issues related to feature requests:
+
+1. Issue #1469: Contradictory results
+   Title: Contradictory results
+   Reporter: KatatoniaSh
+   State: open | Created: 202"
+77,backend_issues_at_risk,Are there high-priority bugs that lack assignees or recent updates?,PASSED,0,0,,43.34,No issues data found matching your query.
+78,backend_issues_at_risk,Which pull requests or issues are at risk of falling through the cracks?,PASSED,0.6052368293155513,3,,66.91,"1. Pull Requests (PRs) that are very difficult for the team to merge due to being linked to Google internal systems and requiring internal review (README.md).
+2. PRs submitted by contributors who do not follow the project's contribution guidelines, as they may be overlooked during code reviews (CONT"
+79,backend_issues_at_risk,How many stale issues should we close?,PASSED,0,1,,31.89,There are **26 open issues** and **190 closed issues** (216 total). These issues were reported by 113 unique contributors.
+80,backend_issues_at_risk,Which long-running issues need attention?,PASSED,0,0,,29.35,No issues data found matching your query.
+81,backend_issues_documentation,What documentation gaps have contributors flagged recently?,PASSED,0.8895496625830508,2,,50.44," The available project documents do not contain information about the specific documentation gaps flagged by contributors recently. You may find this information in the [Issues](https://github.com/google/meridian/issues) tab of the Meridian GitHub repository, where contributors can post issues and s"
+82,backend_issues_documentation,Are there common questions in issues that should be documented?,PASSED,0.6106818273058842,3,,83.88," The available project documents for meridian do not explicitly list common questions that should be documented in issues. However, based on the provided documents, it is recommended to post questions related to installing or using Meridian, bug reports, feature requests, and pull requests in the Is"
+83,backend_issues_documentation,Which parts of the docs receive the most issue reports?,PASSED,0,1,,57.56," Based on the provided issues data, we can analyze the recurring themes to identify which parts of the documentation might be receiving the most issue reports. Here are the recurring themes found in 42 issues:
+
+- **Documentation**: 15 issues (35.7%) - Examples: #1469, #1466, #1455
+- **Performance**:"
+84,backend_issues_documentation,Have documentation improvements reduced related issues?,PASSED,0.9503502804836845,2,,62.97," The available project documents for meridian do not contain information about whether documentation improvements have reduced related issues. I cannot answer this question based on the provided documents. However, you may find relevant information in the repository's Issues tab or by reaching out t"
+85,backend_issues_health,"Are our community health metrics (issues, commits, reviews) improving or declining?",PASSED,0.7004301913373048,2,,61.36," The available project documents for meridian do not contain information about community health metrics such as issues, commits, and reviews. I cannot determine if these metrics are improving or declining based on the provided documents. To find this information, you may want to check the Meridian G"
+86,backend_issues_health,What is the issue close rate trend?,PASSED,0,1,,56.8," Based on the provided issues data, there are 1469 open issues and no closed issues. Therefore, the current close rate for this repository is 0%. The data doesn't contain information about past close rates or trends."
+87,backend_issues_health,How responsive is the project to new issues?,PASSED,0,1,,47.72," Based on the provided issues data, there are 5 open issues that have been reported recently. Here's a breakdown of the issue states and their corresponding percentages:
+
+- Open: 58.0% (3 out of 5)
+- Closed: 42.0% (2 out of 5)
+
+Since all open issues are recent, it suggests that the project is active"
+88,backend_issues_health,Is the community growing or shrinking?,PASSED,0,0,,34.03,No commits data found matching your query.
